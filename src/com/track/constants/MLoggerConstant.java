@@ -456,7 +456,7 @@ public class MLoggerConstant {
 	public static Boolean ItemMstServlet_PRINTPLANTMASTERINFO = Boolean.valueOf(true);
 	public static Boolean InvMstServlet_PRINTPLANTMASTERLOG = Boolean.valueOf(true);
 	public static Boolean InvMstServlet_PRINTPLANTMASTERINFO = Boolean.valueOf(true);
-	public static String PROPS_FOLDER = "C:/S2TCONFIGCKTEST/";
+	public static String PROPS_FOLDER = "C:/S2TCONFIGTEST/";
 	//public static String PROPS_FOLDER = "C:/S2TCONFIGLIVEUAE/";
 	//public static String PROPS_FOLDER = "C:/S2TCONFIGLIVE/";
 	private static String DB_PROPS_FILE = PROPS_FOLDER + "/track/config/MLogger.properties";

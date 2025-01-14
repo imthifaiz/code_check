@@ -5,7 +5,6 @@ var zerotype=0;
 
 $(document).ready(function(){
 	//document.form1.STATE_PREFIX.value="AUH";
-	
 	var plant = document.form1.plant.value;
 	var parent_plant = $("input[name=PARENT_PLANT]").val();
 	if(parent_plant == plant){

@@ -1014,8 +1014,8 @@ $(document).ready(function(){
 		   document.getElementById("qty").readOnly = true;
 		   document.getElementById("qty").style.backgroundColor = "lightgray";
 	   }
+
     onGo();
-//     searchloc();
     $('[data-toggle="tooltip"]').tooltip();
 });
 </script> 

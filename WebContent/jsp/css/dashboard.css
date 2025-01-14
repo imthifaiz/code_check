@@ -1,0 +1,317 @@
+@font-face {
+  font-family: Proxima Nova;
+  src: url(../fonts/ProximaNova-Regular.otf);
+}
+.fc-day-number {
+    font-size: 16px;
+    font-weight: 300;
+    padding-right: 10px;
+}
+.fc-button{
+	text-transform: capitalize !important;
+}
+.panel-title{
+	font-size: 17px;
+    color: inherit;
+    font-weight: 600;
+}
+.dashboard{
+	font-family: Proxima Nova,sans-serif;
+}
+.dashboard-stats__item.dashboard-stats__item_red,.panel .dashboard-stats__item_red {
+    background-color: #f0563d !important;
+}
+.dashboard-stats__item.dashboard-stats__item_orange,.panel .dashboard-stats__item_orange {
+    background-color: #ffa726 !important;
+}
+.dashboard-stats__item.dashboard-stats__item_green,.panel .dashboard-stats__item_green {
+    background-color: #66bb6a !important;
+}
+.dashboard-stats__item.dashboard-stats__item_light-blue,.panel .dashboard-stats__item_light-blue {
+    background-color: #29b6f6 !important;
+}
+.dashboard-stats__item.dashboard-stats__item_purple,.panel .dashboard-stats__item_purple {
+    background-color: #7266ba !important;
+}
+.dashboard-stats__item.dashboard-stats__item_green2,.panel .dashboard-stats__item_green2 {
+    background-color: #2baab1 !important;
+}
+.dashboard-stats__item.dashboard-stats__item_dark-green,.panel .dashboard-stats__item_dark-green {
+    background-color: #17a086 !important;
+}
+.dashboard-stats__item.dashboard-stats__item_green3,.panel .dashboard-stats__item_green3 {
+    background-color: #a86226 !important;
+}
+
+.no-margin{
+	margin : 0px;
+}
+.progress{
+	margin:0px !important;
+	background-color: #d5dadc;
+}
+
+
+.dashboard-stats__item {
+    /* position: relative; */
+    overflow: hidden;
+    padding: 0px 30px 20px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+}
+
+.dashboard-stats__item>.fa {
+    position: absolute;
+    right: 8%;
+    top: 25%;
+    font-size: 3.5em;
+    color: hsla(0,0%,100%,.25);
+}
+
+/* .fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+} */
+
+.dashboard-stats__title {
+    margin: 40px 0px 0px;
+    font-size: 2.11em;
+    font-weight: 500;
+    color: #fff;
+}
+
+.dashboard-stats__title>small {
+    display: block;
+    font-size: 16px;
+    text-transform: capitalize;
+    color: hsla(0,0%,100%,.9);
+}
+.dashboard_heading {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 15px;
+    font-size: 16px;
+    text-transform: capitalize;
+    color: #fff;
+    font-weight: 600;
+    padding: 8px 10px 10px;
+}
+
+.subheading, h1, h1>small, h2, h2>small, h3, h3>small, h4, h4>small, h5, h5>small, h6, h6>small {
+    font-weight: 400;
+}
+.dashboard-stats__item > .nav>li>a{
+    color: #fff;
+    background: none;
+}
+.dashboard-stats__item > .nav .open>a{
+    background-color: inherit;
+    border-color: transparent;
+}
+
+/*the container must be positioned relative:*/
+.custom-select {
+  position: absolute;
+  font-family: Arial;
+  top: 0;
+  right: 15px;
+  width : 9em;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color: transparent;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 16px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: hsla(0,0%,100%,.9) transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent hsla(0,0%,100%,.9) transparent;
+  top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div {
+  color: #464e5f;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid silver;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.select-selected {
+  color: hsla(0,0%,100%,.9);
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+}
+.panel{
+	min-height:338px; 
+}
+.panel-default>.panel-heading {
+    color: #fff;
+    background-color: #29b6f6;
+    border-color: rgba(0,0,0,.07);
+    border-bottom: none;
+}
+.mini-chart_container{
+	    position: relative;
+		padding: 5px 0px 5px 0px;
+	}
+.mini-chart-line1{	 
+	width: 1.5%;
+	background: #66bb6a;
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	position: absolute;
+	top: 0px;
+
+}
+.mini-chart-line2{
+	width: 1.5%;
+	background: #a52a2a;
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	position: absolute;
+	top: 0px;
+	right:0px;
+
+}
+.mini-chart-line3{	 
+	width: 1.5%;
+	background: #a52a2a;
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	position: absolute;
+	top: 0px;
+
+}
+.mini-chart-line4{
+	width: 1.5%;
+	background: #66bb6a;
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	position: absolute;
+	top: 0px;
+	right:0px;
+
+}
+.mini-chart-line5{	 
+	width: 1.5%;
+	/* background: #a52a2a; */
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	position: absolute;
+	top: 0px;
+
+}
+.mini-chart-line6{
+	width: 1.5%;
+	/* background: #66bb6a; */
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	position: absolute;
+	top: 0px;
+	right:0px;
+
+}
+.mini-chart-data{
+	position: absolute;
+	top: -15px;
+	right:-10px;
+	text-align: center;
+}
+.mini-chart-data2{
+	position: absolute;
+	bottom: -15px;
+	right:-10px;
+	text-align: center;
+}
+.progress{
+	margin-bottom:0px;
+}
+#stkReplshPrd>tbody>tr>td{
+	padding-top:15px !important;
+}
+.account-panel{
+	min-height:220px !important;
+}
+
+.bar-chart-bar {
+    background-color: #e8e8e8; 
+    display: block; 
+    position:relative; 
+    width: 100%; 
+    height: 20px; 
+}
+.bar {
+    float: left; 
+    height: 100%; 
+}
+.bar2 {
+    background-color: #e41b1b;
+}
+.bar3 {
+    background-color: #3cb371;
+}
+.bar_2 {
+    background-color: #3cb371;
+}
+.bar_3 {
+    background-color: #e41b1b;
+}
+#tableAccPay tbody tr {
+	height: 55px;
+}
+#tableRecvPay tbody tr {
+	height: 55px;
+}
+#tableRecvPayForMgt tbody tr {
+	height: 55px;
+}

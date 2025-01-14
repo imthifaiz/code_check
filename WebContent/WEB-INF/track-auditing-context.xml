@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<context:annotation-config />
+	<context:property-placeholder
+		location="classpath:track-AuditConfiguraion.properties" />
+
+
+	<bean id="connectionFactory" name="connectionFactory"
+		class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL"
+			value="${com.track.audit.configuration.activemq.brokerURL}">
+		</property>
+	</bean>
+
+	<bean name="jmsTemplate" id="jmsTemplate"
+		class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="defaultDestination" ref="topicOne" />
+	</bean>
+
+	<!-- Default Auditing Topic name -->
+	<bean name="topicOne" id="topicOne"
+		class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="TRACK-TOPIC.ONE" />
+	</bean>
+
+	<bean name="auditTopicPublisher" class="com.track.audit.facade.AuditTopicPublisher">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="topic" ref="topicOne" />
+	</bean>
+
+	<!--  Listener 1 -->
+	<bean
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="topicOne" />
+		<property name="messageListener" ref="auditGeneralListener" />
+	</bean>
+
+	<bean name="auditGeneralListener" class="com.track.audit.facade.AuditMessageListener">
+		<property name="auditService" ref="auditService" />
+	</bean>
+
+	<bean name="auditService" class="com.track.audit.service.AuditService">
+		<property name="auditEngineConfiguration" ref="auditEngineConfiguration" />
+		<property name="auditFileHandler" ref="auditFileHandler" />
+	</bean>
+
+	<bean name="auditFileHandler" class="com.track.audit.dao.fileHandler.AuditFileHandler">
+	</bean>
+
+	<bean name="auditEngineConfiguration"
+		class="com.track.audit.configuration.AuditEngineConfiguration">
+		<property name="defaultLogFolderPath"
+			value="${com.track.audit.configuration.activemq.defaultLogFolderPath}" />
+	</bean>
+
+</beans>

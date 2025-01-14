@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="OrderNo" class="java.lang.String"/>
+	<parameter name="currentTime" class="java.lang.String"/>
+	<parameter name="company" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_CompanyName" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_BlockAddress" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_RoadAddress" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_Country" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_ZIPCode" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_AttentionTo" class="java.lang.String"/>
+	<parameter name="taxInvoiceTo_CCTO" class="java.lang.String"/>
+	<parameter name="fromAddress_CompanyName" class="java.lang.String"/>
+	<parameter name="fromAddress_BlockAddress" class="java.lang.String"/>
+	<parameter name="fromAddress_RoadAddress" class="java.lang.String"/>
+	<parameter name="fromAddress_Country" class="java.lang.String"/>
+	<parameter name="fromAddress_ZIPCode" class="java.lang.String"/>
+	<parameter name="fromAddress_TpNo" class="java.lang.String"/>
+	<parameter name="fromAddress_FaxNo" class="java.lang.String"/>
+	<parameter name="fromAddress_ContactPersonName" class="java.lang.String"/>
+	<parameter name="fromAddress_ContactPersonMobile" class="java.lang.String"/>
+	<parameter name="fromAddress_ContactPersonEmail" class="java.lang.String"/>
+	<parameter name="taxInvoiceNo" class="java.lang.String"/>
+	<parameter name="InvoiceTerms" class="java.lang.String"/>
+	<parameter name="Gst" class="java.lang.Double"/>
+	<parameter name="refNo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select '  ' + DOLNO AS DOLNO,'  ' +ITEM AS ITEM,'  ' +ITEMDESC AS ITEMDESC,'  ' +max(ordqty) AS ORDERQTY,'  ' +sum(pickqty)as SHIPQTY,'  ' +(select stkuom from
+  [$P!{company}_itemmst] where item=a.item) as UOM ,'  ' +(select UNITPRICE from
+  [$P!{company}_DODET] where dono =$P{OrderNo} and DOLNNO=a.DOLNO  and item=a.item) as UPRICE ,
+'  ' +(select UNITPRICE from
+  [$P!{company}_DODET] where dono =$P{OrderNo} and DOLNNO=a.DOLNO  and item=a.item)*sum(pickqty) as PRICE 
+from [$P!{company}_shiphis] a where a.dono =$P{OrderNo} 
+ group by DOLNO,item,itemdesc]]>
+	</queryString>
+	<field name="ITEM" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ITEMDESC" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ORDERQTY" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SHIPQTY" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="UOM" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="UPRICE" class="java.lang.Double"/>
+	<field name="PRICE" class="java.lang.Double"/>
+	<field name="DOLNO" class="java.lang.String"/>
+	<variable name="SubTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRICE}]]></variableExpression>
+	</variable>
+	<variable name="taxAmt" class="java.lang.Double">
+		<variableExpression><![CDATA[new Double( $F{PRICE}.doubleValue() * $P{Gst}.doubleValue())]]></variableExpression>
+	</variable>
+	<variable name="totTaxAmt" class="java.lang.Double">
+		<variableExpression><![CDATA[new Double($V{SubTotal}.doubleValue() * $P{Gst}.doubleValue() )]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="62"/>
+	</title>
+	<pageHeader>
+		<band height="64"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="192">
+			<staticText>
+				<reportElement x="12" y="170" width="30" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SNo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="234" y="7" width="100" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TAX INVOICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="170" width="139" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="264" y="170" width="72" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QTY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="170" width="83" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ITEM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="10" width="100" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TAX INVOICE TO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="373" y="10" width="100" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FROM]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" hyperlinkType="None">
+				<reportElement x="16" y="30" width="325" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_CompanyName}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="16" y="52" width="325" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_BlockAddress}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="19" y="66" width="155" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_RoadAddress}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="183" y="66" width="72" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_Country}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="261" y="66" width="80" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_ZIPCode}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="67" y="81" width="155" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_AttentionTo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="81" width="100" height="13"/>
+				<textElement/>
+				<text><![CDATA[Attention :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="94" width="100" height="13"/>
+				<textElement/>
+				<text><![CDATA[C.C TO :]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="67" y="94" width="132" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{taxInvoiceTo_CCTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" hyperlinkType="None">
+				<reportElement x="368" y="30" width="180" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_CompanyName}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="368" y="56" width="180" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_BlockAddress}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="368" y="71" width="180" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_RoadAddress}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="368" y="86" width="80" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_Country}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="448" y="86" width="84" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_ZIPCode}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="369" y="100" width="24" height="13"/>
+				<textElement/>
+				<text><![CDATA[Tel : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="100" width="24" height="13"/>
+				<textElement/>
+				<text><![CDATA[Fax : ]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="395" y="100" width="67" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_TpNo}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="487" y="100" width="61" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_FaxNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="368" y="115" width="37" height="13"/>
+				<textElement/>
+				<text><![CDATA[Contact :]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="416" y="115" width="132" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_ContactPersonName}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="416" y="129" width="132" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_ContactPersonMobile}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="368" y="129" width="37" height="13"/>
+				<textElement/>
+				<text><![CDATA[Mobile :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="143" width="37" height="13"/>
+				<textElement/>
+				<text><![CDATA[Email :]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="416" y="143" width="132" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{fromAddress_ContactPersonEmail}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="94" y="117" width="106" height="20"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[TAX INVOICE #]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="90" y="138" width="83" height="20"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{OrderNo}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="16" y="137" width="100" height="20"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{currentTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="117" width="78" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="117" width="62" height="20"/>
+				<textElement/>
+				<text><![CDATA[RefNo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="117" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[TERMS]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="255" y="137" width="89" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{InvoiceTerms}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="12" y="112" width="343" height="48"/>
+			</rectangle>
+			<line>
+				<reportElement x="88" y="113" width="1" height="47"/>
+			</line>
+			<rectangle>
+				<reportElement mode="Transparent" x="12" y="27" width="343" height="80"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="364" y="27" width="188" height="133"/>
+			</rectangle>
+			<line>
+				<reportElement x="12" y="137" width="343" height="1"/>
+			</line>
+			<line>
+				<reportElement x="173" y="113" width="1" height="47"/>
+			</line>
+			<line>
+				<reportElement x="244" y="113" width="1" height="47"/>
+			</line>
+			<staticText>
+				<reportElement x="336" y="170" width="73" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="482" y="170" width="70" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AMOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="409" y="170" width="73" height="22"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TAX AMT]]></text>
+			</staticText>
+			<textField hyperlinkType="None">
+				<reportElement x="178" y="137" width="66" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{refNo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField pattern="" hyperlinkType="None">
+				<reportElement x="42" y="0" width="83" height="20"/>
+				<textElement>
+					<font fontName="sansserif"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ITEM}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="None">
+				<reportElement x="125" y="0" width="139" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ITEMDESC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;(###0.00)" hyperlinkType="None">
+				<reportElement x="264" y="0" width="72" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{SHIPQTY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;(###0.00)" hyperlinkType="None">
+				<reportElement x="336" y="0" width="73" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{UPRICE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;(###0.00)" hyperlinkType="None">
+				<reportElement x="482" y="0" width="70" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PRICE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true" hyperlinkType="None">
+				<reportElement x="409" y="0" width="73" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{taxAmt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="0" width="30" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DOLNO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="147">
+			<staticText>
+				<reportElement x="368" y="7" width="169" height="23"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[   SUB TOTAL   :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="367" y="53" width="170" height="23"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[    TOTAL        :]]></text>
+			</staticText>
+			<textField pattern="###0.00;(###0.00)" hyperlinkType="None">
+				<reportElement x="467" y="10" width="70" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{SubTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="367" y="30" width="170" height="23"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[    TOTAL TAX  :]]></text>
+			</staticText>
+			<textField pattern="###0.00;(###0.00)" isBlankWhenNull="true" hyperlinkType="None">
+				<reportElement x="467" y="30" width="67" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totTaxAmt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true" hyperlinkType="None">
+				<reportElement x="467" y="53" width="70" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($V{SubTotal}.doubleValue() + $V{totTaxAmt}.doubleValue())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42"/>
+	</summary>
+</jasperReport>

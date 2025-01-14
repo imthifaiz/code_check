@@ -1,0 +1,185 @@
+.ribbon .ribbon-overdue {
+    background-color: #f59d00;
+    border-color: #c27c00;
+}
+.ribbon .ribbon-success {
+    background-color: #1fcd6d;
+    border-color: #18a155;
+}
+.inline-fields {
+    margin-bottom: 15px;
+    white-space: nowrap;
+}
+.mt-4, .my-4 {
+    margin-top: 15px!important;
+}
+.text-muted {
+    color: #777!important;
+}
+.return-criteria {
+    padding: 20px 50px 20px 110px;
+}
+.float-right {
+    float: right!important;
+}
+.prev-txns-chk {
+    background-color: #f9f9f9;
+    padding: 10px 10px 10px 10px;
+}
+.mt-3, .my-3 {
+    margin-top: 10px!important;
+}
+input[type=checkbox] {
+    box-sizing: border-box;
+    padding: 0;
+}
+.form-check-input {
+    position: absolute;
+    margin-top: .3rem;
+    margin-left: -1.25rem;
+}
+.form-check-label {
+    cursor: pointer;
+}
+.form-check-label {
+    margin-bottom: 0;
+    margin-left: 18px;
+}
+.tooltip-container {
+    position: relative;
+}
+svg.icon.icon-sm {
+    height: 14px;
+    width: 14px;
+}
+svg.icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+return-header {
+    border: 1px solid #ebebeb;
+    margin-bottom: 40px;
+}
+.ml-n4, .mx-n4 {
+    margin-left: -15px!important;
+}
+.mr-n4, .mx-n4 {
+    margin-right: -15px!important;
+}
+.reports-headerspacing {
+    margin-top: -5px;
+}
+.tax-return-header {
+    font-size: 24px;
+    font-weight: 400;
+    margin-top: 50px;
+}
+/*Tax fill table1*/
+/*Theme the Tabulator element*/
+#taxreturnfill-table1{
+    background-color:#ccc;
+    border: 1px solid #ebebeb;
+}
+
+/*Theme the header*/
+#taxreturnfill-table1 .tabulator-header {
+    background-color:#f5f5f5;
+    font-size: 12px;
+    color:#263035;
+}
+
+/*Allow column header names to wrap lines*/
+#taxreturnfill-table1 .tabulator-header .tabulator-col,
+#taxreturnfill-table1 .tabulator-header .tabulator-col-row-handle {
+    white-space: normal;
+    background-color: #ddd;
+    border: 1px solid #ebebeb;
+}
+
+/*Color the table rows*/
+#taxreturnfill-table1 .tabulator-tableHolder .tabulator-table .tabulator-row{
+    color:#000000;
+    background-color: #ffffff;
+}
+
+/*Color even rows*/
+    #taxreturnfill-table1 .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #ffffff;
+}
+/*Tax fill table2*/
+/*Theme the Tabulator element*/
+#taxreturnfill-table2{
+    background-color:#ccc;
+    border: 1px solid #ebebeb;
+}
+
+/*Theme the header*/
+#taxreturnfill-table2 .tabulator-header {
+    background-color:#f5f5f5;
+    font-size: 12px;
+    color:#263035;
+}
+
+/*Allow column header names to wrap lines*/
+#taxreturnfill-table2 .tabulator-header .tabulator-col,
+#taxreturnfill-table2 .tabulator-header .tabulator-col-row-handle {
+    white-space: normal;
+    background-color: #ddd;
+    border: 1px solid #ebebeb;
+}
+
+/*Color the table rows*/
+#taxreturnfill-table2 .tabulator-tableHolder .tabulator-table .tabulator-row{
+    color:#000000;
+    background-color: #ffffff;
+}
+
+/*Color even rows*/
+    #taxreturnfill-table2 .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #ffffff;
+}
+/*Tax fill table3*/
+/*Theme the Tabulator element*/
+#taxreturnfill-table3{
+    background-color:#ccc;
+    border: 1px solid #ebebeb;
+}
+
+/*Theme the header*/
+#taxreturnfill-table3 .tabulator-header {
+    background-color:#f5f5f5;
+    font-size: 12px;
+    color:#263035;
+}
+
+/*Allow column header names to wrap lines*/
+#taxreturnfill-table3 .tabulator-header .tabulator-col,
+#taxreturnfill-table3 .tabulator-header .tabulator-col-row-handle {
+    white-space: normal;
+    background-color: #ddd;
+    border: 1px solid #ebebeb;
+}
+
+/*Color the table rows*/
+#taxreturnfill-table3 .tabulator-tableHolder .tabulator-table .tabulator-row{
+    color:#000000;
+    background-color: #ffffff;
+}
+
+/*Color even rows*/
+    #taxreturnfill-table3 .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #ffffff;
+}
+.taxunfiledstatusbutton {
+    background-color: #fab86e;
+    border: #f78d15;
+    width: 100px;
+    color: #fff;
+}
+.taxfiledstatusbutton {
+    background-color: #54a355;
+    border: #356635;
+    width: 100px;
+    color: #fff;
+}

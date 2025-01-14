@@ -1,0 +1,27 @@
+table {
+ border: #000000;
+ border-style: inset;
+ border-top-width: 1px;
+ border-right-width: 1px;
+ border-bottom-width: 1px;
+ border-left-width: 1px
+}
+td {
+ width: 1px;
+ background-color: #eeeeee;
+ text-align: center;
+ vertical-align: middle;
+ white-space: nowrap;
+ font-family: "Times New Roman", "Times", "serif";
+ font-style: normal;
+ border: #000000;
+ border-style: inset;
+ border-top-width: thin;
+ border-right-width: thin;
+ border-bottom-width: thin;
+ border-left-width: thin
+}
+.describe {
+ text-align: left;
+ font-size: 11pt;
+}

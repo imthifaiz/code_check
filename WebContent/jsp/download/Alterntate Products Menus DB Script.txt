@@ -1,0 +1,27 @@
+INSERT INTO [C4030766437S2T_USER_LEVEL]
+       ([UL_PKEY],[PLANT],[LEVEL_NAME],[URL_NAME],[REMARKS],[CREATED_BY],[CREATED_ON],[UPDATED_BY],[UPDATED_ON],[AUTHORISE_BY],[AUTHORISE_ON])
+VALUES (343,'C4030766437S2T','DefaultGroup','createalternatbrandproduct','','admin','20181108','admin','20181108','admin','20181108')
+
+INSERT INTO [C4030766437S2T_USER_MENU]
+        ([UM_PKEY],[PLANT],[URL_NAME],[LANG],[COL],[ROW],[TEXT],[URL],[STATUS])
+VALUES  (343,'C4030766437S2T','createalternatbrandproduct','E',3,444,'Create Alternate Brand Product','createalternatebranditem.jsp',1)
+
+INSERT INTO [C4030766437S2T_USER_LEVEL]
+       ([UL_PKEY],[PLANT],[LEVEL_NAME],[URL_NAME],[REMARKS],[CREATED_BY],[CREATED_ON],[UPDATED_BY],[UPDATED_ON],[AUTHORISE_BY],[AUTHORISE_ON])
+VALUES (344,'C4030766437S2T','DefaultGroup','summaryalternatbrandproduct','','admin','20181108','admin','20181108','admin','20181108')
+
+INSERT INTO [C4030766437S2T_USER_MENU]
+        ([UM_PKEY],[PLANT],[URL_NAME],[LANG],[COL],[ROW],[TEXT],[URL],[STATUS])
+VALUES  (344,'C4030766437S2T','summaryalternatbrandproduct','E',8,444,'Inventory Summary (Alternate Brand Product)','alternatebrandproductsummary.jsp',1)
+
+---------------------------------------------------------------------------------
+
+alter table C4030766437S2T_to_pick add ID int null
+
+alter table C4030766437S2T_recvdet add ID int null
+
+alter table C4030766437S2T_LOAN_PICK  add ID int null
+
+alter table C4030766437S2T_shiphis add SID Int NULL
+
+

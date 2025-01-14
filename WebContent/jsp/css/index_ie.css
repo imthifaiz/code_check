@@ -1,0 +1,722 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#pics_3d_outer {
+   position:relative;
+   background-position: center;
+ }
+
+#pics_3d.1 {
+	position:relative;
+	top:9px;
+    left:30%;
+   
+}
+#pics_3d img {
+    position:absolute;
+	height:120px;
+	width:176px;
+    left:0px;
+    top:0px;
+}
+
+#pics_4d {
+	position:relative;
+	height:300px;
+	width:760px;
+	top:10px;
+	margin-right: auto;
+	margin-left: auto;
+	background-color: #FFF;
+	background-image: url(../images/bg-edit.jpg);
+}
+#pics_4d img {
+	position:absolute;
+	height:140px;
+	left:0;
+	top:0;
+	width: 176px;
+}
+a {
+	color: #9bcf00;
+}
+a:hover {
+	text-decoration: none;
+	color: #FFCC00;
+}
+
+#index_page {
+	width: 255px;
+	height: 23px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 272px;
+}
+#index_page ul {
+	list-style: none;
+}
+#index_page li {
+	display: inline;
+}
+#index_page a {
+	display: block;
+	width: 20px;
+	height: 20px;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #fff;
+	background-image: url(../images/numbg.jpg);
+	font-size: 12px;
+	padding-top: 3px;
+	margin-right: 5px;
+	float: left;
+}
+#index_page a:hover {
+	text-decoration: none;
+	color: #FFCC00;
+}
+#index_page_soft {
+	width: 130px;
+	height: 23px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 275px;
+}
+#index_page_soft ul {
+	list-style: none;
+}
+#index_page_soft li {
+	display: inline;
+}
+#index_page_soft a {
+	display: block;
+	width: 20px;
+	height: 20px;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #fff;
+	background-image: url(../images/numbg.jpg);
+	font-size: 12px;
+	padding-top: 3px;
+	margin-right: 5px;
+	float: left;
+}
+#index_page_soft a:hover {
+	text-decoration: none;
+	color: #FFCC00;
+}
+#index_page_metho {
+	width: 175px;
+	height: 23px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 275px;
+}
+#index_page_metho ul {
+	list-style: none;
+}
+#index_page_metho li {
+	display: inline;
+}
+#index_page_metho a {
+	display: block;
+	width: 20px;
+	height: 20px;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #fff;
+	background-image: url(../images/numbg.jpg);
+	font-size: 12px;
+	padding-top: 3px;
+	margin-right: 5px;
+	float: left;
+}
+#index_page_metho a:hover {
+	text-decoration: none;
+	color: #FFCC00;
+}
+#index_page_hard {
+	width: 150px;
+	height: 23px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 275px;
+}
+#index_page_hard ul {
+	list-style: none;
+}
+#index_page_hard li {
+	display: inline;
+}
+#index_page_hard a {
+	display: block;
+	width: 20px;
+	height: 20px;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #fff;
+	background-image: url(../images/numbg.jpg);
+	font-size: 12px;
+	padding-top: 3px;
+	margin-right: 5px;
+	float: left;
+}
+#index_page_hard a:hover {
+	text-decoration: none;
+	color: #FFCC00;
+}
+#word {
+	width: 600px;
+	height: 20px;
+	padding-top: 42px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 24px;
+	font-weight: bold;
+	color: #000;
+	padding-left: 150px;
+}
+#footer {
+	width: 940px;
+	height: 1Px
+	margin-top: 20px;
+	margin-right: auto;
+	margin-bottom: 0;
+	margin-left: auto;
+	padding-top: 20px;
+	padding-right: 0;
+	padding-bottom: 2px;
+	padding-left: 0;
+	background-color: white;
+
+}
+#footer p {
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+	font-size: 12px;
+}
+
+#enter a {
+	color: #ffffff;
+	text-decoration: none;
+}
+#enter a:hover {
+	text-decoration: none;
+	color: #9bcf00;
+}
+
+.maincolor {
+	COLOR: red; FONT-FAMILY: "Trebuchet ms", Arial, Arial; FONT-SIZE: 14px; FONT-WEIGHT: bold
+}
+
+
+.mainred {
+	COLOR:red; FONT-FAMILY: "Trebuchet ms", Arial, Arial; FONT-SIZE: 14px; FONT-WEIGHT: bold
+}
+
+.flash {
+	height:390px;
+	width:380px;
+	margin-right: auto;
+	margin-left: 520px;
+	margin-top: -33px;
+	padding-top:-3px;
+}
+
+/* include by Deen on 20131112 to align index page footer line*/
+#footerLine {
+	height:10px;
+	width:56%;
+	background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("../images/track/footer.png");
+	
+}
+
+/* include by Deen on 20140814 to align login page background image for all browsers exclude IE*/
+html { 
+  background: url("../images/track/LoginPageBackGroundImage.png") no-repeat center center fixed; 
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+  
+}
+
+
+/* include by Deen on 20131115 to align index page rotating images to screen size minimum 700px*/
+@media screen and (max-device-width: 480px)  {
+	    #pics_3d {
+		position:relative;
+		height:55%;
+		width:90%;
+		top:4px;
+		float:center;
+	    margin-left:17%;
+	 }
+	 
+	 
+	 #top {
+		background-image: url("../images/Logo.jpg");
+		height:145px;
+		width:200px;
+		margin-right: auto;
+		margin-left: 20%;
+		margin-top:5px;
+		background-repeat: no-repeat;
+	}
+	 
+	 #enter {
+		width: 160px;
+		height: 47px;
+		margin-right: auto;
+		margin-left: 46%; 
+		margin-top: 20px;
+		background-image: url(../images/track/logout.png);
+		padding-top: 5px;
+		background-repeat: no-repeat;
+			
+	 }
+	 
+	#footerLine1 {
+		height:10px;
+		width:56%;
+		margin-top:21%;
+		background-repeat: no-repeat;
+	    background-position: center;
+	    background-image: url("../images/track/footer.png");
+		
+	 }
+	 
+	 .fixedLoginDetails{
+	    position: fixed;
+	    height:10%;
+	    width:40%;
+		top: 25%;
+	    left: 23%;
+	}
+	
+	#fixedLoginButton{
+		background-image: url(../images/track/login.png);
+		background-repeat: no-repeat;
+		position: fixed;
+	    width: 150px;
+		height: 60px;
+		top: 25%;
+	    left: 58%;
+	}
+	    
+	
+	 .fixedCopyRight{
+	    position: fixed;
+	    height:10%;
+	    width:17%;
+		top: 79%;
+	     left: 50%;
+	}
+ 
+}
+
+
+/* include by Deen on 20131115 to align index page rotating images to screen size minimum 700px*/
+@media screen and (max-width: 768px)  {
+	    #pics_3d {
+		position:relative;
+		height:55%;
+		width:90%;
+		top:4px;
+		float:center;
+	    margin-left:17%;
+	 }
+	 
+	 
+	 #top {
+		background-image: url("../images/Logo.jpg");
+		height:145px;
+		width:200px;
+		margin-right: auto;
+		margin-left: 20%;
+		margin-top:5px;
+		background-repeat: no-repeat;
+	}
+	 
+	 #enter {
+		width: 160px;
+		height: 47px;
+		margin-right: auto;
+		margin-left: 46%; 
+		margin-top: 20px;
+		background-image: url(../images/track/logout.png);
+		padding-top: 5px;
+		background-repeat: no-repeat;
+			
+	 }
+	 
+	#footerLine1 {
+		height:10px;
+		width:56%;
+		margin-top:21%;
+		background-repeat: no-repeat;
+	    background-position: center;
+	    background-image: url("../images/track/footer.png");
+		
+	 }
+	 
+	 .fixedLoginDetails{
+	    position: fixed;
+	    height:10%;
+	    width:40%;
+		top: 25%;
+	    left: 23%;
+	}
+	
+	#fixedLoginButton{
+		background-image: url(../images/track/login.png);
+		background-repeat: no-repeat;
+		position: fixed;
+	    width: 150px;
+		height: 60px;
+		top: 25%;
+	    left: 58%;
+	}
+	    
+	
+	 .fixedCopyRight{
+	    position: fixed;
+	    height:10%;
+	    width:17%;
+		top: 79%;
+	     left: 50%;
+	}
+ 
+}
+
+/* include by Deen on 20131115 to align index page rotating images to screen size minimum 700px*/
+@media screen and (max-width: 1100px)  {
+	    #pics_3d {
+		position:relative;
+		height:55%;
+		width:90%;
+		top:4px;
+		float:center;
+	    margin-left:17%;
+	 }
+	 
+	 
+	 #top {
+		background-image: url("../images/Logo.jpg");
+		height:145px;
+		width:200px;
+		margin-right: auto;
+		margin-left: 20%;
+		margin-top:5px;
+		background-repeat: no-repeat;
+	}
+	 
+	 #enter {
+		width: 160px;
+		height: 47px;
+		margin-right: auto;
+		margin-left: 46%; 
+		margin-top: 20px;
+		background-image: url(../images/track/logout.png);
+		padding-top: 5px;
+		background-repeat: no-repeat;
+			
+	 }
+	 
+	#footerLine1 {
+		height:10px;
+		width:56%;
+		margin-top:21%;
+		background-repeat: no-repeat;
+	    background-position: center;
+	    background-image: url("../images/track/footer.png");
+		
+	 }
+	 
+	 .fixedLoginDetails{
+	    position: fixed;
+	    height:10%;
+	    width:40%;
+		top: 25%;
+	    left: 23%;
+	}
+	
+	#fixedLoginButton{
+		background-image: url(../images/track/login.png);
+		background-repeat: no-repeat;
+		position: fixed;
+	    width: 150px;
+		height: 60px;
+		top: 25%;
+	    left: 58%;
+	}
+	    
+	
+	 .fixedCopyRight{
+	    position: fixed;
+	    height:10%;
+	    width:17%;
+		top: 79%;
+	     left: 50%;
+	}
+ 
+}
+
+/* include by Deen on 20131114 to align index page rotating images to screen size minimum 1500px*/
+@media screen and (min-width: 1500px)  {
+	    #pics_3d {
+		position:relative;
+		height:50%;
+		width:90%;
+		top:5px;
+		float:left;
+	    margin-left:23%;
+	 }
+ 
+	   #top {
+		background-image: url("../images/Logo.jpg");
+		height:145px;
+		width:250px;
+		margin-right: auto;
+		margin-left: 25%;
+		margin-top: 5px;
+		background-repeat: no-repeat;
+	  }
+	 
+	 
+	  #enter {
+		width: 160px;
+		height: 45px;
+		margin-right: auto;
+		margin-left: 46%; 
+		margin-top: 20px;
+		
+		padding-top: 5px;
+		background-repeat: no-repeat;
+			
+	 }
+  
+	#footerLine1 {
+		height:10px;
+		width:56%;
+		margin-top:21%;
+		background-repeat: no-repeat;
+	    background-position: center;
+	    background-image: url("../images/track/footer.png");
+	        
+	 }
+ 
+	fixedLoginDetails{
+	    position: fixed;
+	    height:10%;
+	    width:40%;
+		top: 25%;
+	    left: 5%;
+	}
+	
+	#fixedLoginButton{
+		background-image: url(../images/track/login.png);
+		background-repeat: no-repeat;
+	     position: fixed;
+	     width: 150px;
+		height: 90px;
+		top: 26%;
+	    left: 40%;
+		
+	}
+	
+	 .fixedCopyRight{
+	    position: fixed;
+	    height:10%;
+	    width:16%;
+		top: 79%;
+	    left: 70%;
+	}
+}
+
+/* include by Deen on 20131115 to align index page rotating images to screen size minimum 700px*/
+@media screen and (max-width: 1280px)  {
+	    #pics_3d {
+		position:relative;
+		height:55%;
+		width:90%;
+		top:4px;
+		float:center;
+	    margin-left:17%;
+	 }
+	 
+	 #top {
+		background-image: url("../images/Logo.jpg");
+		height:145px;
+		width:200px;
+		margin-right: auto;
+		margin-left: -4%;
+		margin-top:5px;
+		background-repeat: no-repeat;
+	}
+	 
+	 #enter {
+		width: 160px;
+		height: 47px;
+		margin-right: auto;
+		margin-left: 5%; 
+		margin-top: 20px;
+		background-image: url(../images/track/logout.png);
+	
+		padding-top: 5px;
+		background-repeat: no-repeat;
+			
+	 }
+	 
+	#footerLine1 {
+		height:10px;
+		width:56%;
+		margin-top:-3%;
+		margin-left: 1%; 
+		background-repeat: no-repeat;
+	    background-position: center;
+	    background-image: url("../images/track/footer.png");
+		
+	 }
+
+	 .fixedLoginDetails{
+	    position: fixed;
+	    height:10%;
+	    width:40%;
+		top:25%;
+	    left: 23%;
+	}
+	
+	#fixedLoginButton{
+		background-image: url(../images/track/login.png);
+		background-repeat: no-repeat;
+		position: fixed;
+	     width: 150px;
+		height: 60px;
+		top: 25%;
+	    left: 58%;
+	}
+	 .fixedCopyRight{
+	    position: fixed;
+	    height:10%;
+	    width:17%;
+		top: 79%;
+	    left: 50%;
+	}
+
+ 
+}
+
+/* include by Deen on 20131114 to align index page rotating images to screen size minimum 1800px*/
+@media screen and (min-width: 1800px)  {
+	    #pics_3d {
+		position:relative;
+		height:50%;
+		width:90%;
+		top:5px;
+		float:left;
+	    margin-left:29%;
+	  }
+	  
+	   #top {
+		background-image: url("../images/Logo.jpg");
+		height:145px;
+		width:250px;
+		margin-right: auto;
+		margin-left: 25%;
+		margin-top: 5px;
+		background-repeat: no-repeat;
+	  }
+	  
+	  
+	   #enter {
+		width: 160px;
+		height: 45px;
+		margin-right: auto;
+		margin-left: 46%; 
+		margin-top: 20px;
+		background-image:url(../images/track/logout.png);
+		
+		padding-top: 5px;
+		background-repeat: no-repeat;
+			
+	 }
+	  
+	#footerLine1 {
+		height:10px;
+		width:56%;
+		margin-top:21%;
+		background-repeat: no-repeat;
+	    background-position: center;
+	    background-image: url("../images/track/footer.png");
+		
+	 }
+  
+	fixedLoginDetails{
+	    position: fixed;
+	    height:10%;
+	    width:40%;
+		top: 25%;
+	    left: 5%;
+	}
+	
+	#fixedLoginButton{
+		background-image: url(../images/track/login.png);
+		background-repeat: no-repeat;
+	     position: fixed;
+	     width: 150px;
+		height: 90px;
+		top: 26%;
+	    left: 40%;
+		
+	}
+	
+	 .fixedCopyRight{
+	    position: fixed;
+	    height:10%;
+	    width:20%;
+		top: 79%;
+	    left: 60%;
+	}
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

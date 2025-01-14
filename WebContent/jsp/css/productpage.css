@@ -1,0 +1,50 @@
+.product-list .tallCellView {
+            height: 350px!important;
+             border-top: 1px solid #e7e7e7;
+             	
+         }
+         .product-list .tallCellView {
+			 height: 350px!important;
+		     border-left: solid 1px;
+			 border-bottom: solid 1px;
+			 border-color: #DDD;
+			 border-right: 1px solid #e7e7e7;
+			 overflow: hidden;
+			
+         }
+         .a-section {
+         padding-top:25px;
+         }	 
+         .product-list .dealTile {
+			 margin-left: auto;
+			 margin-right: auto;
+         }
+         .a-spacing-mini-price{
+			 margin-bottom: 8px!important;		
+			 color: #111;
+         }
+         .a-spacing-mini {
+         margin-bottom: 6px!important;
+         }
+		 
+         .a-spacing-mini .a-link:hover{
+			 text-decoration:none;
+			 color: #0066c0!important;
+         }
+         .a-spacing-mini-desc {
+		  color: #3498db;
+         font-size:13px;
+         }
+		 .a-spacing-mini-btn{
+			margin-top:10px;
+		    background: #3498db;
+			color: #fff;	 
+		 }
+		 
+		 .a-link{
+		color:black;
+		 font-weight:700;
+		 }
+		 .div-img{
+		  height: 120px;
+		 }

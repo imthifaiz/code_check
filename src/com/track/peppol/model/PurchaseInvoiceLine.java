@@ -1,0 +1,54 @@
+package com.track.peppol.model;
+
+public class PurchaseInvoiceLine {
+	public int id;
+	public String service_name;
+	public String service_description;
+	public int service_quantity;
+	public double service_price;
+	public double service_vat;
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getService_name() {
+		return service_name;
+	}
+	public void setService_name(String service_name) {
+		this.service_name = service_name;
+	}
+	public String getService_description() {
+		return service_description;
+	}
+	public void setService_description(String service_description) {
+		this.service_description = service_description;
+	}
+	public int getService_quantity() {
+		return service_quantity;
+	}
+	public void setService_quantity(int service_quantity) {
+		this.service_quantity = service_quantity;
+	}
+	public double getService_price() {
+		return service_price;
+	}
+	public void setService_price(double service_price) {
+		this.service_price = service_price;
+	}
+	public double getService_vat() {
+		return service_vat;
+	}
+	public void setService_vat(double service_vat) {
+		this.service_vat = service_vat;
+	}
+	@Override
+	public String toString() {
+		return "PurchaseInvoiceLine [id=" + id + ", service_name=" + service_name + ", service_description="
+				+ service_description + ", service_quantity=" + service_quantity + ", service_price=" + service_price
+				+ ", service_vat=" + service_vat + "]";
+	}
+	
+	
+}

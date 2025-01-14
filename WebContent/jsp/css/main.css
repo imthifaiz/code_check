@@ -1,0 +1,302 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	margin: 20px 0;
+	background: #FFFFFF;
+	font: normal 13px Arial, Helvetica, sans-serif;
+	color: #666666;
+	padding: 0;
+}
+
+a {
+	color: #9bcf00;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #FFCC00;
+}
+
+
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 28px;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	color: #9bcf00;
+}
+
+h2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	color: #9bcf00;
+}
+
+h3 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 17px;
+	font-style: normal;
+	font-weight: bold;
+	font-variant: normal;
+	color: #336699;
+}
+
+p {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+}
+
+
+/* Header F4F4F4*/
+
+#header {
+	width: 760px;
+	height: 110px;
+	margin: 0 auto;
+	background-color: #FFFFFF;
+}
+
+#flash {
+	width: 530px;
+	height: 75px;
+	background-repeat: no-repeat;
+	clear: both;
+	float: left;
+	margin-top: 5px;
+}
+
+#bannerpic {
+	float: left;
+	width: 90px;
+	height: 65px;
+	padding-top: 5px;
+	margin-right: 7px;
+	margin-left: 5px;
+	padding-left: 3px;
+}
+
+
+#word {
+	width: 760px;
+	height: 20px;
+	padding-top: 3px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FFCC00;
+	background-color: #9bcf00;
+	float: left;
+	
+}
+
+/* Logo */
+
+#logo {
+	float: left;
+	width: 220px;
+	height: 110px;
+	background-color: #FFFFFF;
+	background-repeat: no-repeat;
+}
+
+#logopic {
+	width: 150px;
+	height: 110px;
+	float: left;
+}
+
+#line {
+	width: 3px;
+	height: 80px;
+	background-image: url(../images/line.png);
+	margin-left: 30px;
+	float: left;
+	margin-top: 15px;
+}
+
+#headerright {
+	float: left;
+	width: 540px;
+	height: 110px;
+	background-color: #FFFFFF;
+	background-repeat: no-repeat;
+}
+
+/* Menu */
+
+#menu {
+	float: left;
+	width: 530px;
+	height: 25px;
+	background: #FFFFFF;
+}
+
+#menu ul {
+	height: 5px;
+	list-style: none;
+}
+
+#menu li {
+	display: inline;
+}
+
+#menu a {
+	display: block;
+	float: left;
+	width: 90px;
+	height: 20px;
+	text-decoration: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #000000;
+	padding-top: 5px;
+	margin-right: 10px;
+	margin-left: 5px;
+}
+
+#menu .active a {
+	background: #9bcf00;
+	border-top-color: #9bcf00;
+	color: #ffffff;
+}
+
+#menu a b {
+	text-decoration: underline;
+}
+
+/* Page */
+
+#page {
+	width: 760px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 10px;
+}
+
+/* Welcome */
+#welcomeleft{
+	width: 760px;
+	float: left;
+	margin-top: 20px;
+}
+#band{
+	width: 750px;
+	float: left;
+	margin-top: 10px;
+	height: 115px;
+}
+#bandword{
+	float: left;
+	height: 115px;
+	width: 140px;
+}
+
+#welcome{
+	width: 750px;
+	float: left;
+	height: 220px;
+	background-image: url(../images/green_bar.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	padding-top: 20px;
+	margin-top: 10px;
+	padding-left: 5px;
+
+}
+
+#softcontent {
+	font-family: Arial, Helvetica, sans-serif;
+	width: 740px;
+	float: left;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	background-image: url(../images/green_bar.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	height: auto;
+	padding-top: 20px;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+#contentpic {
+	width: 130px;
+	height: 85px;
+	float: left;
+	margin-right: 20px;
+}
+
+#contentright {
+	width: 590px;
+	height: auto;
+	float: left;
+	margin-bottom: 5px;
+}
+
+#brandleft {
+	width: 110px;
+	height: 85px;
+	float: left;
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-left: 50px;
+}
+
+#brandpic {
+	width: 110px;
+	height: 85px;
+	float: left;
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+/* Samples */
+
+#sample {
+	float: left;
+	width: 160px;
+	height: 190px;
+	float: left;
+	margin-top: 10px;
+}
+
+
+#prodflash {
+	width: 150px;
+	height: 150px;
+	background-repeat: no-repeat;
+	margin-top: 15px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+/* Footer */
+
+#footer {
+	width: 760px;
+	margin-top: 10px;
+	margin-right: auto;
+	margin-bottom: 0;
+	margin-left: auto;
+	padding-top: 20px;
+	padding-right: 0;
+	padding-bottom: 20px;
+	padding-left: 0;
+	background-image: url(../images/border.png);
+	background-repeat: no-repeat;
+}
+
+#footer p {
+	text-align: center;
+	font-size: 12px;
+}

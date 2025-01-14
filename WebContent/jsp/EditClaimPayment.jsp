@@ -1,0 +1,1673 @@
+<%@page import="org.apache.taglibs.standard.tag.common.xml.ForEachTag"%>
+<%@ page import="com.track.db.util.ItemUtil"%>
+<%@ page import="com.track.db.util.InvUtil"%>
+<%@ page import="com.track.db.object.*"%>
+<%@ page import="com.track.util.*"%>
+<%@ page import="com.track.dao.*"%>
+<%@ page import="com.track.constants.*"%>
+<%@ page import="javax.transaction.UserTransaction"%>
+<%@ page import="java.util.Set"%>
+<%@ include file="header.jsp"%>
+<%@page import="com.track.db.util.PrdTypeUtil"%>
+<%@page import="com.track.db.util.PrdClassUtil"%>
+<jsp:useBean id="ub" class="com.track.gates.userBean" />
+<%
+String fieldDesc=StrUtils.fString(request.getParameter("result"));
+String plant = StrUtils.fString((String) session.getAttribute("PLANT"));
+String curency = StrUtils.fString((String) session.getAttribute("BASE_CURRENCY"));
+String username = StrUtils.fString((String) session.getAttribute("LOGIN_USER"));
+String region = StrUtils.fString((String) session.getAttribute("REGION"));
+String ID = StrUtils.fString(request.getParameter("ID"));
+
+
+
+PlantMstDAO plantMstDAO = new PlantMstDAO();
+DateUtils _dateUtils = new DateUtils();
+CurrencyDAO currencyDAO = new CurrencyDAO();
+HrPayrollPaymentDAO hrPayrollPaymentDAO = new HrPayrollPaymentDAO();
+EmployeeDAO employeeDAO = new EmployeeDAO();
+HrClaimDAO hrClaimDAO = new HrClaimDAO();
+
+String title = "Edit Process Claim";
+		
+
+String numberOfDecimal = plantMstDAO.getNumberOfDecimal(plant);
+//String vendno = poHdrDao.getSuppliercode(plant, pono);
+String curDate = _dateUtils.getDate();
+
+
+fieldDesc="<font class='maingreen'>"+fieldDesc+"</font>";
+
+String taxbylabel = ub.getTaxByLable(plant);
+String sVendorCode = StrUtils.fString(request.getParameter("sCustCode"));
+
+UUID uniqueKey = UUID.randomUUID();
+
+String zeroval = StrUtils.addZeroes(Float.parseFloat("0"), numberOfDecimal);
+
+String CURRENCYUSEQT="0",DISPLAY="";
+List curQryList=new ArrayList();
+curQryList = currencyDAO.getCurrencyDetails(curency,plant);
+for(int i =0; i<curQryList.size(); i++) {
+	ArrayList arrCurrLine = (ArrayList)curQryList.get(i);
+	DISPLAY	= StrUtils.fString(StrUtils.removeQuotes((String)arrCurrLine.get(2)));
+    CURRENCYUSEQT	= StrUtils.fString(StrUtils.removeQuotes((String)arrCurrLine.get(3)));
+    }
+
+double exchange =	Double.valueOf(CURRENCYUSEQT);
+HrPayrollPaymentHdr payhdr = hrPayrollPaymentDAO.getHrPayrollPaymentHdrId(plant, Integer.valueOf(ID));
+List<HrClaimPojo> HrClaimPojolist=new ArrayList<HrClaimPojo>();
+List<HrPayrollPaymentDet> paydet = hrPayrollPaymentDAO.getdetbyhdrid(plant, payhdr.getID());
+for (HrPayrollPaymentDet hrPayrollPaymentDet : paydet) {
+	 HrClaimPojo claim = hrClaimDAO.getAllHrClaimPojobyid(plant, hrPayrollPaymentDet.getPAYID());
+	 HrClaimPojolist.add(claim);
+	 exchange = hrPayrollPaymentDet.getCURRENCYUSEQT();
+}
+double amountpaid = payhdr.getAMOUNTPAID() * exchange;
+
+List<HrPayrollPaymentAttachment> payattachmentlist = hrPayrollPaymentDAO.getdattbyhdrid(plant, payhdr.getID());
+%>
+<%@include file="sessionCheck.jsp" %>
+<jsp:include page="header2.jsp" flush="true">
+	<jsp:param name="title" value="<%=title %>" />
+	<jsp:param name="mainmenu" value="<%=IConstants.PAYROLL%>"/>
+	<jsp:param name="submenu" value="<%=IConstants.CLAIM_PAYMENT%>"/>
+</jsp:include>
+<script src="../jsp/js/typeahead.jquery.js"></script>
+<link rel="stylesheet" href="../jsp/css/typeahead.css">
+<link rel="stylesheet" href="../jsp/css/accounting.css">
+<script type="text/javascript" src="../jsp/js/general.js"></script>
+<script src="../jsp/js/ProcessClaim.js"></script>
+<style>
+.extraInfo {
+    border: 1px dashed #555;
+    background-color: #f9f8f8;
+    border-radius: 3px;
+    color: #555;
+    padding: 15px;
+}
+.offset-lg-7 {
+    margin-left: 58.33333%;
+}
+#table2 thead {
+	text-align: center;
+	background: black;
+	color: white;
+}
+
+#table1>tbody>tr>td, #table3>tbody>tr>td {
+	border: none;
+}
+
+#table2>tbody>tr>td {
+	border-bottom: 1px solid #ddd;
+}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  line-height: 0.5;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+.payment-action{
+    cursor: pointer;
+    font-size: 15px;
+    opacity: 0.4;
+    position: absolute;
+    right: -12%;
+    top: 15px;
+}
+.voucher-action{
+    cursor: pointer;
+    font-size: 15px;
+    opacity: 0.4;
+    position: absolute;
+    right: -12%;
+    top: 15px;
+}
+</style>
+<center>
+	<h2><small class="error-msg"><%=fieldDesc%></small></h2>
+</center>
+<div class="container-fluid m-t-20">
+	<input type="number" id="inpayment" name="inpayment" style="display: none;" value="0">
+
+	<div> 
+		<div class="box-header menu-drop">
+              <h1 style="font-size: 20px;" class="box-title"><%=title %></h1>
+              <h1 style="font-size: 18px;cursor:pointer;" class="box-title pull-right" onclick="window.location.href='../payroll/claimpayment'">
+              <i class="glyphicon glyphicon-remove"></i>
+              </h1>
+		</div>
+		
+		<div class="container-fluid">
+			<!-- <form id="" class="form-vertical" name="form" action="/track/HrPayrollPaymentServlet?Submit=Save"  method="post" enctype="multipart/form-data" > -->
+			<form id="" class="form-vertical" name="form" action="/track/HrPayrollPaymentServlet?Submit=Edit"  method="post" enctype="multipart/form-data"  onsubmit="return validatePayment()">
+				<input type="hidden" name="plant" value="<%=plant%>">
+				<input type="hidden" name="username" value=<%=username%>>
+				<input name="totalBillAmount" type="hidden" value="0">
+				<input name="paytype" type="hidden" value="CLAIM">
+				<input name="uuid" type="hidden" value="<%=uniqueKey%>">
+				<input type="hidden" id="numberOfDecimal" value=<%=numberOfDecimal%>>	
+				<input name="paidpdcstatus" type="hidden" value="0">
+				<input name="vbank" type="hidden" value="">
+				<INPUT type="hidden" name="CURRENCYID"  value="<%=curency%>">
+				<input type="hidden" id="CURRENCYUSEQT" value=<%=CURRENCYUSEQT%>>
+				<input name="trid" type="hidden" value="<%=ID%>">
+				<!-- <div class="row">
+					<div class="col-lg-4 form-group">
+						<lable class="checkbox-inline"><input type="checkbox" class="form-check-input" id="pdc" name="pdc" Onclick="checkpdc()">PDC</lable>
+					</div>
+				</div> -->
+				<div class="row">
+					<div class="col-lg-4 form-group">
+						<label class="required">Account Name</label>
+						<input id="account_name" name="account_name" class="form-control text-left" type="text" value="<%=payhdr.getACCOUNT_NAME()%>" readonly> 
+						 
+					</div>
+					<div class="col-lg-4 form-group">
+						<label class="required">Payment Date&nbsp;</label>
+						<input id="" class="form-control datepicker" name="payment_date" type="text"  value="<%=payhdr.getPAYMENT_DATE()%>" readonly>
+					</div>
+					<div class="col-lg-4 form-group">
+						<label class="required">Currency</label> 
+						<input type="text" class="ac-selected  form-control typeahead" id="CURRENCY" placeholder="Select a Currency" name="CURRENCY" value="<%=DISPLAY%>" readonly>
+						<span class="pay-select-icon" onclick="$(this).parent().find('input[name=\'CURRENCY\']').focus()">
+						 	<i class="glyphicon glyphicon-menu-down"></i>
+						</span> 
+					</div>
+					
+							
+				</div>
+				
+				<div class="row">
+					<div class="col-lg-4 form-group vendor-section">
+						<label class="required">Exchange Rate</label>
+						<div class="input-group"> 
+							<input type="text" class="form-control" id="CURRENCYUSEQT" name="CURRENCYUSEQT" placeholder="Enter Exchange Rate" value="<%=StrUtils.addZeroes(exchange, numberOfDecimal)%>" onchange="currencychanged(this)" readonly>	
+						</div>
+					</div>
+					<div class="col-lg-4 form-group">
+						<label class="required" id="PaymentMade" ></label>
+						<input id="" class="form-control" name="amount_paid_Curr" id="amount_paid_Curr" type="text" readonly value="<%=StrUtils.addZeroes(amountpaid, numberOfDecimal)%>" onchange="calculatebasecurrency(this)" readonly>
+					</div>
+					<div class="col-lg-4 form-group">
+						<label class="required">Payment Made&nbsp;(<%=curency%>)</label>
+						<input id="amount_paid" name="amount_paid" class="form-control text-left" readonly onchange="amountchanged(this)" type="text" value="<%=StrUtils.addZeroes(payhdr.getAMOUNTPAID(), numberOfDecimal)%>" readonly> 
+					</div>							
+				</div>
+				
+				<div class="row">
+					
+					
+					<div class="col-lg-4 form-group">
+						<label class="required">Payment Mode</label>
+						<input id="payment_mode" name="payment_mode" class="form-control" type="text" required value="<%=payhdr.getPAYMENT_MODE()%>">
+						<span class="pay-select-icon" onclick="$(this).parent().find('input[name=\'payment_mode\']').focus()">
+						 	<i class="glyphicon glyphicon-menu-down"></i>
+						 </span>
+					</div>
+					
+					<div class="col-lg-4 form-group">
+						<label class="required">Paid Through</label>
+						<input id="paid_through_account_name" name="paid_through_account_name"  value="<%=payhdr.getPAID_THROUGH()%>"
+						 class="form-control text-left" type="text" required> 
+						 <span class="pay-select-icon" 
+						 onclick="$(this).parent().find('input[name=\'paid_through_account_name\']').focus()">
+						 	<i class="glyphicon glyphicon-menu-down"></i>
+						 </span>
+					</div>
+					
+					<div class="col-lg-4 form-group">
+						<label>Bank Charges (if any)</label>
+						<input id="bankCharge" name="bank_charge" class="form-control text-left" value="<%=StrUtils.addZeroes(payhdr.getBANK_CHARGE(), numberOfDecimal)%>" type="text" readonly> 
+					</div>
+				</div>
+				
+				<!-- <div class="row">
+					<div class="col-lg-4 form-group bankAccountSection" hidden>
+						<label class="required">Choose a Bank</label>
+						<input id="bankAccountSearch" name="bank_name" class="form-control text-left " type="text"> 
+					</div>
+					
+					<div class="col-lg-4 form-group bankAccountSection" hidden>
+						<label class="required">Cheque No:</label>
+						<input name="checqueNo" class="form-control text-left " type="text"> 
+					</div>
+					<div class="col-lg-4 form-group bankAccountSection" hidden>
+						<label class="required">Cheque Date:</label>
+						<input type="text" class="form-control datepicker" id="cheque_date" name="cheque_date" >
+					</div>
+				</div> -->
+				
+				<div class="row hidepdc" hidden>
+					<div class="row" style="margin: 0px;width: 95%;margin-left: 15px;">
+						<table class="table table-bordered line-item-table payment-table">
+							<thead>
+								<tr>
+									<!-- <th>PDC</th> -->
+									<th>Choose a Bank</th>
+									<th>Cheque No</th>
+									<th>Cheque Date</th>
+									<th>Cheque Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<!-- <td class="text-center">
+										<input type="hidden" name="pdcstatus" value="0"> 
+										<input type="checkbox" class="form-check-input" id="pdc" name="pdc" Onclick="checkpdc(this)">
+									</td> -->
+									<td class="text-center">
+										<input name="bank_branch" type="hidden"> 
+										<input class="form-control text-left bankAccountSearch" name="bankname" value="<%=payhdr.getBANK_BRANCH()%>" type="text" placeholder="Select a bank" readonly> 
+									</td>
+									<td class="text-center">
+										<input class="form-control text-left" type="text" name="cheque-no" value="<%=payhdr.getCHEQUE_NO() %>" placeholder="Enter Cheque No">
+									</td>
+									<td class="text-center">
+										<input class="form-control text-left datepicker" type="text" value="<%=payhdr.getCHEQUE_DATE()%>" name="cheque-date" placeholder="Enter Cheque Date" readonly>
+									</td>
+									<td class="text-center">
+										<input class="form-control text-right" type="text" name="cheque-amount" readonly value="<%=StrUtils.addZeroes(payhdr.getCHEQUE_AMOUNT(), numberOfDecimal)%>">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<%-- <div class="form-group hidepdc" hidden>
+					<div class="row">
+						<div class="col-sm-6">
+							<a class="add-line"
+								style="text-decoration: none; cursor: pointer;"
+								onclick="addRow()">+ Add another cheque details</a>
+						</div>
+						<div class="total-section col-sm-6">
+							<div class="total-row sub-total">
+								<div class="total-label" style="text-align: right;">
+									Total Cheque Amount:
+								</div>
+								<div style="padding-right: 8%;" class="total-amount" id="subTotal"><%=zeroval%></div>
+							</div>
+						</div>
+					</div>
+				</div> 
+				<div class="form-group hidepdc" hidden>
+					<div class="row">
+						<div class="col-sm-6">
+						</div>
+						<div class="total-section col-sm-6">
+							<div class="total-row sub-total">
+								<div class="total-label" style="text-align: right;">
+									Balance Cheque Amount:
+								</div>
+								<div style="padding-right: 8%;" class="total-amount" id="balamount"><%=zeroval%></div>
+							</div>
+						</div>
+					</div>
+				</div>--%>
+				
+				
+				<div class="form-group">
+					<label>Reference#</label> 
+					<input maxlength="250" id="" name="refrence" class="form-control" value="<%=payhdr.getREFERENCE() %>" type="text"> 
+				</div>
+				
+				<div class="form-group">
+					<label>Notes</label> 
+					<textarea rows="2" maxlength="950" name="note"  id="" class="form-control"><%=payhdr.getNOTE() %></textarea> 
+				</div>
+				
+				<div class="row form-group">  
+					<div class="col-xs-12">
+						<table id="table2" class="table">
+							<thead>
+								<tr>
+									<th class='text-left'>Date</th>
+									<th class='text-left'>Employee Code</th>
+									<th class='text-left'>Employee Name</th>
+				                    <th class='text-left'>Claim</th>
+				                    <th class='text-left'>Description</th>
+				                    <th class='text-left'>From Place</th>
+				                    <th class='text-left'>To Place</th>
+				                    <th class='text-left'>Distance</th>
+				                    <th class='text-right'>Amount</th>		
+								</tr>
+							</thead>
+							<tbody id="billlisttablebody">
+								<%for(HrClaimPojo claimpojo:HrClaimPojolist){ %>
+								<tr>
+					        		<td class='text-left'><%=claimpojo.getCLAIMDATE()%></td>
+					        		<td class='text-left'><%=claimpojo.getEMPCODE()%></td>
+					        		<td class='text-left'><%=claimpojo.getEMPNAME()%></td>
+					        		<td class='text-left'><%=claimpojo.getCLAIMNAME()%></td>
+					        		<td class='text-left'><%=claimpojo.getDESCRIPTION()%></td>
+					        		<td class='text-left'><%=claimpojo.getFROM_PLACE()%></td>
+					        		<td class='text-left'><%=claimpojo.getTO_PLACE()%></td>
+					        		<td class='text-left'><%=claimpojo.getDISTANCE()%></td>
+					        		<td class='text-right'><%=StrUtils.addZeroes(claimpojo.getAMOUNT(), numberOfDecimal)%></td>		
+				        		</tr>
+								<% }%>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="offset-lg-7 col-lg-5 clearfix">
+							<div class="row">
+								<p class="col-lg-8 text-right">Total :</p>
+								<p class="col-lg-4 text-right" id="totalInvoiceAmount"><%=StrUtils.addZeroes(amountpaid, numberOfDecimal)%></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<div class="row form-group">
+					<div class="col-sm-4">
+						<div class="form-inline">
+							<label for="email">Attach Files(s)</label>
+							<div class="attch-section">
+								<input type="file" class="form-control input-attch" id="billPaymentAttch" name="file" multiple="true">
+								<div class="input-group">
+									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class="icon icon-xs align-text-top action-icons input-group-addon" style="height:30px;display:inline-block;color: #c63616;"><path d="M262.4 512c-35.7 0-64.2-10.5-84.9-31.4-24.7-24.9-37.1-63.8-36.8-115.6.2-32.6-.3-248.7-1.4-268.1-.9-15.9 4.8-41.6 23.6-61.5 11.4-12 32-26.3 66-26.3 30.3 0 55.1 15.7 69.8 44.2 10.1 19.7 12.2 38.8 12.4 40.9l.1.9v.9l.5 236.9v.5c-1 19.2-15.9 47.6-53 47.6h-.7c-39.1-.4-53.7-30.4-56-46.2l-.2-1.3V179.6c0-10.2 8.3-18.5 18.5-18.5s18.5 8.3 18.5 18.5v150.5c.4 1.5 1.4 4.4 3.6 7.2s6.2 6.5 16 6.6c9.2.1 12.4-3.2 14.1-6 1.6-2.6 2.2-5.6 2.3-6.3l-.7-234.5c-.4-3-2.4-15.6-8.8-27.6-8.3-15.7-20.2-23.3-36.4-23.3-16.7 0-29.8 5-39.1 14.8-10.7 11.3-14 26.6-13.6 34 1.2 21.6 1.6 244.3 1.4 270.3-.2 41.6 8.5 71.7 26 89.3 13.5 13.6 33.2 20.4 58.7 20.4 17.2 0 31.8-5.9 43.5-17.7 18.9-18.9 30.1-53.4 30-92.2 0-19.6-.1-193.2-.1-250.9 0-10.2 8.3-18.5 18.5-18.5s18.5 8.3 18.5 18.5c0 57.6.1 231.2.1 250.8.1 49.1-14.8 92.3-40.8 118.4-18.6 18.7-42.7 28.6-69.6 28.6z"></path></svg>
+									<button type="button" class="btn btn-sm btn-attch">Upload File</button>
+								</div>								
+							</div>
+						</div>
+						<%if(payattachmentlist.size()>0){ %>
+						<div id="billPaymentAttchNote">
+							<small class="text-muted"><div class="attachclass"><a><%=payattachmentlist.size()%> files Attached</a>
+									<div class="tooltiptext">
+										<%for(HrPayrollPaymentAttachment attach:payattachmentlist) { %>
+												<div class="row" style="padding-left:10px;padding-top:10px">
+													<span class="text-danger col-sm-3">
+														<%if(attach.getFileType().toString().equalsIgnoreCase("application/pdf")) {%>
+														<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class="icon doc-icon icon-xxxlg"><path d="M314.2 318.9c-6.4-3.7-13-7.7-18.2-12.5-13.9-13-25.5-31.1-32.7-50.8.5-1.9.9-3.5 1.3-5.2 0 0 7.8-44.5 5.8-59.6-.3-2.1-.5-2.6-1-4.3l-.7-1.8c-2.1-4.9-6.3-10.6-12.9-10.4l-3.8-.6h-.1c-7.3 0-13.3 4.2-14.8 9.9-4.8 17.5.2 43.9 9 77.9l-2.2 5.7c-6.3 15.5-14.4 31.2-21.4 44.9l-.9 1.9c-7.4 14.5-14.2 26.8-20.2 37.2l-6.2 3.3c-.5.2-11.2 6-13.8 7.4-21.4 12.8-35.6 27.3-38 38.9-.8 3.7-.2 8.4 3.6 10.5l6.1 3c2.6 1.4 5.4 2 8.3 2 15.2 0 33-19 57.4-61.5 28.2-9.2 60.3-16.8 88.4-21 21.4 12 47.8 20.4 64.5 20.4 2.9 0 5.5-.3 7.6-.9 3.2-.8 5.9-2.6 7.5-5.1 3.2-4.9 3.9-11.5 3-18.5-.3-2.1-1.9-4.6-3.6-6.2-4.9-4.9-15.9-7.4-32.5-7.6-11.6 0-25.2 1-39.5 3zM158 405c2.8-7.6 13.8-22.7 30.1-36 1.1-.8 3.5-3.2 5.9-5.4-17.1 27.1-28.5 38-36 41.4zm96.5-222.2c4.9 0 7.7 12.4 7.9 23.9.2 11.6-2.4 19.7-5.9 25.8-2.8-8.9-4.1-22.9-4.1-32.1 0 0-.2-17.6 2.1-17.6zm-28.8 158.3c3.4-6.2 6.9-12.6 10.6-19.4 8.9-16.7 14.5-29.9 18.7-40.6 8.3 15 18.6 27.8 30.8 38.2 1.5 1.3 3.1 2.5 4.8 3.8-24.9 4.8-46.2 10.8-64.9 18zm148.1-9.1c8.8 2.2 8.9 6.7 7.4 7.7s-5.8 1.5-8.6 1.5c-8.9 0-20-4.1-35.4-10.7 6-.5 11.4-.7 16.3-.7 8.9 0 11.5 0 20.3 2.2z"></path><path d="M441.6 116.6L329 4.7c-3-3-7.1-4.7-11.3-4.7H94.1C76.5 0 62.4 14.2 62.4 31.7v448.5c0 17.5 14.2 31.7 31.7 31.7h320.6c17.3 0 31.3-14 31.4-31.3l.3-352.7c-.1-4.1-1.8-8.2-4.8-11.3zm-14.9 358c0 9.4-7.8 17.1-17.3 17.1H99.2c-9.5 0-17.3-7.7-17.3-17.1V36.3c0-9.4 7.8-17.1 17.3-17.1h172.4c9.5 0 17.3 7.7 17.3 17.1v83.5c0 18.7 14.7 33.8 34.1 33.8h86.5c9.5 0 17.3 7.7 17.3 17.1l-.1 303.9zM326.8 136c-10.8 0-19.6-8.8-19.6-19.6V24.6c0-4.4 5.3-6.5 8.3-3.4l106.6 106.5c3.1 3.1.9 8.3-3.4 8.3h-91.9z"></path></svg>
+														<%}else if(attach.getFileType().toString().equalsIgnoreCase("image/jpeg") || attach.getFileType().toString().equalsIgnoreCase("image/png") || attach.getFileType().toString().equalsIgnoreCase("image/gif") || attach.getFileType().toString().equalsIgnoreCase("image/tiff")){ %>
+														<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class="icon doc-icon icon-xxxlg"><path d="M417.2 378.8H95.3c-7 0-12.8-5.7-12.8-12.8v-34.9c0-2.7.8-5.2 2.3-7.4l44.6-63c4-5.6 11.6-7 17.4-3.3l60.8 39.7c4.9 3.2 11.1 2.7 15.5-1.1l116.8-103.2c5.5-4.9 14.1-4.1 18.5 1.8l66.3 86c1.7 2.2 2.7 5 2.7 7.8v80.2c0 5.6-4.6 10.2-10.2 10.2z" fill="#40bab5"></path><path d="M212.2 157.7c23.2 0 42 19 42 42.4s-18.8 42.4-42 42.4-42-19-42-42.4c.1-23.4 18.9-42.4 42-42.4z" fill="#fbbe01"></path><path d="M462 60.8c16.5 0 30 13.5 30 30V422c0 16.5-13.5 30-30 30H50.4c-16.5 0-30-13.5-30-30V90.8c0-16.5 13.5-30 30-30H462m0-20H50.4c-27.6 0-50 22.4-50 50V422c0 27.6 22.4 50 50 50H462c27.6 0 50-22.4 50-50V90.8c0-27.6-22.4-50-50-50z" fill="#888"></path></svg>
+														<%} else{%>
+														<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class="icon doc-icon icon-xxxlg"><path d="M270.825,70.55L212.17,3.66C210.13,1.334,207.187,0,204.093,0H55.941C49.076,0,43.51,5.566,43.51,12.431V304.57  c0,6.866,5.566,12.431,12.431,12.431h205.118c6.866,0,12.432-5.566,12.432-12.432V77.633  C273.491,75.027,272.544,72.51,270.825,70.55z M55.941,305.073V12.432H199.94v63.601c0,3.431,2.78,6.216,6.216,6.216h54.903  l0.006,222.824H55.941z"></path></svg>	
+														<%} %>
+													</span>
+													<div class="col-sm-9" style="padding-left:16px"><span class="fileNameFont"><a><%=attach.getFileName() %></a></span><br><span class="fileTypeFont">File Size: <%=attach.getFileSize()/1024 %>KB</span></div>
+												</div>
+												<div class="row bottomline">
+														<span class="col-sm-6" Style="font-size:14px;"><i class="fa fa-download" aria-hidden="true" onclick="downloadFile(<%=attach.getID() %>,'<%=(String) attach.getFileName()%>')"> Download</i></span>
+														<span class="col-sm-6" Style="font-size:14px;float:right"><i class="fa fa-trash" aria-hidden="true" onclick="removeFile(<%=attach.getID() %>)"> Remove</i></span>
+												</div>	
+										<%} %>
+										
+									</div>
+								</div>
+								
+							</small>
+						</div>
+						<%}else{ %>
+						<div id="billPaymentAttchNote">
+							<small class="text-muted">  You can upload a maximum of 5 files, 2MB each  </small>
+						</div>
+						<%} %>
+					</div>
+				</div>
+				
+				<div class="row form-group">      
+					<div class="col-sm-12 txn-buttons">
+						<button type="submit" class="btn btn-success" onClick="onPay()">Save</button>
+						<button type="button" class="btn btn-default" onclick="window.location.href='../home'">Cancel</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	</div>
+	<div>
+	
+	</div>
+</div>
+<!-- Modal -->
+	<%@include file="NewChartOfAccountAdd.jsp"%>
+	<%@include file="newBankModal.jsp"%>
+	<%@include file="newPaymentTypeModal.jsp"%>
+<!-- Modal -->
+<!-- ----------------Modal-------------------------- -->
+
+<div id="supplierModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<form class="form-horizontal" name="form1" id="formsupplierid" method="post">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">New Supplier</h4>
+				</div>
+				<div class="modal-body">
+					<input name="SUPPLIER_TYPE_DESC" type="hidden" value="">
+					<input type="number" id="numberOfDecimal" style="display: none;"
+						value=<%=numberOfDecimal%>>
+						<input type="text" name="PLANT"  style="display: none;"
+						value=<%=plant%>>
+						<input type="text" name="LOGIN_USER" style="display: none;"
+						value=<%=username%>>
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2 required"
+							for="Create Supplier ID">Supplier Id</label>
+						<div class="col-sm-4">
+							<div class="input-group">
+								<INPUT class="form-control" name="CUST_CODE" id="CUST_CODE"
+									type="TEXT" value=""
+									onchange="checkitem(this.value)" size="50" MAXLENGTH=50
+									width="50"> <span
+									class="input-group-addon" onClick="onIDGen();"> <a
+									href="#" data-toggle="tooltip" data-placement="top"
+									title="Auto-Generate"> <i class="glyphicon glyphicon-edit"
+										style="font-size: 20px;"></i></a></span>
+							</div>
+							<INPUT type="hidden" name="CUST_CODE1" value="">
+							<INPUT type="hidden" name="COUNTRY" value="">
+  							<INPUT type="hidden" name="COUNTRY_REG" value="<%=region%>">
+
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2 required"
+							for="Supplier Name">Supplier Name</label>
+						<div class="col-sm-4">
+
+							<INPUT class="form-control" name="CUST_NAME" type="TEXT"
+								value="" size="50" MAXLENGTH=100>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2"
+							for="supplier type">Supplier Type</label>
+						<div class="col-sm-4">
+							<div class="input-group">
+								<input name="SUPPLIER_TYPE_ID" type="TEXT"
+									value="" size="50" MAXLENGTH=50
+									class="form-control"> <span class="input-group-addon"
+									onClick="javascript:popUpWin('../jsp/suppliertypelistsave.jsp?SUPPLIER_TYPE_ID='+form1.SUPPLIER_TYPE_ID.value+'&TYPE=POPUP1');">
+									<a href="#" data-toggle="tooltip" data-placement="top"
+									title="Supplier Type Details"> <i
+										class="glyphicon glyphicon-log-in" style="font-size: 20px;"></i></a>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<INPUT type="hidden" id="TaxByLabel" name="taxbylabel"
+						value=<%=taxbylabel%>>
+					
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2"
+							for="Telephone No">Supplier Phone</label>
+						<div class="col-sm-4">
+
+							<INPUT name="TELNO" type="TEXT" value="" size="50"
+								class="form-control" onkeypress="return isNumber(event)"
+								MAXLENGTH="30">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2" for="Fax">Supplier
+							Fax</label>
+						<div class="col-sm-4">
+
+							<INPUT name="FAX" type="TEXT" value="" size="50"
+								onkeypress="return isNumber(event)" MAXLENGTH="30"
+								class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2"
+							for="Customer Email">Supplier Email</label>
+						<div class="col-sm-4">
+							<INPUT name="CUSTOMEREMAIL" type="TEXT"
+								value="" size="50" MAXLENGTH=50
+								class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-form-label col-sm-2" for="Website">Website</label>
+						<div class="col-sm-4">
+							<INPUT name="WEBSITE" type="TEXT" value="" size="50"
+								MAXLENGTH=50 class="form-control">
+						</div>
+					</div>
+
+
+					<div class="bs-example">
+						<ul class="nav nav-tabs" id="myTab">
+							<li class="nav-item active"><a href="#other"
+								class="nav-link" data-toggle="tab" aria-expanded="true">Other
+									Details</a></li>
+							<li class="nav-item"><a href="#profile" class="nav-link"
+								data-toggle="tab">Contact Details</a></li>
+							<li class="nav-item"><a href="#home" class="nav-link"
+								data-toggle="tab">Address</a></li>
+							<li class="nav-item"><a href="#bank_cus" class="nav-link"
+							 	data-toggle="tab">Bank Account Details</a></li>	
+							<li class="nav-item"><a href="#remark" class="nav-link"
+								data-toggle="tab">Remarks</a></li>
+						</ul>
+						<div class="tab-content clearfix">
+							<div class="tab-pane fade" id="home">
+								<br>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2 required">Country</label>
+									<div class="col-sm-4">
+
+										<SELECT class="form-control" data-toggle="dropdown" data-placement="right" onchange="OnCountry(this.value)" id="COUNTRY_CODE" name="COUNTRY_CODE" value="" style="width: 100%">
+				<OPTION style="display:none;">Select Country</OPTION>
+				<%
+				MasterUtil _MasterUtil=new  MasterUtil();
+				ArrayList ccList =  _MasterUtil.getCountryList("",plant,region);
+			for(int i=0 ; i<ccList.size();i++)
+      		 {
+				Map m=(Map)ccList.get(i);
+				String vCOUNTRYNAME = (String)m.get("COUNTRYNAME");
+				String vCOUNTRY_CODE = (String)m.get("COUNTRY_CODE"); %>
+		        <option  value='<%=vCOUNTRY_CODE%>' ><%=vCOUNTRYNAME%> </option>		          
+		        <%
+       			}
+			 %></SELECT>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Unit No">Unit No.</label>
+									<div class="col-sm-4">
+
+										<INPUT name="ADDR1" type="TEXT" value="" size="50"
+											MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Building">Building</label>
+									<div class="col-sm-4">
+
+										<INPUT name="ADDR2" type="TEXT" value="" size="50"
+											MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Street">Street</label>
+									<div class="col-sm-4">
+
+										<INPUT name="ADDR3" type="TEXT" value="" size="50"
+											MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2" for="City">City</label>
+									<div class="col-sm-4">
+
+										<INPUT name="ADDR4" type="TEXT" value="" size="50"
+											MAXLENGTH=80 class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2">State</label>
+									<div class="col-sm-4">
+										<SELECT class="form-control" data-toggle="dropdown" data-placement="right" id="STATE" name="STATE" value="" style="width: 100%">
+										<OPTION style="display:none;">Select State</OPTION>
+										</SELECT>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Postal Code">Postal Code</label>
+									<div class="col-sm-4">
+
+										<INPUT name="ZIP" type="TEXT" value="" size="50"
+											MAXLENGTH=10 class="form-control">
+									</div>
+								</div>
+
+							</div>
+
+							<div class="tab-pane fade" id="profile">
+								<br>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Contact Name">Contact Name</label>
+									<div class="col-sm-4">
+
+										<INPUT name="CONTACTNAME" type="TEXT" class="form-control"
+											value="" size="50" MAXLENGTH="100">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Designation">Designation</label>
+									<div class="col-sm-4">
+
+										<INPUT name="DESGINATION" type="TEXT" class="form-control"
+											value="" size="50" MAXLENGTH="30">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Work phone">Work Phone</label>
+									<div class="col-sm-4">
+										<INPUT name="WORKPHONE" type="TEXT" value=""
+											onkeypress="return isNumber(event)" size="50" MAXLENGTH=50
+											class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Hand Phone">Mobile</label>
+									<div class="col-sm-4">
+
+										<INPUT name="HPNO" type="TEXT" value="" size="50"
+											class="form-control" onkeypress="return isNumber(event)"
+											MAXLENGTH="30">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Email">Email</label>
+									<div class="col-sm-4">
+
+										<INPUT name="EMAIL" type="TEXT" value="" size="50"
+											MAXLENGTH="50" class="form-control">
+									</div>
+								</div>
+
+
+							</div>
+
+							<div class="tab-pane active" id="other">
+								<br>
+								
+								<div class="form-group">
+						<label class="control-label col-form-label col-sm-2 required">Tax Treatment</label>
+						<div class="col-sm-4 ac-box">				
+							<SELECT class="form-control" data-toggle="dropdown" data-placement="right" onchange="OnTaxChange(this.value)" id="TAXTREATMENT" name="TAXTREATMENT" style="width: 100%">
+							<OPTION style="display:none;">Select Tax Treatment</OPTION>
+							<%
+					   _MasterUtil=new  MasterUtil();
+					   ccList =  _MasterUtil.getTaxTreatmentList("",plant,"");
+						for(int i=0 ; i<ccList.size();i++)
+			      		 {
+							Map m=(Map)ccList.get(i);
+							String vTAXTREATMENT = (String)m.get("TAXTREATMENT"); %>
+					        <option  value='<%=vTAXTREATMENT%>' ><%=vTAXTREATMENT %> </option>		          
+					        <%
+			       			}
+						 %></SELECT>
+						</div>
+					</div>								
+							<div class="form-group">
+							<label class="control-label col-form-label col-sm-2" for="TRN No"
+								id="TaxLabel"></label>
+							<div class="col-sm-4">
+	
+								<INPUT name="RCBNO" type="TEXT" class="form-control"
+									value="" size="50" MAXLENGTH="30">
+							</div>
+							</div>
+								
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Opening Balance">Opening Balance</label>
+									<div class="col-sm-4">
+										<INPUT name="OPENINGBALANCE" type="TEXT"
+											value=""
+											onkeypress="return isNumberKey(event,this,4)" size="50"
+											MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Payment Terms">Payment Type</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<INPUT class="form-control" name="PAYTERMS" type="TEXT"
+												value="" size="20" MAXLENGTH=100 readonly>
+											<span class="input-group-addon"
+												onClick="javascript:popUpWin('../jsp/list/paymenttypelist_save.jsp?paymenttype='+form1.PAYTERMS.value+'&PAYTYPE=POPUP1');">
+												<a href="#" data-toggle="tooltip" data-placement="top"
+												title="Payment Type"> <i
+													class="glyphicon glyphicon-log-in" style="font-size: 20px;"></i></a>
+											</span>
+										</div>
+									</div>
+
+									<div class="form-inline">
+										<label class="control-label col-form-label col-sm-1"
+											for="Payment Terms">Days</label> <input name="PMENT_DAYS"
+											type="TEXT" value="" size="5" MAXLENGTH=10
+											class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Facebook">Facebook Id</label>
+									<div class="col-sm-4">
+										<INPUT name="FACEBOOK" type="TEXT" value=""
+											size="50" MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Twitter">Twitter Id</label>
+									<div class="col-sm-4">
+										<INPUT name="TWITTER" type="TEXT" value=""
+											size="50" MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Linkedin">LinkedIn Id</label>
+									<div class="col-sm-4">
+										<INPUT name="LINKEDIN" type="TEXT" value=""
+											size="50" MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Linkedin">Skype Id</label>
+									<div class="col-sm-4">
+										<INPUT name="SKYPE" type="TEXT" value="" size="50"
+											MAXLENGTH=50 class="form-control">
+									</div>
+								</div>
+
+							</div>
+
+<div class="tab-pane fade" id="bank_cus">
+        <br>
+        
+        <div class="form-group">
+      	<label class="control-label col-form-label col-sm-2" for="IBAN">IBAN</label>
+      	<div class="col-sm-4">  
+        <INPUT name="IBAN" type="TEXT" value=""	size="50" MAXLENGTH=100 class="form-control">
+      	</div>
+    	</div>
+       
+       <div class="form-group">
+			<label class="control-label col-form-label col-sm-2">Bank</label>
+			<div class="col-sm-4 ac-box">				
+				<SELECT class="form-control" data-toggle="dropdown" data-placement="right" onchange="OnBank(this.value)" id="BANKNAME" name="BANKNAME" value="" style="width: 100%">
+				<OPTION style="display:none;">Select Bank</OPTION>
+				<%
+		    _MasterUtil=new  MasterUtil();
+		    ccList =  _MasterUtil.getBankList("",plant);
+			for(int i=0 ; i<ccList.size();i++)
+      		 {
+				Map m=(Map)ccList.get(i);
+				String vNAME = (String)m.get("NAME"); %>
+		        <option  value='<%=vNAME%>' ><%=vNAME %> </option>		          
+		        <%
+       			}
+			 %></SELECT>
+			</div>
+		</div>
+		
+		<div class="form-group">
+      	<label class="control-label col-form-label col-sm-2" for="Branch">Branch</label>
+      	<div class="col-sm-4">  
+        <INPUT name="BRANCH" type="TEXT" value=""	size="50" MAXLENGTH=100 class="form-control" readonly>
+      	</div>
+    	</div>
+        
+        <div class="form-group">
+      	<label class="control-label col-form-label col-sm-2" for="Routing Code">Routing Code</label>
+      	<div class="col-sm-4">  
+        <INPUT name="BANKROUTINGCODE" type="TEXT" value=""	size="50" MAXLENGTH=100 class="form-control">
+      	</div>
+    	</div>
+        
+        </div>
+
+
+							<div class="tab-pane fade" id="remark">
+								<br>
+								<div class="form-group">
+									<label class="control-label col-form-label col-sm-2"
+										for="Remarks">Remarks</label>
+									<div class="col-sm-4">
+
+										<INPUT name="REMARKS" type="TEXT" value=""
+											size="50" MAXLENGTH=100 class="form-control ">
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-4 col-sm-8">
+							<!-- <button type="button" class="Submit btn btn-default"
+								onClick="window.location.href='../home'">Back</button>
+							&nbsp;&nbsp;
+							<button type="button" class="Submit btn btn-default" onClick="{backNavigation('settings.jsp','SA');}"><b>Back</b></button>&nbsp;&nbsp;
+							<button type="button" class="Submit btn btn-default"
+								onClick="onNew();" >Clear</button>
+							&nbsp;&nbsp; -->
+							<button type="button" class="btn btn-success" onClick="onAdd();" >
+								<b>Save</b>
+							</button>
+							&nbsp;&nbsp;
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+						</div>
+					</div>
+
+
+
+
+				</div>
+				<!-- <div class="modal-footer">
+	      	<button id="btnBillOpen" type="button" class="btn btn-success" onClick="onAdd();">Save</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div> -->
+			</div>
+		</form>
+	</div>
+</div>
+<div id="creditListModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<form name="creditForm" method="post">
+		<input type="hidden" id="numberOfDecimal" value=<%=numberOfDecimal%>>
+			<div class="modal-content">
+				<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">Apply credits for <span id="billnod"></span></h4>
+		      	</div>
+		      	<div class="modal-body">
+		      	<div class="row">
+		      		<div class="col-sm-12 text-right">
+		      			<span>Bill Balance: </span><b><%=curency%><span id="creditBalanceAmountdisplay"></span></b>
+		      		</div>
+		      	</div>
+		      	<h4>General Credit</h4>
+				<table class="table creditListTable">
+					<thead>
+						<tr>
+							<th>Reference#</th>
+							<th>Date</th>
+							<th class="text-right">Amount</th>
+							<th class="text-right">Balance</th>
+							<th class="text-right">Amount to Apply</th>
+						</tr>
+					</thead>
+					<tbody> 
+					
+					</tbody> 
+				</table>
+				<h4>Order Credit</h4>
+				<table class="table ordercreditListTable">
+					<thead>
+						<tr>
+							<th>Reference#</th>
+							<th>Date</th>
+							<th class="text-right">Amount</th>
+							<th class="text-right">Balance</th>
+							<th class="text-right">Amount to Apply</th>
+						</tr>
+					</thead>
+					<tbody> 
+				
+					</tbody>
+				</table>
+				<input type="hidden" name="ordertotal" value="">
+				<input type="hidden" name="totalbalpopup" value="">
+				<div class="row">
+		      		<div class="col-sm-offset-4 col-sm-6 text-right">
+		      			<span>Total Amount Applied: </span>
+		      		</div>
+		      		<div class="col-sm-2 text-right">
+		      			<span id="creditTotalAmount">0.00</span>
+		      		</div>
+		      	</div>
+		      	<br>
+		      	<div class="row">
+		      		<div class="col-sm-offset-4 col-sm-6 text-right">
+		      			<span>Bill Balance: </span>
+		      		</div>
+		      		<div class="col-sm-2 text-right">
+		      			<span id="creditBalanceAmount"></span>
+		      		</div>
+		      	</div>
+				</div>
+				<div class="modal-footer">
+	      		    	<div class="form-group">  
+				    		<button type="button" class="btn btn-success" onClick="applyCredit()">Save</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+				    </div>
+				</div>			
+		</form>
+	</div>
+</div>
+
+
+
+
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+    
+    var  curr = document.getElementById("CURRENCY").value;
+    document.getElementById('PaymentMade').innerHTML = "Payment Made ("+curr+")";
+
+    var  d = document.getElementById("TaxByLabel").value;
+    document.getElementById('TaxLabel').innerHTML = d +" No.";	
+    var numberOfDecimal = document.getElementById("numberOfDecimal").value;
+ 	var cbank = "<%=payhdr.getBANK_BRANCH()%>";
+    
+    if(cbank=="" || cbank.length==0 || cbank==null) {
+    }else{
+    	$("input[name ='paidpdcstatus']").val("1");
+		$("#bankCharge").attr("readonly", false);
+		$(".hidepdc").show();
+    }
+    
+    
+    $(document).on("focusout",".creditAmount", function(){
+		  var value = $(this).val();
+		  $(this).val(parseFloat(value).toFixed(numberOfDecimal));
+		  var balance =  $(this).data("balance");
+		  var ordertotal = $("input[name ='ordertotal']").val();
+		  var ordertotalbal = $("input[name ='totalbalpopup']").val();
+		  var originalBalance = ordertotalbal;
+		  if(isNaN(value)){ /* To check if valid input i.e., number */
+			  $(this).val("0.00");
+		  }
+		  value = parseFloat(value);
+		  if(value > balance){
+			  $(this).val(parseFloat(balance).toFixed(numberOfDecimal));
+		  }
+		  var totalAmount = 0;
+		  $(".creditAmount").each(function() {
+			  totalAmount += parseFloat($(this).val())					    
+		  });
+		  		  
+		  balance = parseFloat(originalBalance - totalAmount).toFixed(numberOfDecimal);
+		  if(balance < 0){
+			  $(this).val("0.00");
+			  alert("Total Amount is exceeding Bill balance.");
+		  }else{
+			  
+			  var balamountorder = ordertotal;
+			  if(parseFloat(balamountorder) > 0){  
+				
+				  var tamt = "0";
+				  $(".ordercreditListTable tbody tr").each(function() {
+						var amt = $('td:eq(7)', this).find('input').val();
+						tamt = tamt + amt;		
+					});
+				 
+				  if(parseFloat(balamountorder) != parseFloat(tamt)){
+					  $(".creditListTable tbody tr").each(function() {
+							$('td:eq(7)', this).find('input').val(parseFloat("0").toFixed(numberOfDecimal));
+						});
+					  $( ".creditAmountvaluec" ).prop( "disabled", true );
+					  totalAmount = 0;
+					  $(".creditAmount").each(function() {
+						  totalAmount += parseFloat($(this).val())					    
+					  });
+					  		  
+					  balance = parseFloat(originalBalance - totalAmount).toFixed(numberOfDecimal);
+					  
+				  }else{
+					  $( ".creditAmountvaluec" ).prop( "disabled", false );
+				  }
+			  
+			  }
+			  $('#creditTotalAmount').text(parseFloat(totalAmount).toFixed(numberOfDecimal));		
+			  $('#creditBalanceAmount').text(balance);
+		  }				  	  
+	  });
+    
+    
+    
+});
+
+
+function downloadFile(id,fileName)
+{
+	 var urlStrAttach = "/track/HrPayrollPaymentServlet?CMD=downloadAttachmentById&attachid="+id;
+	 var xhr=new XMLHttpRequest();
+	 xhr.open("GET", urlStrAttach, true);
+	 //Now set response type
+	 xhr.responseType = 'arraybuffer';
+	 xhr.addEventListener('load',function(){
+	   if (xhr.status === 200){
+	     console.log(xhr.response) // ArrayBuffer
+	     console.log(new Blob([xhr.response])) // Blob
+	     var datablob=new Blob([xhr.response]);
+	     var a = document.createElement('a');
+         var url = window.URL.createObjectURL(datablob);
+         a.href = url;
+         a.download = fileName;
+         document.body.append(a);
+         a.click();
+         a.remove();
+         //window.URL.revokeObjectURL(url); 
+	   }
+	 })
+	 xhr.send();
+}
+function removeFile(id)
+{
+	var urlStrAttach = "/track/HrPayrollPaymentServlet?CMD=removeAttachmentById&removeid="+id;	
+	$.ajax( {
+		type : "GET",
+		url : urlStrAttach,
+		success : function(data) {
+					window.location.reload();
+				}
+			});
+}
+
+
+
+function checkitem(aCustCode)
+{	
+	 if(aCustCode=="" || aCustCode.length==0 ) {
+		alert("Enter Supplier ID!");
+		document.getElementById("CUST_CODE").focus();
+		return false;
+	 }else{ 
+			var urlStr = "/track/MasterServlet";
+			$.ajax( {
+				type : "POST",
+				url : urlStr,
+				async : true,
+				data : {
+					CUST_CODE : aCustCode,
+	                USERID : "<%=username%>",
+					PLANT : "<%=plant%>",
+					ACTION : "SUPPLIER_CHECK"
+					},
+					dataType : "json",
+					success : function(data) {
+						if (data.status == "100") {
+	                               
+							alert("Supplier Already Exists");
+							document.getElementById("CUST_CODE").focus();
+							//document.getElementById("ITEM").value="";
+							return false;
+						}
+						else
+							return true;
+					}
+	});	
+			return true;
+	}
+}
+
+
+function isNumber(evt) {	
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    
+    if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
+    	if( (charCode!=43 && charCode!=32 && charCode!=45))
+    		{
+    		
+        alert("  Please enter only Numbers.  ");
+        return false;
+    		}
+    	}
+    return true;
+}
+function onAdd(){
+   var CUST_CODE   = document.form1.CUST_CODE.value;
+   var CUST_NAME   = document.form1.CUST_NAME.value;
+   var TAXTREATMENT   = document.form1.TAXTREATMENT.value;
+   var RCBNO   = document.form1.RCBNO.value;
+   var rcbn = RCBNO.length;
+   if(CUST_CODE == "" || CUST_CODE == null) {alert("Please Enter Supplier ID");;document.form1.CUST_CODE.focus(); return false; }
+   
+   if(CUST_NAME == "" || CUST_NAME == null) {
+   alert("Please Enter Supplier Name"); 
+   document.form1.CUST_NAME.focus();
+   return false; 
+   }
+   if(document.form1.TAXTREATMENT.selectedIndex==0)
+	{
+	alert("Please Select TAXTREATMENT");
+	document.form1.TAXTREATMENT.focus();
+	return false;
+	}
+   if(TAXTREATMENT=="VAT Registered"||TAXTREATMENT=="VAT Registered - Desginated Zone")
+   {
+   var  d = document.getElementById("TaxByLabel").value;
+   	if(RCBNO == "" || RCBNO == null) {
+   		
+	   alert("Please Enter "+d+" No."); 
+	   document.form1.RCBNO.focus();
+	   return false; 
+	   }
+   	//if(document.form1.COUNTRY_REG.value=="GCC")// region based validtion
+	//{
+	if(!IsNumeric(RCBNO))
+	{
+    alert(" Please Enter "+d+" No. Input In Number"); 
+   	document.form1.RCBNO.focus();
+   	return false; 
+  	}
+
+	if("15"!=rcbn)
+	{
+	alert(" Please Enter your 15 digit numeric "+d+" No."); 
+		document.form1.RCBNO.focus();
+		return false; 
+		}
+	//}
+   }
+else if(50<rcbn)
+{
+   var  d = document.getElementById("TaxByLabel").value;
+   alert(" "+d+" No. length has exceeded the maximum value"); 
+   document.form1.RCBNO.focus();
+   return false; 
+ }
+
+   if(!IsNumeric(form1.PMENT_DAYS.value))
+   {
+     alert(" Please Enter Days In Number");
+     form1.PMENT_DAYS.focus();  form1.PMENT_DAYS.select(); return false;
+   }
+   if(document.form1.COUNTRY_CODE.selectedIndex==0)
+	{
+	   alert("Please Select Country from Address");
+	   document.form.COUNTRY_CODE.focus();
+	 return false;
+	}
+   /* document.form1.action  = "/track/CreateSupplierServlet?action=ADD&reurl=createBillpayment";
+   document.form1.submit(); */
+   
+   var datasend = $('#formsupplierid').serialize();
+   
+	var urlStr = "/track/CreateSupplierServlet?action=JADD&reurl=createBillpayment";
+	$.ajax( {
+	type : "POST",
+	url : urlStr,
+	async : true,
+	data : datasend,
+	dataType : "json",
+	success : function(data) {
+		/* console.log(data);*/
+		//alert(data.supplier[0].SID); 
+		$("input[name ='vendno']").val(data.supplier[0].SID);
+		$("input[name ='vendname']").val(data.supplier[0].SName);
+		
+		$('#supplierModal').modal('hide');
+	}
+	});
+
+}
+
+function onIDGen()
+{
+ /* document.form1.action  = "/track/CreateSupplierServlet?action=Auto-ID&reurl=createBillpayment";
+   document.form1.submit(); */ 
+	var urlStr = "/track/CreateSupplierServlet";
+	$.ajax( {
+	type : "POST",
+	url : urlStr,
+	async : true,
+	data : {
+		PLANT : "<%=plant%>",
+		action : "JAuto-ID",
+		reurl : "createBillpayment"
+	},
+	dataType : "json",
+	success : function(data) {
+		
+		$("input[name ='CUST_CODE']").val(data.supplier[0].SID);
+		$("input[name ='CUST_CODE1']").val(data.supplier[0].SID);
+		
+	}
+	});
+
+}
+
+function create_account() {
+	
+	if ($('#create_account_modal #acc_type').val() == "") {
+		alert("please fill account type");
+		$('#create_account_modal #acc_type').focus();
+		return false;
+	}
+	
+	if ($('#create_account_modal #acc_det_type').val() == "") {
+		alert("please fill account detail type");
+		$('#create_account_modal #acc_det_type').focus();
+		return false;
+	}
+	
+	if ($('#create_account_modal #acc_name').val() == "") {
+		alert("please fill account name");
+		$('#create_account_modal #acc_name').focus();
+		return false;
+	}
+	
+	if(document.create_form.acc_is_sub.checked)
+	{
+		if ($('#create_account_modal #acc_subAcct').val() == "") {
+			alert("please fill sub account");
+			$('#create_account_modal #acc_subAcct').focus();
+			return false;
+		}
+		else
+			{
+			 var parType=$('#create_account_modal #acc_det_type').val();
+			 subType=subType.trim();
+			 var n = parType.localeCompare(subType);
+			    if(n!=0)
+			    	{
+			    	$(".alert").show();
+			    	$('.alert').html("For subaccounts, you must select the same account and extended type as their parent.");
+			    	/* setTimeout(function() {
+			            $(".alert").alert('close');
+			        }, 5000); */
+			    	 return false;
+			    	}
+			}
+	}
+	if ($('#create_account_modal #acc_balance').val() != "") {
+		if ($('#create_account_modal #acc_balance').val() != "0") {
+		if ($('#create_account_modal #acc_balanceDate').val() == "") {
+		alert("please fill date");
+		$('#create_account_modal #acc_balanceDate').focus();
+		return false;
+		}
+		}
+	}
+	
+	var formData = $('form[name="create_form"]').serialize();
+	$.ajax({
+		type : 'post',
+		url : "/track/ChartOfAccountServlet?action=create",
+		dataType : 'json',
+		data : formData,//{key:val}
+		success : function(data) {
+			if (data.STATUS == "FAIL") {		                               
+				alert(data.MESSAGE);
+			}else{
+				$("input[name ='paid_through_account_name']").val(data.ACCOUNT_NAME);
+				$('#create_account_modal').modal('toggle');
+				
+			}
+		},
+		error : function(data) {
+
+			alert(data.responseText);
+		}
+	});
+	return false;
+}
+
+function aCredit(id,pono,vno,billno,balamount,CURRENCYID,CURRENCYUSEQT){
+	var numberOfDecimal = document.getElementById("numberOfDecimal").value;
+	var zeroshow = parseFloat("0").toFixed(numberOfDecimal);
+	var ozero = "0";
+	var uuid = $("input[name ='uuid']").val();
+	var conv_balanceAmount= parseFloat(parseFloat(balamount)*parseFloat(CURRENCYUSEQT)).toFixed(numberOfDecimal);
+	$('#billnod').text(billno);
+	$('#creditBalanceAmountdisplay').text(' '+parseFloat(balamount).toFixed(numberOfDecimal) +' / '+CURRENCYID +' '+ conv_balanceAmount);
+	$('#creditBalanceAmount').text(parseFloat(balamount).toFixed(numberOfDecimal));
+	$('#creditTotalAmount').text(zeroshow);	
+	var urlStr = "/track/BillPaymentServlet?CMD=showcreditforapply";
+	$.ajax( {
+		type : "GET",
+		url : urlStr,
+		data: {
+			vendno:vno,
+			pono:pono,
+			bid:id
+		},
+        success: function (data1) {
+    
+        	var obj = JSON.parse(data1);
+        	console.log(obj);
+        	
+        	var body="";
+        	var orderbody="";
+        	$.each(obj.CREDIT,function(i,v){
+        			var adfrom = v.ADVANCEFROM;
+					var ponore = v.PONO;
+					
+					if(ponore == "" || ponore == null){
+						var reference ="Excess Payment";
+  						if(adfrom == "GENERAL"){
+  							reference = v.REFERENCE;
+  						}
+
+						var cAmount = v.AMOUNT;
+						cAmount = parseFloat(cAmount).toFixed(numberOfDecimal);
+						
+						var cbalAmount = v.BALANCE;
+						cbalAmount = parseFloat(cbalAmount).toFixed(numberOfDecimal);
+						
+						body +='<tr>';
+						body +='<td hidden>'+id+'</td>';
+						body +='<td hidden>'+pono+'</td>';
+						body +='<td hidden>'+v.PAYHDRID+'</td>';
+						body +='<td>'+reference+'</td>';
+						body +='<td>'+v.PAYMENT_DATE+'</td>';
+						body +='<td class="text-right">'+cAmount+'</td>';
+						body +='<td class="text-right">'+cbalAmount+'</td>';
+						body +='<td><div class="float-right">';
+						body +='<input class="form-control text-right creditAmount creditAmountvaluec" type="text"data-balance="'+cbalAmount+'" value="'+zeroshow+'" disabled>'
+						body +='</div></td>';
+						body +='<td hidden>'+v.ID+'</td>';
+						body +='<td hidden>'+uuid+'</td>';
+						body +='</tr>';
+					
+					}
+        	});
+        	var ordertottalamo = "0";
+        	$.each(obj.CREDIT,function(i,v){
+    			var adfrom = v.ADVANCEFROM;
+				var ponore = v.PONO;
+				if(ponore == "" || ponore == null){
+					
+				}else{
+					if(pono == ponore){
+						var cAmount = v.AMOUNT;
+						cAmount = parseFloat(cAmount).toFixed(numberOfDecimal);
+						
+						var cbalAmount = v.BALANCE;
+						cbalAmount = parseFloat(cbalAmount).toFixed(numberOfDecimal);
+						ordertottalamo = parseFloat(cbalAmount) + parseFloat(ordertottalamo);
+						
+						orderbody +='<tr>';
+						orderbody +='<td hidden>'+id+'</td>';
+						orderbody +='<td hidden>'+pono+'</td>';
+						orderbody +='<td hidden>'+v.PAYHDRID+'</td>';
+						orderbody +='<td>'+v.PONO+'</td>';
+						orderbody +='<td>'+v.PAYMENT_DATE+'</td>';
+						orderbody +='<td class="text-right">'+cAmount+'</td>';
+						orderbody +='<td class="text-right">'+cbalAmount+'</td>';
+						orderbody +='<td><div class="float-right">';
+						orderbody +='<input class="form-control text-right creditAmount creditAmountvalue" type="text"data-balance="'+v.BALANCE+'" value="'+zeroshow+'">'
+						orderbody +='</div></td>';
+						orderbody +='<td hidden>'+v.ID+'</td>';
+						orderbody +='<td hidden>'+ozero+'</td>';
+						orderbody +='</tr>';
+					}
+				}
+    	});
+        	
+        	$("input[name ='ordertotal']").val(ordertottalamo);
+        	$("input[name ='totalbalpopup']").val(balamount );
+        	
+			$(".creditListTable tbody").html(body);
+			$(".ordercreditListTable tbody").html(orderbody);	
+			
+			if(ordertottalamo > 0){
+  
+        	}else{
+        		
+        		$( ".creditAmountvaluec" ).prop( "disabled", false );
+        	}
+        }
+		
+	});
+
+}
+
+function applyCredit(){
+	
+	var CURRENCYUSEQTs = $("#CURRENCYUSEQT").val();
+	var billHdrId = [], pono = [], payHdrId = [], amount = [], payDetId = [], capplyKey = [];
+	$(".creditListTable tbody tr").each(function() {
+		
+		var amt = $('td:eq(7)', this).find('input').val();
+		if(amt > 0){
+			billHdrId.push($('td:eq(0)', this).text());
+			pono.push($('td:eq(1)', this).text());
+			payHdrId.push($('td:eq(2)', this).text());
+			payDetId.push($('td:eq(8)', this).text());
+			capplyKey.push($('td:eq(9)', this).text());
+			amount.push(amt);
+		}					
+	});
+
+	
+	$(".ordercreditListTable tbody tr").each(function() {
+		
+		var amt = $('td:eq(7)', this).find('input').val();
+		if(amt > 0){
+			billHdrId.push($('td:eq(0)', this).text());
+			pono.push($('td:eq(1)', this).text());
+			payHdrId.push($('td:eq(2)', this).text());
+			payDetId.push($('td:eq(8)', this).text());
+			capplyKey.push($('td:eq(9)', this).text());
+			amount.push(amt);
+		}					
+	});
+
+	$.ajax({
+		type : "POST",
+		url : "/track/BillPaymentServlet?Submit=applyCredit",
+		async : true,
+		data : {
+			BILLHDRID : billHdrId,
+			PONO : pono,
+			PAYHDRID : payHdrId,
+			AMOUNT : amount,
+			PAYDETID : payDetId,
+			CAPPLYKEY : capplyKey,
+			CURRENCYUSEQT : CURRENCYUSEQTs,
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.ERROR_CODE == 100){
+				$("#billlisttablebody").html("");
+				vendorchanged();
+				$('#creditListModal').modal('toggle');
+				var numberOfDecimal = document.getElementById("numberOfDecimal").value;
+				callTotalDetail(numberOfDecimal);
+			}else{
+				alert(data.MESSAGE);
+			}
+		}
+	});
+}
+
+function onPay(){
+	   /* if(validatePayment()){ */
+		   $( ".paymentamountclass" ).prop( "disabled", false );
+		  /*  document.form.action  = "/track/BillPaymentServlet?Submit=Save";
+		   document.form.submit(); */
+	 /*   } */
+	}
+	
+
+	
+function openPayment(evt, pay) {
+	  // Declare all variables
+	  var i, tabcontent, tablinks;
+
+	  // Get all elements with class="tabcontent" and hide them
+	  tabcontent = document.getElementsByClassName("tabcontent");
+	  for (i = 0; i < tabcontent.length; i++) {
+	    tabcontent[i].style.display = "none";
+	  }
+
+	  // Get all elements with class="tablinks" and remove the class "active"
+	  tablinks = document.getElementsByClassName("tablinks");
+	  for (i = 0; i < tablinks.length; i++) {
+	    tablinks[i].className = tablinks[i].className.replace(" active", "");
+	  }
+
+	  // Show the current tab, and add an "active" class to the button that opened the tab
+	  document.getElementById(pay).style.display = "block";
+	  evt.currentTarget.className += " active";
+	  
+	  if(pay=="payment")
+		  $("input[name ='inpayment']").val("0");
+	  else if(pay=="voucher")
+		  $("input[name ='inpayment']").val("1");
+	}
+function OnTaxChange(TAXTREATMENT)
+{
+	
+	if(TAXTREATMENT=="VAT Registered"||TAXTREATMENT=="VAT Registered - Desginated Zone")
+	{
+		$("#TaxLabel").addClass("required");
+	}
+	else
+		$("#TaxLabel").removeClass("required");
+	}
+function OnBank(BankName)
+{
+	$.ajax({
+		type : "POST",
+		url: '/track/MasterServlet',
+		async : true,
+		dataType: 'json',
+		data : {
+			action : "GET_BANK_DATA",
+			PLANT : "<%=plant%>",
+			NAME : BankName,
+		},
+		success : function(dataitem) {
+			var BankList=dataitem.BANKMST;
+			var myJSON = JSON.stringify(BankList);						
+			var dt = JSON.stringify(BankList).replace('[', '').replace(']', '');
+			if (dt) {
+			  var result = jQuery.parseJSON(dt);			  
+			  var val = result.BRANCH;			  
+			  $("input[name ='BRANCH']").val(val);
+			}
+		}
+	});		
+}
+function OnCountry(Country)
+{
+	$.ajax({
+		type : "POST",
+		url: '/track/MasterServlet',
+		async : true,
+		dataType: 'json',
+		data : {
+			action : "GET_STATE_DATA",
+			PLANT : "<%=plant%>",
+			COUNTRY : Country,
+		},
+		success : function(dataitem) {
+			var StateList=dataitem.STATEMST;
+			var myJSON = JSON.stringify(StateList);
+			//alert(myJSON);
+			$('#STATE').empty();
+			$('#STATE').append('<OPTION style="display:none;">Select State</OPTION>');
+				 $.each(StateList, function (key, value) {
+					   $('#STATE').append('<option value="' + value.text + '">' + value.text + '</option>');
+					});
+		}
+	});	
+	
+}
+$('select[name="COUNTRY_CODE"]').on('change', function(){		
+    var text = $("#COUNTRY_CODE option:selected").text();
+    $("input[name ='COUNTRY']").val(text.trim());
+});
+
+
+function checkAll(isChk) {
+	 var len = document.form.appcheck.length;	
+	 if(len == undefined) len = 1;  
+    if (document.form.appcheck)
+    {
+       for (var i = 0; i < len ; i++)
+       {      
+             	if(len == 1){
+             		document.form.appcheck.checked = isChk;
+              	}
+             	else{
+             		document.form.appcheck[i].checked = isChk;
+             	}
+       }
+   }
+    getcheckedids();
+}
+
+function getcheckedids(){
+	var numberOfDecimal = document.getElementById("numberOfDecimal").value;
+	var tamount = "0";
+	var	cids = "0";
+	$("input[name ='appcheck']").each(function() {
+		if($(this).is(":checked")){
+			var cid = $(this).val();
+			cids +=","+cid;
+			var amount = $(this).closest('tr').find("input[name ='clamt']").val();
+			tamount = parseFloat(tamount) + parseFloat(amount);
+	    }
+	});
+	document.getElementById("totalInvoiceAmount").innerHTML=parseFloat(tamount).toFixed(numberOfDecimal);
+	var exrate = $("input[name ='CURRENCYUSEQT']").val();
+	var examount = parseFloat(tamount)/parseFloat(exrate)
+	$("input[name ='amount_paid']").val(parseFloat(examount).toFixed(numberOfDecimal));
+	$("input[name ='amount_paid_Curr']").val(parseFloat(tamount).toFixed(numberOfDecimal));
+	$("input[name ='cheque-amount']").val(parseFloat(examount).toFixed(numberOfDecimal));
+	$("input[name ='claimids']").val(cids);
+}
+
+</script>
+
+<jsp:include page="footer2.jsp" flush="true">
+		<jsp:param name="title" value="<%=title %>" />
+</jsp:include>

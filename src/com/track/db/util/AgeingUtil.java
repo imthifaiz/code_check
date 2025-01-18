@@ -14,6 +14,7 @@ import com.track.dao.CustomerBeanDAO;
 import com.track.dao.InvoiceDAO;
 import com.track.dao.OrderPaymentDAO;
 import com.track.dao.PlantMstDAO;
+import com.track.util.DateUtils;
 import com.track.util.MLogger;
 
 public class AgeingUtil {
@@ -1157,6 +1158,17 @@ public class AgeingUtil {
 					+ "'  ";
 			
 		}
+		
+		String purdate="";
+		
+		String curDate =DateUtils.getDate();
+		
+		if (atoDate.equalsIgnoreCase("") && afrmDate.equalsIgnoreCase("") ) {
+			searchCondord = "";
+		}else {
+//			searchCondord = "";
+			purdate ="AND CAST(b.PURCHASEDATE AS date) >= '"+afrmDate+"' ";
+		}
 		if (productDesc.length() > 0 ) {
 			if (productDesc.indexOf("%") != -1) {
 				productDesc = productDesc.substring(0, productDesc.indexOf("%") - 1);
@@ -1207,7 +1219,7 @@ public class AgeingUtil {
 					    + "WHERE a.PLANT = '"+aPlant+"' AND a.item IN (SELECT ITEM FROM "+aPlant+"_ALTERNATE_ITEM_MAPPING WHERE ALTERNATE_ITEM_NAME LIKE '"+ aItem +"%') "
 					        + "AND c.NONSTKFLAG <> 'Y' AND A.QTY > 0 AND b.TRANTYPE IN ('MOVEWITHBATCH') "
 					        + loc
-					        + "AND CAST(b.PURCHASEDATE AS date) >= '"+afrmDate+"' "
+					        + " "+purdate+" "
 					    + "GROUP BY a.PLANT,a.item, a.loc, c.ITEMDESC, c.COST, c.UnitPrice, c.stkuom, a.userfld4, b.PURCHASEDATE, A.QTY "
 					+ ") AS CombinedResults where CombinedResults.ITEM!='' ";
 

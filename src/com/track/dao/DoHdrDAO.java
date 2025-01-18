@@ -3176,7 +3176,8 @@ public class DoHdrDAO extends BaseDAO {
        java.sql.Connection con = null;
        String UnitCostForSelCurrency = "";
        try {
-               
+    	   if(uom.equalsIgnoreCase(""))
+    		   uom = " (SELECT PURCHASEUOM FROM "+aPlant+"_ITEMMST WHERE ITEM = '"+aItem+"') ";
                con = DbBean.getConnection();
                String currency=new PlantMstDAO().getBaseCurrency(aPlant);
 
@@ -3207,7 +3208,7 @@ public class DoHdrDAO extends BaseDAO {
    			" AND ISNULL(C.UNITCOST,0) != 0 AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING')) ELSE \n" +
    			" CAST(((SELECT M.COST / ISNULL((select ISNULL(QPUOM,1) from "+aPlant+"_UOM where UOM=M.SALESUOM),1) FROM "+aPlant+"_ITEMMST M WHERE M.ITEM = '"+aItem+"')*(SELECT CURRENCYUSEQT  FROM\n" +
    			" "+aPlant+"_CURRENCYMST WHERE  CURRENCYID='"+currency+"')) AS DECIMAL(20,5))   END) END),0) "
-   			+ " * (ISNULL((select ISNULL(QPUOM,1) from "+aPlant+"_UOM where UOM='"+uom+"'),1)) "
+   			+ " * (ISNULL((select ISNULL(QPUOM,1) from "+aPlant+"_UOM where UOM="+uom+"),1)) "
    			+ "AS AVERAGE_COST");
 
 

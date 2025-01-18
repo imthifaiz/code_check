@@ -390,6 +390,7 @@ if (arrCust.size() > 0) {
           <th style="font-size: smaller;">TAX</TH>
           <th style="font-size: smaller;">TOTAL AMOUNT</TH>
           <th style="font-size: smaller;">TOTAL COST</TH>
+          <th style="font-size: smaller;">Average COST</TH>
           <th style="font-size: smaller;">GP %</th>
           <th style="font-size: smaller;">LOW</th>
           <th style="font-size: smaller;">SEL</th>
@@ -415,6 +416,7 @@ if (arrCust.size() > 0) {
 		            <th colspan='1'></th>
 		            <th style="text-align: left !important">Grand Total</th>
 		            <%if(SORT.equalsIgnoreCase("PRODUCT")) {%>
+		            <th style="text-align: left !important"></th>
 		            <th style="text-align: left !important"></th>
 		            <th style="text-align: left !important"></th>
 		            <th style="text-align: left !important"></th>
@@ -594,6 +596,11 @@ if (arrCust.size() > 0) {
                 cost = StrUtils.addZeroes(costVal, numberOfDecimal);
                 price = StrUtils.addZeroes(priceVal, numberOfDecimal);
                 totalCostValue = StrUtils.addZeroes(Totcost, numberOfDecimal);
+                
+                //added average cost in sales order sales summary report
+                String convertedcost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(PLANT,"",(String)lineArr.get("NAME"));
+                double sconvertedcost=Double.parseDouble(convertedcost);
+                convertedcost = StrUtils.addZeroes(sconvertedcost, numberOfDecimal);
                           
           %>
           var totQty = <%=totQtyVal%>;
@@ -613,6 +620,7 @@ if (arrCust.size() > 0) {
           rowData[rowData.length] = '<%=totalPriceValue%>';
           <%if(SORT.equalsIgnoreCase("PRODUCT")) {%>
           rowData[rowData.length] = '<%=totalCostValue%>';
+          rowData[rowData.length] = '<%=convertedcost%>';
           rowData[rowData.length] = '<%=gp%>';
 <%--           <%if(totInvQtyValue.equalsIgnoreCase("0")) {%> --%>
 <%--           <%}%> --%>
@@ -650,6 +658,7 @@ if (arrCust.size() > 0) {
           rowData[rowData.length] = '<%=totalPriceValue%>';
           <%if(SORT.equalsIgnoreCase("PRODUCT")) {%>
           rowData[rowData.length] = '<%=totalCostValue%>';
+          rowData[rowData.length] = '<%=convertedcost%>';
           rowData[rowData.length] = '<%=gp%>';
           <%if(totInvQtyVal!=0) {%>
           <%if(totInvQtyValue.contains("-")) {%>
@@ -686,6 +695,7 @@ if (arrCust.size() > 0) {
           rowData[rowData.length] = '<%=totalPriceValue%>';
           <%if(SORT.equalsIgnoreCase("PRODUCT")) {%>
           rowData[rowData.length] = '<%=totalCostValue%>';
+          rowData[rowData.length] = '<%=convertedcost%>';
           rowData[rowData.length] = '<%=gp%>';
           <%if(totInvQtyVal!=0) {%>
           <%if(totInvQtyValue.contains("-")) {%>
@@ -924,7 +934,7 @@ if (arrCust.size() > 0) {
         			gpvalue = parseFloat(gpvalue).toFixed("3");
    	            	 $(rows).eq( currentRow ).after(
    	            			<%if(SORT.equalsIgnoreCase("PRODUCT")) {%>
-   	            			'<tr class="group"><td colspan=' + groupRowColSpan + '></td><td>Grand Total</td><td></td><td></td><td>' + totalPickQtyVal + '</td><td>'+ totalinvQtyVal +'</td><td>' + totalpriceVal + '</td><td>' + totaltaxVal + '</td><td>' + totalIssueQtyVal + '</td><td>' + totalcostVal + '</td><td>' + gpvalue + '</td><td></td><td></td><td></td><td></td><td></td></tr>'
+   	            			'<tr class="group"><td colspan=' + groupRowColSpan + '></td><td>Grand Total</td><td></td><td></td><td>' + totalPickQtyVal + '</td><td>'+ totalinvQtyVal +'</td><td>' + totalpriceVal + '</td><td>' + totaltaxVal + '</td><td>' + totalIssueQtyVal + '</td><td>' + totalcostVal + '</td><td></td><td>' + gpvalue + '</td><td></td><td></td><td></td><td></td><td></td></tr>'
    	                     <% } else {%>
    	                        '<tr class="group"><td colspan=' + groupRowColSpan + '></td><td>Grand Total</td><td>' + totalPickQtyVal + '</td><td>'+ totalinvQtyVal +'</td><td>' + totalIssueQtyVal + '</td></tr>'
    	                     <% }%>

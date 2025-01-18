@@ -596,8 +596,43 @@ public class InvMstServlet extends HttpServlet implements IMLogger {
         			            resultJsonInt.put("INVCOST",StrUtils.addZeroes(mincost, numberOfDecimal));
         			            resultJsonInt.put("REVENUECOST",StrUtils.addZeroes((invcost-mincost), numberOfDecimal));
         			            resultJsonInt.put("TOPUP_QTY",StrUtils.addZeroes(TOPUP_QTY, "3"));
+        			            
+        			         /*  if(INVMINQTY==INVQTY) {
+        			            	PARENT_TOPUP_QTY = MAXQTY-INVQTY;
+        			            }else if(INVMINQTY>INVQTY) {
+        			            	PARENT_TOPUP_QTY = MAXQTY-INVQTY;
+        			            }else if(INVMAXQTY<INVQTY) {
+        			            	PARENT_TOPUP_QTY = MAXQTY-INVQTY;
+//        			            	PARENT_TOPUP_QTY = Math.abs(PARENT_TOPUP_QTY);
+        			            	INVMINQTY = INVQTY+INVQTY;
+        			            }
         			            resultJsonInt.put("PARENT_TOPUP_QTY",StrUtils.addZeroes(PARENT_TOPUP_QTY, "3"));
-        			            if (PARENT_TOPUP_QTY>0) {
+//        			            if (PARENT_TOPUP_QTY>0) {
+        			            	if(INVMINQTY>INVQTY) {
+        			            if(!PARENT_PLANT.equalsIgnoreCase("")) {                                
+                                if(PARENT_TOPUP_QTY!=0)
+                                	if((PARENTINVQTY+PARENTINVQTY1)!=0)                                	
+                            	   jsonArray.add(resultJsonInt);
+        			            } else
+                                jsonArray.add(resultJsonInt);
+        			            	}
+//        			            } */
+        			            
+        			            String status="";
+        			            if(INVMINQTY==INVQTY) {
+        			            	PARENT_TOPUP_QTY = MAXQTY-INVQTY;
+        			            }else if(INVMAXQTY<INVQTY && INVMINQTY<INVQTY) {
+        			            	PARENT_TOPUP_QTY = MAXQTY-INVQTY;
+        			            	status = "show";
+        			            }else if(INVMINQTY<INVQTY) {
+        			            	status = "hide";
+        			            }else if(INVMINQTY>INVQTY) {
+        			            	PARENT_TOPUP_QTY = MAXQTY-INVQTY;
+        			            }
+        			            
+        			            resultJsonInt.put("PARENT_TOPUP_QTY",StrUtils.addZeroes(PARENT_TOPUP_QTY, "3"));
+        			            if(!status.equalsIgnoreCase("hide")) {
+        			            	
         			            if(!PARENT_PLANT.equalsIgnoreCase("")) {                                
                                 if(PARENT_TOPUP_QTY!=0)
                                 	if((PARENTINVQTY+PARENTINVQTY1)!=0)                                	

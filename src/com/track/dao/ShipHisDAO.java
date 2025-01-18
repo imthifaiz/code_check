@@ -1775,7 +1775,7 @@ public ArrayList getproductReorderqty(String plant,String item,String itemDesc,S
 
 //getAllCompProductReorderqty
 public ArrayList getAllCompProductReorderqty(String plant,String item,String itemDesc,String custname,String loc,
-		String sort, String fromdt,String todt,String ispos) throws Exception {
+		String sort, String fromdt,String todt,String ispos,String isCompbased) throws Exception {
 	ArrayList alData = new ArrayList();
 	java.sql.Connection con = null;
 	String extCond = "";
@@ -1807,10 +1807,17 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
 		extCond = " where replace(ITEMDESC,' ','') like '%"+ StrUtils.InsertQuotes(itemDesc.replaceAll(" ","")) + "%' ";
 	}
 	
-	String cond = "";
+	String cond = "",condt="";
 	if (custname.length()>0){
 		custname = StrUtils.InsertQuotes(custname);
 		cond =  " WHERE CNAME LIKE '%"+custname+"%' " ;
+	}
+	if (item.length()>0){
+		condt = "and A.ITEM='"+item+"' ";
+	}
+	if (custname.length()>0){
+//		condt = condt  + " and A.VENDNO = '"+custname+"'";
+		condt = condt  + " and PU.CustCode = '"+custname+"'";
 	}
 	String bcondition = "";
 	String bcondition1 = "";
@@ -1851,6 +1858,15 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
       			addcomp.add(childplant);
       		  }
       	  }
+      	
+      	
+      	
+      	if(isCompbased.equalsIgnoreCase("0")) {
+      		addcomp.clear();
+      		addcomp.add(plant);
+      	}
+      	
+      	
       	StringBuilder queryExchangeBuilder = new StringBuilder();
       	StringBuilder querySalesPosBuilder = new StringBuilder();
 		StringBuilder querySalesBuilder = new StringBuilder();
@@ -1933,9 +1949,12 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
 			for (int i = 0; i < addcomp.size(); i++) {plant = (String) addcomp.get(i);
 				if (i > 0) {queryPurchaseBuilder.append(" UNION ");}
 				
-				queryPurchaseBuilder.append("SELECT A.PLANT, B.ITEM, SUM(B.QTYOR) AS QTYOR FROM ["+plant+"_POHDR] A JOIN ["+plant+"_PODET] B ON A.PONO = B.PONO JOIN ["+plant+"_RECVDET] S ON B.PONO = S.PONO AND B.ITEM=S.ITEM ")
+//				queryPurchaseBuilder.append("SELECT A.PLANT, B.ITEM, SUM(B.QTYOR) AS QTYOR FROM ["+plant+"_POHDR] A JOIN ["+plant+"_PODET] B ON A.PONO = B.PONO JOIN ["+plant+"_RECVDET] S ON B.PONO = S.PONO AND B.ITEM=S.ITEM ")
+//				.append("AND B.POLNNO=S.LNNO WHERE A.STATUS='C'  AND A.PLANT = '"+plant+"' AND S.LOC LIKE '%"+loc+"%'  "+purcondcond+" ")
+//				.append("GROUP BY A.PLANT, B.ITEM ");
+				queryPurchaseBuilder.append("SELECT A.PLANT, B.ITEM,A.CustCode, SUM(B.QTYOR) AS QTYOR FROM ["+plant+"_POHDR] A JOIN ["+plant+"_PODET] B ON A.PONO = B.PONO JOIN ["+plant+"_RECVDET] S ON B.PONO = S.PONO AND B.ITEM=S.ITEM ")
 				.append("AND B.POLNNO=S.LNNO WHERE A.STATUS='C'  AND A.PLANT = '"+plant+"' AND S.LOC LIKE '%"+loc+"%'  "+purcondcond+" ")
-				.append("GROUP BY A.PLANT, B.ITEM ");
+				.append("GROUP BY A.PLANT, B.ITEM,A.CustCode");
 			}
 			
 			queryPurchaseBuilder.append("), ");
@@ -1965,16 +1984,16 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
 			String InventoryQuery = queryInventoryBuilder.toString();
 			
 			String finalquery = salesQuery+ExchangeQuery+SalesPosQuery+SalesReturnQuery+PurchaseQuery+PurchaseReturnQuery+InventoryQuery;
-			finalquery = finalquery + " SELECT A.ITEM AS ID,A.ITEMDESC AS NAME,A.UNITPRICE,isnull(A.COST,0) as COST, "
+			finalquery = finalquery + " SELECT A.ITEM AS ID,A.ITEMDESC AS NAME,isnull(A.UNITPRICE,0) as UNITPRICE,isnull(A.COST,0) as COST, "
 					+ "ISNULL((SELECT SUM(QTYOR) FROM ProcessedOrders PO where PO.ITEM = A.ITEM), 0) AS TOTQTY, "
 					+ "ISNULL((SELECT SUM(QTYOR) FROM SalesPOSOrders SPOS where SPOS.ITEM = A.ITEM), 0) AS POSQTY, "
 					+ "ISNULL((SELECT SUM(QTYOR) FROM SoReturnorder SPU where SPU.ITEM = A.ITEM), 0) AS RSOQTY, "
 					+ "ISNULL((SELECT SUM(QTYOR) FROM PurchaseOrders PU where PU.ITEM = A.ITEM), 0) AS PUQTY, "
 					+ "ISNULL((SELECT SUM(QTYOR) FROM PoReturnorder RPU where RPU.ITEM = A.ITEM), 0) AS RPUQTY, "
-					+ "ISNULL((SELECT SUM(QTYOR) FROM inventory INV where INV.ITEM = A.ITEM), 0) AS QTY, "
-					+ "ISNULL('/track/ReadFileServlet/?fileLocation='+CATLOGPATH,'../jsp/dist/img/NO_IMG.png') AS CATALOG, "
-					+ "ROUND(ISNULL(SUM(PO.TOTAL_UNITCOST), 0),5) - ISNULL(E.EXCOST, 0) AS TOTCOST, ISNULL(SUM(PO.TOTAL_UNITPRICE - PO.TOTAL_DISCOUNT) + CASE WHEN ISNULL(PO.ITEM_RATES, 1) = 1  "
-					+ "THEN SUM(PO.TOTAL_UNITPRICE) - ((SUM(PO.TOTAL_UNITPRICE) / (100 + PO.OUTBOUND_GST)) * 100) ELSE (SUM(PO.TOTAL_UNITPRICE) / 100) * PO.OUTBOUND_GST END - ISNULL(E.EXPRICE, 0), 0) AS TOTPRICE "
+					+ "ISNULL((SELECT SUM(QTYOR) FROM inventory INV where INV.ITEM = A.ITEM), 0) AS QTY,0 TOTCOST,0 TOTPRICE "
+					+ ",ISNULL('/track/ReadFileServlet/?fileLocation='+CATLOGPATH,'../jsp/dist/img/NO_IMG.png') AS CATALOG "
+//					+ ",ROUND(ISNULL(SUM(PO.TOTAL_UNITCOST), 0),5) - ISNULL(E.EXCOST, 0) AS TOTCOST, ISNULL(SUM(PO.TOTAL_UNITPRICE - PO.TOTAL_DISCOUNT) + CASE WHEN ISNULL(PO.ITEM_RATES, 1) = 1  "
+//					+ "THEN SUM(PO.TOTAL_UNITPRICE) - ((SUM(PO.TOTAL_UNITPRICE) / (100 + PO.OUTBOUND_GST)) * 100) ELSE (SUM(PO.TOTAL_UNITPRICE) / 100) * PO.OUTBOUND_GST END - ISNULL(E.EXPRICE, 0), 0) AS TOTPRICE "
 //					+ " ISNULL(SUM(PO.QTYOR),0) AS QTYOR, "
 //					+ "	ISNULL(SUM(SPOS.QTYOR),0) AS SQTYOR, "
 //					+ "	ISNULL(SUM(SPU.QTYOR),0) AS SRQTYOR, "
@@ -1992,8 +2011,9 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
 					+ "LEFT JOIN SoReturnorder SPU ON A.ITEM = SPU.ITEM "
 					+ "LEFT JOIN PurchaseOrders PU ON A.ITEM = PU.ITEM "
 					+ "LEFT JOIN PoReturnorder RPU ON A.ITEM = RPU.ITEM "
-					+ "where A.IsActive='Y' "
-					+ "GROUP BY A.ITEM,A.ITEMDESC,A.CATLOGPATH,A.UNITPRICE,A.COST,PO.ITEM_RATES,PO.OUTBOUND_GST,E.EXCOST,E.EXPRICE" ;
+					+ "where A.IsActive='Y' "+condt+" "
+					+ "GROUP BY A.ITEM,A.ITEMDESC,A.CATLOGPATH,A.UNITPRICE,A.COST" ;
+//					+ "GROUP BY A.ITEM,A.ITEMDESC,A.CATLOGPATH,A.UNITPRICE,A.COST,PO.ITEM_RATES,PO.OUTBOUND_GST,E.EXCOST,E.EXPRICE" ;
 //					+ "GROUP BY A.ITEM;" ;
 			
 			sql.append(" "+finalquery+" ");

@@ -1444,7 +1444,8 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
            
            if(FROM_DATE==null) FROM_DATE=""; else FROM_DATE = FROM_DATE.trim();
 	        String curDate =DateUtils.getDate();
-           if(FROM_DATE.length()<0||FROM_DATE==null||FROM_DATE.equalsIgnoreCase(""))FROM_DATE=curDate;
+//           if(FROM_DATE.length()<0||FROM_DATE==null||FROM_DATE.equalsIgnoreCase(""))FROM_DATE=curDate;
+           if(FROM_DATE.length()<0||FROM_DATE==null||FROM_DATE.equalsIgnoreCase(""))FROM_DATE="";
            
            if(STATEMENT_DATE.length()<0||STATEMENT_DATE==null||STATEMENT_DATE.equalsIgnoreCase(""))STATEMENT_DATE=curDate;
              

@@ -66,6 +66,10 @@ document.form1.submit();
 	//storeInLocalStorage('OutboundOrderSalesSummary_SORT',$('#SORT').val());
 } */
 
+function changecomptype(count){
+	  $("input[name ='INTER']").val(count);
+	  onGo();
+	}
 function changetype(count){
 	  $("input[name ='RADIOSEARCH']").val(1);
 	  onGo();
@@ -89,7 +93,7 @@ PlantMstDAO plantMstDAO = new PlantMstDAO();
 
 
 String fieldDesc="";
-String USERID ="",PLANT="",ITEM = "",CUSTOMER="",PRD_DESCRIP="", QTY ="",FROM_DATE ="",  TO_DATE = "",fdate="",tdate="",RADIOSEARCH="1",LOC="",POSSEARCH="1";
+String USERID ="",PLANT="",ITEM = "",CUSTOMER="",PRD_DESCRIP="", QTY ="",FROM_DATE ="",  TO_DATE = "",fdate="",tdate="",RADIOSEARCH="1",LOC="",POSSEARCH="1",INTER="1";
 String html = "",SORT="";
 int Total=0,STOCK_EXPIRE_INT=0,STOCK_CLAIM_INT=0, STOCK_FLOATING_INT=0,STOCK_SALE_INT=0;
 String SumColor="";
@@ -102,7 +106,7 @@ String LOGIN_USER= session.getAttribute("LOGIN_USER").toString();
 String systatus = session.getAttribute("SYSTEMNOW").toString();
 USERID= session.getAttribute("LOGIN_USER").toString();
 ITEM    = StrUtils.fString(request.getParameter("ITEM"));
-CUSTOMER    = StrUtils.fString(request.getParameter("CUSTOMER"));
+CUSTOMER    = StrUtils.fString(request.getParameter("CUSTCODE"));
 LOC    = StrUtils.fString(request.getParameter("LOC"));
 SORT = StrUtils.fString(request.getParameter("SORT"));
 PRD_DESCRIP = StrUtils.fString(request.getParameter("PRD_DESCRIP"));
@@ -111,6 +115,9 @@ TO_DATE = StrUtils.fString(request.getParameter("TO_DATE"));
 RADIOSEARCH = StrUtils.fString(request.getParameter("RADIOSEARCH"));
 String ENABLE_POS = plantMstDAO.getispos(PLANT);
 POSSEARCH = StrUtils.fString(request.getParameter("POSSEARCH"));
+INTER = StrUtils.fString(request.getParameter("INTER"));
+if(INTER.equalsIgnoreCase("") || INTER.equalsIgnoreCase("null"))
+	INTER="1";
 if(RADIOSEARCH.equalsIgnoreCase("") || RADIOSEARCH.equalsIgnoreCase("null"))
 	RADIOSEARCH="1";
 if(POSSEARCH.equalsIgnoreCase("") || POSSEARCH.equalsIgnoreCase("null"))
@@ -252,6 +259,7 @@ for(int i =0; i<curQryList.size(); i++) {
 <input type="hidden" name="PRD_TYPE_DESC" value="">
 <input type="hidden" name="PRD_TYPE_ID1" value="">
 <input type="hidden" name="CUSTOMER_TYPE_DESC" value="">
+<input type="hidden" name="CUSTCODE" id="CUSTCODE" value="">
   
   <span style="text-align: center;"><small><font color="red"> <%=fieldDesc%> </font></small></span>
   
@@ -292,13 +300,22 @@ for(int i =0; i<curQryList.size(); i++) {
 		<!--   		<span class="select-search btn-danger input-group-addon " onClick="javascript:popUpWin('item_list_inventory.jsp?ITEM='+form1.ITEM.value);"><span class="glyphicon glyphicon-search" aria-hidden="true" style="left: -4px;"></span></span>  		 -->
   		</div>				
   		</div>
-		<div class="col-sm-4 ac-box">
+		<div class="col-sm-4 ac-box" style="display:none;">
   		<INPUT class="ac-selected  form-control typeahead" name="LOC" ID="LOC" type ="TEXT" value="<%=StrUtils.forHTMLTag(LOC)%>"  placeholder="LOCATION" size="30"  MAXLENGTH=20>
             <button type="button" style=" position: absolute; margin-left: -22px; z-index: 2; vertical-align: middle; font-size: 20px; opacity: 0.5;"
 						onclick="changeloc(this)">
 			<i class="glyphicon glyphicon-menu-down" style="font-size: 8px;"></i>	
 			</button>  		
 		</div>
+		
+			  <div class="col-sm-4 ac-box">
+					<label class="control-label col-sm-3" for="view" style="right: 50px;font-weight: bold;">Inter CO :</label>
+				  	<label class="radio-inline" style="right: 40px;">
+  					<input name="INTER" type="radio" value="0" id="allcomp" <% if(INTER.equals("0")){ %> checked <% }%> value="<%=StrUtils.forHTMLTag(INTER)%>" onclick="changecomptype(this.value)"> <b>EXCL</b></label>
+  					<label class="radio-inline" style="right: 40px;">
+  					<input name="INTER" type="radio" value="1" id="currentcomp"  <% if(INTER.equals("1")){ %> checked <% }%>  value="<%=StrUtils.forHTMLTag(INTER)%>" onclick="changecomptype(this.value)"> <b>INCL</b></label>
+		</div>
+		
   		</div>
   		<div class="row" style="padding:3px">
   		<div class="col-sm-2">
@@ -451,10 +468,11 @@ for(int i =0; i<curQryList.size(); i++) {
 <script>
   var tableData = [];
   var RADIOSEARCH = '<%=RADIOSEARCH%>';  
-  var POSSEARCH = '<%=POSSEARCH%>';  
+  var POSSEARCH = '<%=POSSEARCH%>';
+  var INTER = '<%=INTER%>';    
        <%
 // 	   invQryList = shipdao.getproductReorderqty(PLANT,ITEM,PRD_DESCRIP,CUSTOMER,LOC,SORT,FROM_DATE,TO_DATE,POSSEARCH);
-	   invQryList = shipdao.getAllCompProductReorderqty(PLANT,ITEM,PRD_DESCRIP,CUSTOMER,LOC,SORT,FROM_DATE,TO_DATE,POSSEARCH);
+	   invQryList = shipdao.getAllCompProductReorderqty(PLANT,ITEM,PRD_DESCRIP,CUSTOMER,LOC,SORT,FROM_DATE,TO_DATE,POSSEARCH,INTER);
        if(invQryList.size() <=0)
        {
      	  cntRec =true;
@@ -1455,7 +1473,9 @@ function showImage(src){
     $('#imageModal').modal('show');
 }
 
- function getvendname(TAXTREATMENT,VENDO){}
+ function getvendname(TAXTREATMENT,VENDO){
+		 $("input[name=CUSTCODE]").val(VENDO);
+	 }
 
  $(document).ready(function() {
      $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {

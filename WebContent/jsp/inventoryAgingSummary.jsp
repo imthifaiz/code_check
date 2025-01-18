@@ -666,7 +666,7 @@ function onGo(){
 	var totalQty = 0;
 	    
     if(FROM_DATE == null || FROM_DATE == "") {
-    	FROM_DATE = "<%=FROM_DATE%>";
+<%--     	FROM_DATE = "<%=FROM_DATE%>"; --%>
     }
     if (tableinvoiceAgingSummary){
     	tableinvoiceAgingSummary.ajax.url( urlStr ).load();

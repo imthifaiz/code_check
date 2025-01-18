@@ -127,7 +127,7 @@ public class WmsStockTake implements WmsTran, IMLogger {
 				StringBuffer sql = new StringBuffer(" SET ");
 
 //				sql.append("" + IDBConstants.QTY + " = QTY + " + IDBConstants.QTY+ " + '" + map.get(IConstants.QTY) + "' ,DIFFQTY= DIFFQTY+ '" + Double.parseDouble(map.get("DIFFQTY")) + "',INVFLAG='" + map.get("INVFLAG") +  "',REMARKS='" + map.get(IConstants.REMARKS) + "' ,UPAT='" + DateUtils.getDateTime() + "' ,UPBY='" + map.get(IConstants.LOGIN_USER) +"'");
-				sql.append("" + IDBConstants.QTY + " = QTY + " + IDBConstants.QTY+ " + '" + map.get(IConstants.QTY) + "' ,DIFFQTY= '" + Double.parseDouble(map.get("DIFFQTY")) + "',INVFLAG='" + map.get("INVFLAG") +  "',REMARKS='" + map.get(IConstants.REMARKS) + "' ,UPAT='" + DateUtils.getDateTime() + "' ,UPBY='" + map.get(IConstants.LOGIN_USER) +"'");
+				sql.append("" + IDBConstants.QTY + " =  " + IDBConstants.QTY+ " + '" + map.get(IConstants.QTY) + "' ,DIFFQTY= '" + Double.parseDouble(map.get("DIFFQTY")) + "',INVFLAG='" + map.get("INVFLAG") +  "',REMARKS='" + map.get(IConstants.REMARKS) + "' ,UPAT='" + DateUtils.getDateTime() + "' ,UPBY='" + map.get(IConstants.LOGIN_USER) +"'");
 
 				flag = _StockTakeDAO.update(sql.toString(), htInvMst, "");
 

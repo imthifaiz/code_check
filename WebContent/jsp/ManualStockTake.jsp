@@ -405,21 +405,30 @@ if(systatus.equalsIgnoreCase("INVENTORY"))
  <div id="tableInventorySummary_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
               <div class="row"><div class="col-sm-12">
               
-              <div class="col-12 col-sm-12 no-padding">
+<!--               <div class="col-12 col-sm-12 no-padding"> -->
                      	
-                     	<label class="control-label col-sm-1" for="Loc">Filter By LOC:</label>
-	 					<div class="col-sm-2">
-			      	    <div class="input-group">
-				    		<INPUT class="ac-selected  form-control typeahead" name="LOCS1" ID="LOCS1" type ="TEXT" value="" placeholder="LOCATION" size="30"  MAXLENGTH=20>
-        					<span class="select-icon" onclick="$(this).parent().find('input[name=\'LOCS1\']').focus()"><i class="glyphicon glyphicon-menu-down"></i></span>
-  						</div>
-  						</div>
-  						<button type=submit class="Submit btn btn-success"  id="clearbtn" name="action"  onClick="return searchloc()"><b>Filter</b></button>&nbsp;&nbsp;
-                    </div>
-                    <br></br>
+<!--                      	<label class="control-label col-sm-1" for="Loc">Filter By LOC:</label> -->
+<!-- 	 					<div class="col-sm-2"> -->
+<!-- 			      	    <div class="input-group"> -->
+<!-- 				    		<INPUT class="ac-selected  form-control typeahead" name="LOCS1" ID="LOCS1" type ="TEXT" value="" placeholder="LOCATION" size="30"  MAXLENGTH=20> -->
+<!--         					<span class="select-icon" onclick="$(this).parent().find('input[name=\'LOCS1\']').focus()"><i class="glyphicon glyphicon-menu-down"></i></span> -->
+<!--   						</div> -->
+<!--   						</div> -->
+<!--   						<button type=submit class="Submit btn btn-success"  id="clearbtn" name="action"  onClick="return searchloc()"><b>Filter</b></button>&nbsp;&nbsp; -->
+<!--                     </div> -->
+                    <br>
               <div class="col-12 col-sm-12 no-padding">
   		        		<input type="Checkbox" class="form-check-input" style="border:0;" name="select" value="select" onclick="return checkAll(this.checked);">
                      	<strong>&nbsp;Select/Unselect All </strong>&nbsp;&nbsp;&nbsp;
+                     	
+                     	<div class="input-group">
+				    		<INPUT class="ac-selected  form-control typeahead" name="LOCS1" ID="LOCS1" type ="TEXT" value="" placeholder="LOCATION" size="30"  MAXLENGTH=20>
+        					<span class="select-icon" onclick="$(this).parent().find('input[name=\'LOCS1\']').focus()"><i class="glyphicon glyphicon-menu-down"></i></span>
+  						</div>&nbsp;&nbsp;
+  						
+  						
+  						<button type=submit class="Submit btn btn-success"  id="clearbtn" name="action"  onClick="return searchloc()"><b>Filter</b></button>&nbsp;&nbsp;&nbsp;&nbsp;
+  						
                      	<button type="submit" class="Submit btn btn-danger"  id="addbtn" name="action"  onClick="return resetaction()"><b>Reset Stock Take by Inventory</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
               
@@ -743,6 +752,9 @@ function getParameters(){
 	}
 }  
 
+function storeUserLoc(){
+	storeInLocalStorage('view_inv_list_withoutpriceqtyMultiUOM_LOC1', $('#LOCS1').val());
+}
 function storeUserPreferences(){
 	storeInLocalStorage('view_inv_list_withoutpriceqtyMultiUOM_ITEM', $('#ITEM').val());
 	storeInLocalStorage('view_inv_list_withoutpriceqtyMultiUOM_PRD_DEPT_ID', $('#PRD_DEPT_ID').val());
@@ -787,6 +799,7 @@ function onGo(){
     if(ALLOWCATCH_ADVANCE_SEARCH==='1'){
     storeUserPreferences();
     }
+    storeUserLoc();
     var urlStr = "../InvMstServlet";
    	// Call the method of JQuery Ajax provided
    	var groupColumn = 0;

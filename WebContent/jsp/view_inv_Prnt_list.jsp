@@ -794,7 +794,7 @@ function onGo(){
 	        	var parts = data["PARENT_TOPUP_QTY"];
 	        	if (parseFloat(parts)<0){
 	        		$(row).css('color', 'red');
-	        		parts = Math.abs(parseFloat(parts));
+// 	        		parts = Math.abs(parseFloat(parts));
 	        		$(row).find('td:eq(3)').text(parts); 
 	        	}
 	        },

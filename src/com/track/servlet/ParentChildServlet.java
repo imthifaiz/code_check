@@ -27,6 +27,7 @@ import com.track.db.object.HrEmpSalaryMst;
 import com.track.db.object.HrHolidayMst;
 import com.track.db.object.ParentChildCmpDet;
 import com.track.db.util.CoaUtil;
+import com.track.db.util.ItemMstUtil;
 import com.track.gates.DbBean;
 import com.track.service.HrEmpSalaryService;
 import com.track.service.ParentChildCmpDetService;
@@ -185,6 +186,44 @@ public class ParentChildServlet extends HttpServlet implements IMLogger {
 	            resultJsonInt.put("ERROR_CODE", "98");
 	            jsonArrayErr.add(resultJsonInt);
 	            resultJson.put("ERROR", jsonArrayErr);
+			}
+			
+			
+			response.getWriter().write(resultJson.toString());
+			
+		}
+		
+		if(action.equalsIgnoreCase("GET_CHILD_PLANT_DATA_DESC"))
+		{
+			JSONObject resultJson = new JSONObject();
+			JSONArray jsonArrayErr = new JSONArray();
+			
+			try {
+				String parentCompany = request.getParameter("parent");
+				Hashtable htData = new Hashtable();
+				String query="SELECT CHILD_PLANT,PLNTDESC FROM PARENT_CHILD_COMPANY_DET C join PLNTMST P on P.PLANT=C.CHILD_PLANT WHERE PARENT_PLANT='"+parentCompany+"' ";
+	        	  ArrayList arrList = new ItemMstUtil().selectForReport(query,htData,"");
+	        	  Map m = new HashMap();
+	        	  if (arrList.size() > 0) {
+	        		  for (int k=0; k < arrList.size(); k++ ) {
+	        			  m = (Map) arrList.get(k);
+	        			  JSONObject resultJsonInt = new JSONObject();
+	        			  String childplant = (String) m.get("CHILD_PLANT");
+	        			  String desc = (String) m.get("PLNTDESC");
+	        			  resultJsonInt.put("CHILD_PLANT", childplant);
+	        			  resultJsonInt.put("CHILD_PLNTDESC", desc);
+	        			  jsonArrayErr.add(resultJsonInt);
+	        		  }
+	        	  }
+				resultJson.put("CHILDLIST", jsonArrayErr);   
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				resultJson.put("CHILDLIST", "");
+				JSONObject resultJsonInt = new JSONObject();
+				resultJsonInt.put("ERROR_MESSAGE",  e.getMessage());
+				resultJsonInt.put("ERROR_CODE", "98");
+				jsonArrayErr.add(resultJsonInt);
+				resultJson.put("ERROR", jsonArrayErr);
 			}
 			
 			

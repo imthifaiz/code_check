@@ -1775,7 +1775,7 @@ public ArrayList getproductReorderqty(String plant,String item,String itemDesc,S
 
 //getAllCompProductReorderqty
 public ArrayList getAllCompProductReorderqty(String plant,String item,String itemDesc,String custname,String loc,
-		String sort, String fromdt,String todt,String ispos,String isCompbased) throws Exception {
+		String sort, String fromdt,String todt,String ispos,String isCompbased,String child) throws Exception {
 	ArrayList alData = new ArrayList();
 	java.sql.Connection con = null;
 	String extCond = "";
@@ -1858,14 +1858,27 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
       			addcomp.add(childplant);
       		  }
       	  }
-      	
-      	
+      	ArrayList<String> commonElements = new ArrayList<>(addcomp); 
       	
       	if(isCompbased.equalsIgnoreCase("0")) {
       		addcomp.clear();
       		addcomp.add(plant);
+      	}else {
+      	 	String[] parts = child.split(",");
+          	ArrayList nonEmptyParts = new ArrayList();
+          	for (String part : parts) {
+          	    if (!"empty".equals(part)) {
+          	        nonEmptyParts.add(part);
+          	    }
+          	}
+          	
+          	
+            commonElements.retainAll(nonEmptyParts); 
+            addcomp.clear();
+            commonElements.add(plant);
+            addcomp = commonElements;
+
       	}
-      	
       	
       	StringBuilder queryExchangeBuilder = new StringBuilder();
       	StringBuilder querySalesPosBuilder = new StringBuilder();

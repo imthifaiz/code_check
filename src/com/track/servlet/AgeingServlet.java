@@ -1474,8 +1474,8 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
             double lastSumPrdQty = 0;
             String lastProduct="",lastDescription="",lastLocation="",lastBatch="",lastuom="";
             String item="",loc="",batch="",uom="",cost="",listprice="";
-            double days30=0;double days60=0;double days90=0;double days120=0;
-            double prevdays30=0;double prevdays60=0;double prevdays90=0;double prevdays120=0;
+            double days30=0;double days60=0;double days90=0;double days120=0;double days160=0;
+            double prevdays30=0;double prevdays60=0;double prevdays90=0;double prevdays120=0;double prevdays160=0;
             curDate = curDate.substring(0,2) + curDate.substring(3,5) + curDate.substring(6);
             
             String minseq = "";
@@ -1616,9 +1616,13 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
             	   {
             		   days90 = days90 + recQty;
             	   }
-            	   if(days>90)
-            	   {
+            	   if(days>90 && days<=120) {
             		   days120 = days120 + recQty;
+            		   
+            	   }
+            	   if(days>120)
+            	   {
+            		   days160 = days160 + recQty;
             	   }
                 /*}else{
             	  if(days>0 && days<=365)
@@ -1657,6 +1661,9 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
             		   if((prevdays30+prevdays60+prevdays90+prevdays120)>lastSumPrdQty){
             			   prevdays120 = lastSumPrdQty-prevdays30-prevdays60-prevdays90;
             		   }
+            		   if((prevdays30+prevdays60+prevdays90+prevdays120+prevdays160)>lastSumPrdQty){
+            			   prevdays160 = lastSumPrdQty-prevdays30-prevdays60-prevdays90-prevdays120;
+            		   }
             		   
             		   reportDetails.put("product", strUtils.fString(StrUtils.forHTMLTag(lastProduct)));
             		   reportDetails.put("description", strUtils.fString(StrUtils.forHTMLTag(lastDescription)));
@@ -1666,11 +1673,18 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
             		   reportDetails.put("location", strUtils.fString(StrUtils.forHTMLTag(lastLocation)));
             		   reportDetails.put("batch", strUtils.fString(StrUtils.forHTMLTag(lastBatch)));
 //            		   reportDetails.put("qty", strUtils.fString(StrUtils.forHTMLTag(Double.toString(lastSumPrdQty))));
-            		   reportDetails.put("qty", Numbers.toMillionFormat(lastSumPrdQty,3));
-            		   reportDetails.put("prevdays30", Numbers.toMillionFormat(prevdays30,3));
-            		   reportDetails.put("prevdays60", Numbers.toMillionFormat(prevdays60,3));
-            		   reportDetails.put("prevdays90", Numbers.toMillionFormat(prevdays90,3));
-            		   reportDetails.put("prevdays120", Numbers.toMillionFormat(prevdays120,3));
+//            		   reportDetails.put("qty", Numbers.toMillionFormat(lastSumPrdQty,3));
+//            		   reportDetails.put("prevdays30", Numbers.toMillionFormat(prevdays30,3));
+//            		   reportDetails.put("prevdays60", Numbers.toMillionFormat(prevdays60,3));
+//            		   reportDetails.put("prevdays90", Numbers.toMillionFormat(prevdays90,3));
+//            		   reportDetails.put("prevdays120", Numbers.toMillionFormat(prevdays120,3));
+//            		   reportDetails.put("abovedays120", Numbers.toMillionFormat(prevdays160,3));
+            		   reportDetails.put("qty", StrUtils.addZeroes(lastSumPrdQty, "3"));
+            		   reportDetails.put("prevdays30", StrUtils.addZeroes(prevdays30,"3"));
+            		   reportDetails.put("prevdays60", StrUtils.addZeroes(prevdays60,"3"));
+            		   reportDetails.put("prevdays90", StrUtils.addZeroes(prevdays90,"3"));
+            		   reportDetails.put("prevdays120", StrUtils.addZeroes(prevdays120,"3"));
+            		   reportDetails.put("abovedays120", StrUtils.addZeroes(prevdays160,"3"));
 
             		   days30=0;days60=0;days90=0;days120=0;
             		   //prevdays30=0;prevdays60=0;prevdays90=0;prevdays120=0;
@@ -1688,9 +1702,14 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
 	            	   {
 	            		   days90 = days90 + recQty;
 	            	   }
-	            	   if(days>90)
-	            	   {
+	            	   
+	            	   if(days>90 && days<=120) {
 	            		   days120 = days120 + recQty;
+	            		   
+	            	   }
+	            	   if(days>120)
+	            	   {
+	            		   days160 = days160 + recQty;
 	            	   }
 	            	   /*}
             		   else{
@@ -1729,6 +1748,9 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
             	   if((days30+days60+days90+days120)>sumprdQty){
          			   days120 = sumprdQty-days30-days60-days90;
          		   }
+            	   if((days30+days60+days90+days120+days160)>sumprdQty){
+            		   days160 = sumprdQty-days30-days60-days90-days120;
+            	   }
             	   
             	   reportDetails.put("product", strUtils.fString(StrUtils.forHTMLTag(item)));
         		   reportDetails.put("description", strUtils.fString(StrUtils.forHTMLTag((String)lineArr.get("ITEMDESC"))));
@@ -1737,11 +1759,21 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
         		   reportDetails.put("uom", strUtils.fString(StrUtils.forHTMLTag(uom)));
         		   reportDetails.put("location", strUtils.fString(StrUtils.forHTMLTag(loc)));
         		   reportDetails.put("batch", strUtils.fString(StrUtils.forHTMLTag(batch)));
-        		   reportDetails.put("qty", Numbers.toMillionFormat(sumprdQty,3));
-        		   reportDetails.put("prevdays30", Numbers.toMillionFormat(days30,3));
-        		   reportDetails.put("prevdays60", Numbers.toMillionFormat(days60,3));
-        		   reportDetails.put("prevdays90", Numbers.toMillionFormat(days90,3));
-        		   reportDetails.put("prevdays120", Numbers.toMillionFormat(days120,3));
+//        		   reportDetails.put("qty", StrUtils.addZeroes(Double.valueOf((Numbers.toMillionFormat(sumprdQty,3))),"3"));
+//        		   reportDetails.put("qty", Numbers.toMillionFormat(sumprdQty,3));
+//        		   reportDetails.put("prevdays30", Numbers.toMillionFormat(days30,3));
+//        		   reportDetails.put("prevdays60", Numbers.toMillionFormat(days60,3));
+//        		   reportDetails.put("prevdays90", Numbers.toMillionFormat(days90,3));
+//        		   reportDetails.put("prevdays120", Numbers.toMillionFormat(days120,3));
+//        		   reportDetails.put("prevdays120", Numbers.toMillionFormat(days120,3));
+//        		   reportDetails.put("abovedays120", Numbers.toMillionFormat(days160,3));
+        		   reportDetails.put("qty", StrUtils.addZeroes(sumprdQty, "3"));
+        		   reportDetails.put("prevdays30", StrUtils.addZeroes(days30,"3"));
+        		   reportDetails.put("prevdays60", StrUtils.addZeroes(days60,"3"));
+        		   reportDetails.put("prevdays90", StrUtils.addZeroes(days90,"3"));
+        		   reportDetails.put("prevdays120", StrUtils.addZeroes(days120,"3"));
+        		   reportDetails.put("prevdays120", StrUtils.addZeroes(days120,"3"));
+        		   reportDetails.put("abovedays120", StrUtils.addZeroes(days160,"3"));
         		   jsonArray.add(reportDetails);
                }
                          
@@ -1756,6 +1788,7 @@ public class AgeingServlet  extends HttpServlet implements IMLogger  {
                  prevdays60 = days60;
                  prevdays90 = days90;
                  prevdays120 = days120;
+                 prevdays160 = days160;
              
                 
 

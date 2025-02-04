@@ -1235,8 +1235,8 @@ if(cost.length()<0){
 	        		  hPoss.put(IConstants.ITEM,sItem);
 	        		  hPoss.put("MINQTY",stkqty);
 	        		  hPoss.put("MAXQTY",maxstkqty);
-	        		  hPoss.put("UPAT",username);
-	        		  hPoss.put("UPBY",dateutils.getDateTime());
+	        		  hPoss.put("UPBY",username);
+	        		  hPoss.put("UPAT",dateutils.getDateTime());
 	        		  if(!(itemUtil.isExistsPosOutletminmax(sItem,outlet,plant))) {
 	        			  boolean posInserted = new POSHdrDAO().insertIntoPosOutletminmax(hPoss);
 	        		  }else {
@@ -1710,8 +1710,8 @@ if(cost.length()<0){
 				        		  hPoss.put(IConstants.ITEM,sItem);
 				        		  hPoss.put("MINQTY",stkqty);
 				        		  hPoss.put("MAXQTY",maxstkqty);
-				        		  hPoss.put("UPAT",username);
-				        		  hPoss.put("UPBY",dateutils.getDateTime());
+				        		  hPoss.put("UPBY",username);
+				        		  hPoss.put("UPAT",dateutils.getDateTime());
 				        		  if(!(itemUtil.isExistsPosOutletminmax(sItem,outlet,childplant))) {
 				        			  boolean posInserted = new POSHdrDAO().insertIntoPosOutletminmax(hPoss);
 				        		  }else {
@@ -2195,8 +2195,8 @@ if(cost.length()<0){
 				        		  hPoss.put(IConstants.ITEM,sItem);
 				        		  hPoss.put("MINQTY",stkqty);
 				        		  hPoss.put("MAXQTY",maxstkqty);
-				        		  hPoss.put("UPAT",username);
-				        		  hPoss.put("UPBY",dateutils.getDateTime());
+				        		  hPoss.put("UPBY",username);
+				        		  hPoss.put("UPAT",dateutils.getDateTime());
 				        		  if(!(itemUtil.isExistsPosOutletminmax(sItem,outlet,parentplant))) {
 				        			  boolean posInserted = new POSHdrDAO().insertIntoPosOutletminmax(hPoss);
 				        		  }else {
@@ -2656,8 +2656,8 @@ if(cost.length()<0){
 				        		  hPoss.put(IConstants.ITEM,sItem);
 				        		  hPoss.put("MINQTY",stkqty);
 				        		  hPoss.put("MAXQTY",maxstkqty);
-				        		  hPoss.put("UPAT",username);
-				        		  hPoss.put("UPBY",dateutils.getDateTime());
+				        		  hPoss.put("UPBY",username);
+				        		  hPoss.put("UPAT",dateutils.getDateTime());
 				        		  if(!(itemUtil.isExistsPosOutletminmax(sItem,outlet,childplant))) {
 				        			  boolean posInserted = new POSHdrDAO().insertIntoPosOutletminmax(hPoss);
 				        		  }else {

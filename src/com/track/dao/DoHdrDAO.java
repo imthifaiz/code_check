@@ -3178,6 +3178,9 @@ public class DoHdrDAO extends BaseDAO {
        try {
     	   if(uom.equalsIgnoreCase(""))
     		   uom = " (SELECT PURCHASEUOM FROM "+aPlant+"_ITEMMST WHERE ITEM = '"+aItem+"') ";
+    	   else
+    		   uom = "'"+uom+"'";
+    	   
                con = DbBean.getConnection();
                String currency=new PlantMstDAO().getBaseCurrency(aPlant);
 

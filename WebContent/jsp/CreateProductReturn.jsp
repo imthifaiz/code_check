@@ -673,6 +673,29 @@ a:focus {
 							</div>
 						</div>
 					</div>
+					
+					
+	<div class="form-group">
+      <div class="col-sm-12">    
+       <label class="checkbox-inline" style="display: none;">
+      <INPUT Type=Checkbox  style="border:0;" name = "checkNoBatch" value="checkNoBatch" onclick="return checkNOBATCH(this.checked);">
+	  <b>Default NOBATCH</b></label>
+	   <label class="checkbox-inline" style="display: none;">    
+      <INPUT Type=Checkbox  style="border:0;" name = "ClearLoc" value="ClearLoc" >
+	  <b>Clear Location</b></label>
+		<label class="text-inline">
+      <div class="col-sm-7">
+		<input type="text" class="ac-selected  form-control typeahead locationSearch" id="LOCT" placeholder="Select a Location" name="LOCT" value="">
+			<span class="select-icon" onclick="$(this).parent().find('input[name=\'LOCT\']').focus()">
+				<i class="glyphicon glyphicon-menu-down"></i>
+	  		</div>
+     	 <label class="checkbox-inline">      
+      <INPUT Type=Checkbox  style="border:0;" name = "selectloc" value="selectloc" onclick="return checkAllLoc(this.checked);">
+	  <b>Apply to all location</b></label>
+	 </div>
+     </div>
+					
+					
 					<div class="row" style="margin: 0px;">
 						<table class="table table-bordered line-item-table bill-table"
 							style="width: 100%;">

@@ -8,7 +8,7 @@ String title = "Inventory Aging Summary";
 String plant = StrUtils.fString((String) session.getAttribute("PLANT"));
 String FROM_DATE ="",  TO_DATE = "",USER="",fdate="",tdate="",pono="",PGaction="",LOC_TYPE_ID="",LOC_TYPE_ID2="",LOC_TYPE_ID3="";
 DateUtils _dateUtils = new DateUtils();
-FROM_DATE = DateUtils.getDate();
+// FROM_DATE = DateUtils.getDate();
 
 PlantMstDAO _PlantMstDAO = new PlantMstDAO();
 String COMP_INDUSTRY = _PlantMstDAO.getCOMP_INDUSTRY(plant);//Check Company Industry
@@ -25,6 +25,9 @@ String STATE = (String) map.get("STATE");
 String COUNTRY = (String) map.get("COUNTY");
 String ZIP = (String) map.get("ZIP");
 String TELNO = (String) map.get("TELNO");
+String AGING = (String) map.get("AGING");
+
+FROM_DATE = DateUtils.getDateMinusDays(Integer.parseInt(AGING));
 
 String fromAddress_BlockAddress = ADD1 + " " + ADD2;
 String fromAddress_RoadAddress = ADD3 + " " + ADD4;
@@ -222,12 +225,14 @@ String ALLOWCATCH_ADVANCE_SEARCH = session.getAttribute("ALLOWCATCH_ADVANCE_SEAR
 								<th style="font-size: smaller;">1-30 DAYS</th>
 								<th style="font-size: smaller;">31-60 DAYS</th>
 								<th style="font-size: smaller;">61-90 DAYS</th>
-								<th style="font-size: smaller;">90+ DAYS</th></tr>
+								<th style="font-size: smaller;">91-120 DAYS</th>
+								<th style="font-size: smaller;">120+ DAYS</th></tr>
 							</thead>
 							<tfoot align="right" style="display: none;">
 							<tr>
 								<th></th>
 								<th>Total</th>
+								<th></th>
 								<th></th>
 								<th></th>
 								<th></th>
@@ -666,7 +671,7 @@ function onGo(){
 	var totalQty = 0;
 	    
     if(FROM_DATE == null || FROM_DATE == "") {
-<%--     	FROM_DATE = "<%=FROM_DATE%>"; --%>
+    	FROM_DATE = "<%=FROM_DATE%>";
     }
     if (tableinvoiceAgingSummary){
     	tableinvoiceAgingSummary.ajax.url( urlStr ).load();
@@ -692,13 +697,18 @@ function onGo(){
 			        "dataSrc": function(data){
 			        	if(typeof data.INVDETAILS[0].product === 'undefined'){
 			        		return [];
-			        	}else {				        		
+			        	}else {
+			        		for(var dataIndex = 0; dataIndex < data.INVDETAILS.length; dataIndex ++){
+		        				var lineno = data.INVDETAILS[dataIndex].product;
+		        				var desc = data.INVDETAILS[dataIndex].description;
+		        				data.INVDETAILS[dataIndex]['ITEM'] = '<a href="../product/detail?action=View&ITEM='+lineno+'&DESC='+desc+'">'+lineno+'</a>';
+		        			}				        		
 			        		return data.INVDETAILS;
 			        	}
 			        }
 			    },
 		        "columns": [
-		        	{"data": 'product', "orderable": true},
+		        	{"data": 'ITEM', "orderable": true},
 	    			{"data": 'description', "orderable": true},
 	    			{"data": 'COST', "orderable": true},
 	    			{"data": 'UnitPrice', "orderable": true},
@@ -710,6 +720,7 @@ function onGo(){
 	    			{"data": 'prevdays60', "orderable": true},   			
 	    			{"data": 'prevdays90', "orderable": true},   			
 	    			{"data": 'prevdays120', "orderable": true},   			
+	    			{"data": 'abovedays120', "orderable": true},   			
 	    			],
 	    			"columnDefs": [{"className":"text-center", "targets": [7,8,9,10,11]}],
 					/* "orderFixed": [ groupColumn, 'asc' ],  */
@@ -784,6 +795,10 @@ function onGo(){
 			            var api = this.api();
 			            var rows = api.rows({ page: 'current' }).nodes();
 			            var last = null;
+			            var groupTotalQty2 = 0;
+			            var totalQty2 = 0;
+			            var groupTotalQty3 = 0;
+			            var totalQty3 = 0;
 			            var groupTotalQty7 = 0;
 			            var totalQty7 = 0;
 			            var groupTotalQty8 = 0;
@@ -794,6 +809,8 @@ function onGo(){
 			            var totalQty10 = 0;
 			            var groupTotalQty11 = 0;
 			            var totalQty11 = 0;
+			            var groupTotalQty12 = 0;
+			            var totalQty12 = 0;
 			            var groupEnd = 0;
 			            var currentRow = 0;
 
@@ -807,12 +824,19 @@ function onGo(){
 			                    }*/
 			                    last = group;
 			                    groupEnd = i;
+			                    groupTotalQty2 = 0;
+			                    groupTotalQty3 = 0;
 			                    groupTotalQty7 = 0;
 			                    groupTotalQty8 = 0;
 			                    groupTotalQty9 = 0;
 			                    groupTotalQty10 = 0;
 			                    groupTotalQty11 = 0;
+			                    groupTotalQty12 = 0;
 			                }
+			                groupTotalQty2 += parseFloat($(rows).eq(i).find('td:eq(2)').html());
+			                totalQty2 += parseFloat($(rows).eq(i).find('td:eq(2)').html());
+			                groupTotalQty3 += parseFloat($(rows).eq(i).find('td:eq(3)').html());
+			                totalQty3 += parseFloat($(rows).eq(i).find('td:eq(3)').html());
 			                groupTotalQty7 += parseFloat($(rows).eq(i).find('td:eq(7)').html());
 			                totalQty7 += parseFloat($(rows).eq(i).find('td:eq(7)').html());
 			                groupTotalQty8 += parseFloat($(rows).eq(i).find('td:eq(8)').html());
@@ -823,12 +847,14 @@ function onGo(){
 			                totalQty10 += parseFloat($(rows).eq(i).find('td:eq(10)').html());
 			                groupTotalQty11 += parseFloat($(rows).eq(i).find('td:eq(11)').html());
 			                totalQty11 += parseFloat($(rows).eq(i).find('td:eq(11)').html());
+			                groupTotalQty12 += parseFloat($(rows).eq(i).find('td:eq(12)').html());
+			                totalQty12 += parseFloat($(rows).eq(i).find('td:eq(12)').html());
 			                currentRow = i;
 			            });
 
 			            if (groupEnd > 0 || rows.length == (currentRow + 1)) {
 			                $(rows).eq(currentRow).after(
-			                    '<tr class="group"><td colspan=' + groupRowColSpans + '></td><td></td><td></td><td></td><td></td><td></td><td>Total</td><td class="t-right">' + parseFloat(totalQty7).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty8).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty9).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty10).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty11).toFixed(3) + '</td></tr>'
+			                    '<tr class="group"><td colspan=' + groupRowColSpans + '></td><td>Total</td><td class="t-right">' + parseFloat(totalQty2).toFixed(2) + '</td><td class="t-right">' + parseFloat(totalQty3).toFixed(2) + '</td><td></td><td></td><td></td><td class="t-right">' + parseFloat(totalQty7).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty8).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty9).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty10).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty11).toFixed(3) + '</td><td class="t-right">' + parseFloat(totalQty12).toFixed(3) + '</td></tr>'
 			                );
 			            }
 			        },
@@ -862,6 +888,11 @@ function onGo(){
 			            var total11 = api.column(11).data().reduce(function(a, b) {
 			                return intVal(a) + intVal(b);
 			            }, 0);
+			            
+			            // Total over all pages for column 12
+			            var total12 = api.column(12).data().reduce(function(a, b) {
+			                return intVal(a) + intVal(b);
+			            }, 0);
 
 			            var rows = api.rows({ page: 'current' }).nodes();
 			            var last = null;
@@ -875,6 +906,8 @@ function onGo(){
 			            var totalQty10 = 0;
 			            var groupTotalQty11 = 0;
 			            var totalQty11 = 0;
+			            var groupTotalQty12 = 0;
+			            var totalQty12 = 0;
 			            var groupEnd = 0;
 			            var currentRow = 0;
 
@@ -893,6 +926,7 @@ function onGo(){
 			                    groupTotalQty9 = 0;
 			                    groupTotalQty10 = 0;
 			                    groupTotalQty11 = 0;
+			                    groupTotalQty12 = 0;
 			                }
 			                groupTotalQty7 += parseFloat($(rows).eq(i).find('td:eq(7)').html());
 			                totalQty7 += parseFloat($(rows).eq(i).find('td:eq(7)').html());
@@ -904,6 +938,7 @@ function onGo(){
 			                totalQty10 += parseFloat($(rows).eq(i).find('td:eq(10)').html());
 			                groupTotalQty11 += parseFloat($(rows).eq(i).find('td:eq(11)').html());
 			                totalQty11 += parseFloat($(rows).eq(i).find('td:eq(11)').html());
+			                totalQty12 += parseFloat($(rows).eq(i).find('td:eq(12)').html());
 			                currentRow = i;
 			            });
 
@@ -919,6 +954,7 @@ function onGo(){
 			            $(api.column(9).footer()).html(parseFloat(groupTotalQty9).toFixed(<%=DbBean.NOOFDECIMALPTSFORWEIGHT%>));
 			            $(api.column(10).footer()).html(parseFloat(groupTotalQty10).toFixed(<%=DbBean.NOOFDECIMALPTSFORWEIGHT%>));
 			            $(api.column(11).footer()).html(parseFloat(groupTotalQty11).toFixed(<%=DbBean.NOOFDECIMALPTSFORWEIGHT%>));
+			            $(api.column(12).footer()).html(parseFloat(groupTotalQty12).toFixed(<%=DbBean.NOOFDECIMALPTSFORWEIGHT%>));
 			            
 			        }
 			});

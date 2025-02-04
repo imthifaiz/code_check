@@ -150,7 +150,8 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				e.printStackTrace();
 			}
 
-			if (action.equalsIgnoreCase("getTrialBalanceAsExcel") && !fromDate.isEmpty()) {
+//				if (action.equalsIgnoreCase("getTrialBalanceAsExcel") && !fromDate.isEmpty()) {
+			if (action.equalsIgnoreCase("getTrialBalanceAsExcel")) {
 				PlantMstDAO _PlantMstDAO = new PlantMstDAO();
 
 				HSSFWorkbook workbook = null;

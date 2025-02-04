@@ -73,6 +73,18 @@ public class DateUtils extends Object {
 		return time;
 	}
 	
+	public static String getDateMinusDays(int days) {
+		if(days==1)days=30;else if(days==2)days=60;else if(days==3)days=90;else if(days==4)days=120;else if(days==5)days=365;else days=90;
+		String time = "";
+		int MinusDays=-days;
+		Date dt = new Date();
+		calendar.setTime(dt);
+		calendar.add(Calendar.DATE, MinusDays);
+		Date lastMinusDays = calendar.getTime();
+		time = formatter1.format(lastMinusDays);
+		return time;
+	}
+	
 	public static String Time() {
 		String time = "";
 

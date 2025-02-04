@@ -367,6 +367,31 @@ public JSONObject getprdclsName(String plant, String name) {
 	return mainObj;
 }
 
+public JSONObject getprdclsNames(String plant, String name) {
+	JSONObject mainObj = new JSONObject();
+	String query = "SELECT * FROM [" + plant + "_PRD_CLASS_MST] WHERE PRD_CLS_ID LIKE '" + name + "%' OR PRD_CLS_DESC LIKE '" + name + "%'";
+	Connection con = null;
+	try {
+		con = DbBean.getConnection();
+		Statement stmt = con.createStatement();
+		ResultSet rset = stmt.executeQuery(query);
+		
+		while (rset.next()) {
+			
+			mainObj.put("PRD_CLS_ID", rset.getString("PRD_CLS_ID"));
+			mainObj.put("PRD_CLS_DESC", rset.getString("PRD_CLS_DESC"));
+		}
+	} catch (NamingException | SQLException e) {
+		mainObj.put("responseText", "failed");
+		e.printStackTrace();
+	} finally {
+		if (con != null) {
+			DbBean.closeConnection(con);
+		}
+	}
+	return mainObj;
+}
+
 public boolean isExistCat(String cat, String plant)
 		throws Exception {
 	PreparedStatement ps = null;

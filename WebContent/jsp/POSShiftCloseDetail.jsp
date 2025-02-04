@@ -50,6 +50,8 @@ String title = "POS Shift Close Detail";
 			
 			ArrayList shiftcloselist = movHisUtil.getPosShiftCloseDetailByid(Integer.valueOf(SID),plant);
 			Map shiftclose = (Map) shiftcloselist.get(0);
+			int imti = (int) Double.valueOf((String) shiftclose.get("EXCHANGECOUNT")).doubleValue();
+			System.out.println("abcdefghijklmnopqrstuvwxyz "+imti);
 			
 			String fromdate = dateUtils.getDB2UserDateTime((String) shiftclose.get("FROMDATE"));
 			String todate = dateUtils.getDB2UserDateTime((String) shiftclose.get("TODATE"));
@@ -121,22 +123,22 @@ String title = "POS Shift Close Detail";
 							</tr>
 							<tr>
 								<td align="left" style="width: 40%;">Total Sales</td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("SALESCOUNT")), "0")%></td>
+								<td align="center"><%=(String) shiftclose.get("SALESCOUNT")%></td>
 								<td align="right"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("TOTALSALES")), numberOfDecimal)%></td>
 							</tr>
 							<tr>
 								<td align="left">Voided Sales </td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("VOIDSALESCOUNT")), "0")%></td>
+								<td align="center"><%=(String) shiftclose.get("VOIDSALESCOUNT")%></td>
 								<td align="right"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("VOIDEDSALES")), numberOfDecimal)%></td>
 							</tr>
 							<tr>
 								<td align="left">Voided Products </td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("VOIDITEMCOUNT")), "0")%></td>
+								<td align="center"><%=(String) shiftclose.get("VOIDITEMCOUNT")%></td>
 								<td align="right"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("RETURNEDAMOUNT")), numberOfDecimal)%></td>
 							</tr>
 							<tr>
 								<td align="left">Exchanged Products </td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("EXCHANGECOUNT")), "0")%></td>
+								<td align="center"><%=(int) Double.valueOf((String) shiftclose.get("EXCHANGECOUNT")).doubleValue()%></td>
 								<td align="right"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("EXCHANGE")), numberOfDecimal)%></td>
 							</tr>
 							<tr>
@@ -151,7 +153,7 @@ String title = "POS Shift Close Detail";
 							%>
 							<tr>
 								<td align="left"><%=(String) lineArr.get("PAYMENTMODE")%></td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) lineArr.get("SALESCOUNT")), "0")%></td>
+								<td align="center"><%=(String) lineArr.get("SALESCOUNT")%></td>
 								<td align="right"><%=StrUtils.addZeroes(Double.valueOf((String) lineArr.get("AMOUNT")), numberOfDecimal)%></td>
 							</tr>
 							<%}%>
@@ -177,7 +179,7 @@ String title = "POS Shift Close Detail";
 							%>
 							<tr>
 								<td align="left">Total Sales</td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("SALESCOUNT")), "0")%></td>
+								<td align="center"><%=(String) shiftclose.get("SALESCOUNT")%></td>
 								<td align="right"><%=tsales%></td>
 							</tr>
 							<tr>
@@ -188,7 +190,7 @@ String title = "POS Shift Close Detail";
 							
 							<tr>
 								<td align="left">Actual Sales</td>
-								<td align="center"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("SALESCOUNT")), "0")%></td>
+								<td align="center"><%=(String) shiftclose.get("SALESCOUNT")%></td>
 								<%-- <td align="right"><%=StrUtils.addZeroes(Double.valueOf((String) shiftclose.get("TOTALSALES")), numberOfDecimal)%></td> --%>
 								<td align="right"><%=StrUtils.addZeroes(fasales, numberOfDecimal)%></td>
 							</tr>

@@ -436,7 +436,7 @@ function onAdd(){
 	       ENABLEINVENTORY = "0", ENABLEACCOUNTING = "0",OWNERAPP = "0",CUSTOMERAPP="0",MANAGERAPP = "0",STOREAPP = "0",RIDEAPP = "0",STATE="",DECIMALPRECISION="",IMAGEPATH="",ISTAXREG="",REPROTSBASIS="",
 	       NOOFCATALOGS="",NOOFSIGNATURES="",currencyCode = "",APPPATH="",SEALNAME="",SIGNNAME="",ISSALESAPP_TAXINCLUSIVE="",ISPOSTAXINCLUSIVE="",ISPOSSALESMAN="",ALLOWPRDTOCOMPANY="",
 		   FISCALYEAR="",PAYROLLYEAR="",REGION="",EDIT_REGION="",WEBSITE="",FACEBOOK="",TWITTER="",LINKEDIN="",SKYPE="",ENABLEPAYROLL="0",ENABLEPOS="0",FYEAR="",PYEAR="",sCountryCode="",PLANTID="",EMPLOYEEWORKINGMANDAYSBY="",IsDefautDrawerAmount="",IsExpJournalEdit ="",
-		   NOOFSUPPLIER="",NOOFCUSTOMER="",NOOFEMPLOYEE="",NOOFINVENTORY="",NOOFLOCATION="",NOOFORDER="",NOOFEXPBILLINV="", NOOFPAYMENT="",PRODUCT_SHOWBY_CATAGERY="",ISASSIGN_USERLOC="",SHOW_STOCKQTY_ONAPP="",ISPOSRETURN_TRAN="",ISPOSVOID_TRAN="",SHOW_POS_SUMMARY="",ISMANAGEWORKFLOW="",ALLOWCATCH_ADVANCE_SEARCH="",SETCURRENTDATE_ADVANCE_SEARCH="",ISSHOWPOSPRICEBYOUTLET="",ALLOWPOSTRAN_LESSTHAN_AVBQTY="",ISPRODUCTMAXQTY="",ISAUTO_CONVERT_ESTPO="",ISAUTO_CONVERT_RECEIPTBILL="",SETCURRENTDATE_GOODSRECEIPT="",ISEMPLOYEEVALIDATEPO="",SETCURRENTDATE_PICKANDISSUE="",ISEMPLOYEEVALIDATESO="",ISAUTO_CONVERT_ISSUETOINVOICE="",ISPRICE_UPDATEONLY_IN_OWNOUTLET="",SHOWITEM_AVGCOST="",ISAUTO_MINMAX_MULTIESTPO="",ISAUTO_CONVERT_SOINVOICE="",ENABLE_RESERVEQTY="",ISSALESTOPURCHASE="",NOOFJOURNAL="", NOOFCONTRA="", shopify="",COMP_INDUSTRY="", ISPEPPOL="",PEPPOL_ID="",lazada="", shopee="", amazon="",ISSTOCKTAKE_BYAVGCOST="";
+		   NOOFSUPPLIER="",NOOFCUSTOMER="",NOOFEMPLOYEE="",NOOFINVENTORY="",NOOFLOCATION="",NOOFORDER="",NOOFEXPBILLINV="", NOOFPAYMENT="",PRODUCT_SHOWBY_CATAGERY="",ISASSIGN_USERLOC="",SHOW_STOCKQTY_ONAPP="",ISPOSRETURN_TRAN="",ISPOSVOID_TRAN="",SHOW_POS_SUMMARY="",ISMANAGEWORKFLOW="",ALLOWCATCH_ADVANCE_SEARCH="",SETCURRENTDATE_ADVANCE_SEARCH="",ISSHOWPOSPRICEBYOUTLET="",ALLOWPOSTRAN_LESSTHAN_AVBQTY="",ISPRODUCTMAXQTY="",ISAUTO_CONVERT_ESTPO="",ISAUTO_CONVERT_RECEIPTBILL="",SETCURRENTDATE_GOODSRECEIPT="",ISEMPLOYEEVALIDATEPO="",SETCURRENTDATE_PICKANDISSUE="",ISEMPLOYEEVALIDATESO="",ISAUTO_CONVERT_ISSUETOINVOICE="",ISPRICE_UPDATEONLY_IN_OWNOUTLET="",SHOWITEM_AVGCOST="",ISAUTO_MINMAX_MULTIESTPO="",ISAUTO_CONVERT_SOINVOICE="",ENABLE_RESERVEQTY="",ISSALESTOPURCHASE="",NOOFJOURNAL="", NOOFCONTRA="", shopify="",COMP_INDUSTRY="", ISPEPPOL="",PEPPOL_ID="",lazada="", shopee="", amazon="",ISSTOCKTAKE_BYAVGCOST="",AGING="";
 	String sNewEnb    = "enabled";
 	String sDeleteEnb = "enabled";
 	String sAddEnb    = "disabled";
@@ -539,6 +539,7 @@ function onAdd(){
     ISSALESTOPURCHASE = (request.getParameter("ISSALESTOPURCHASE") != null) ? "1": "0";
     companyregnumber=StrUtils.fString(request.getParameter("companyregnumber"));
     ISPOSTAXINCLUSIVE=StrUtils.fString(request.getParameter("ISPOSTAXINCLUSIVE"));
+    AGING=StrUtils.fString(request.getParameter("AGING"));
     ISSALESAPP_TAXINCLUSIVE=StrUtils.fString(request.getParameter("ISSALESAPP_TAXINCLUSIVE"));
     ISPOSSALESMAN=StrUtils.fString(request.getParameter("ISPOSSALESMAN"));
     ALLOWPRDTOCOMPANY=StrUtils.fString(request.getParameter("ALLOWPRDTOCOMPANY"));
@@ -702,6 +703,7 @@ System.out.println("Existing company"+plntcode);
 	       updateQyery.append(",ENABLE_RESERVEQTY= '"+ (String)ENABLE_RESERVEQTY+ "'");
 	       updateQyery.append(",ISSALESTOPURCHASE= '"+ (String)ISSALESTOPURCHASE+ "'");
 	       updateQyery.append(",ISPOSTAXINCLUSIVE= '"+ (String)ISPOSTAXINCLUSIVE+ "'");
+	       updateQyery.append(",AGING= '"+ (String)AGING+ "'");
 	       updateQyery.append(",ISSALESAPP_TAXINCLUSIVE= '"+ (String)ISSALESAPP_TAXINCLUSIVE+ "'");
 	       updateQyery.append(",ISPOSSALESMAN_BYBILLPRODUCT= '"+ (String)ISPOSSALESMAN+ "'");
 	       updateQyery.append(",ALLOWPRODUCT_TO_OTHERCOMPANY= '"+ (String)ALLOWPRDTOCOMPANY+ "'");
@@ -857,6 +859,7 @@ System.out.println("Existing company"+plntcode);
                         ISSALESTOPURCHASE=StrUtils.fString((String)map.get("ISSALESTOPURCHASE"));
                         companyregnumber=StrUtils.fString((String)map.get("companyregnumber"));
                         ISPOSTAXINCLUSIVE=StrUtils.fString((String)map.get("ISPOSTAXINCLUSIVE"));
+                        AGING=StrUtils.fString((String)map.get("AGING"));
                         ISSALESAPP_TAXINCLUSIVE=StrUtils.fString((String)map.get("ISSALESAPP_TAXINCLUSIVE"));
                         ISPOSSALESMAN=StrUtils.fString((String)map.get("ISPOSSALESMAN_BYBILLPRODUCT"));
                         ALLOWPRDTOCOMPANY=StrUtils.fString((String)map.get("ALLOWPRODUCT_TO_OTHERCOMPANY"));
@@ -959,6 +962,7 @@ System.out.println("Existing company"+plntcode);
           ENABLE_RESERVEQTY="";
           ISSALESTOPURCHASE="";
           ISPOSTAXINCLUSIVE="";
+          AGING="";
           ISSALESAPP_TAXINCLUSIVE="";
           ISPOSSALESMAN="";
           ALLOWPRDTOCOMPANY="";
@@ -2169,6 +2173,42 @@ label {
     </div>
     </div>
     </div>
+    
+    
+     <div class="form-group">	
+  	  <div class="panel panel-default">  
+  <div class="panel-heading" style="background: #eaeafa"><strong>Reports</strong></div>  
+ <div class="panel-body">
+  <table class="table1" style="font-size:14px;width: 100%;">
+    <TR>
+    	<TH WIDTH="20%" ALIGN = "LEFT">
+<div class="form-group comproprice">
+      <label class="control-label col-form-label col-sm-12" for="POS">Aging Reports By</label>
+      <div class="col-sm-12" style="padding-bottom: 0%;text-align: left;">
+			<label class="radio-inline">
+      	<INPUT name="AGING"  type = "radio"  value="1"  id="AGING" <%if (AGING.equalsIgnoreCase("1")) {%> checked <%}%>>1 Month
+    	</label>
+    	<label class="radio-inline">
+      	<INPUT  name="AGING" type = "radio" value="2"  id = "AGING" <%if (AGING.equalsIgnoreCase("2")) {%> checked <%}%> >2 Month
+    	</label>				
+    	<label class="radio-inline">
+      	<INPUT  name="AGING" type = "radio" value="3"  id = "AGING" <%if (AGING.equalsIgnoreCase("3")) {%> checked <%}%> >3 Month
+    	</label>				
+    	<label class="radio-inline">
+      	<INPUT  name="AGING" type = "radio" value="4"  id = "AGING" <%if (AGING.equalsIgnoreCase("4")) {%> checked <%}%> >4 Month
+    	</label>				
+    	<label class="radio-inline">
+      	<INPUT  name="AGING" type = "radio" value="5"  id = "AGING" <%if (AGING.equalsIgnoreCase("5")) {%> checked <%}%> >4 Month+
+    	</label>				
+      </div>
+    </div>
+    
+	</TH>
+    
+   </table>
+   </div>
+   </div>
+   </div>
     
     
      <div class="form-group">	

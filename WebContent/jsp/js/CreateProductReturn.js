@@ -116,6 +116,56 @@ $(document).ready(function(){
 	$("#adjustment").html(parseFloat("0.00000").toFixed(numberOfDecimal));
 	$("#total").html(parseFloat("0.00000").toFixed(numberOfDecimal));
 	
+	
+	/* location Auto Suggestion */
+	$('.locationSearch').typeahead({
+		  hint: true,
+		  minLength:0,  
+		  searchOnFocus: true
+		},
+		{
+		  display: 'LOC',  
+		  source: function (query, process,asyncProcess) {
+			var urlStr = "/track/ItemMstServlet";
+			$.ajax( {
+			type : "POST",
+			url : urlStr,
+			async : true,
+			data : {
+				PLANT : plant,
+				ACTION : "GET_LOC_LIST_FOR_SUGGESTION",
+				QUERY : query
+			},
+			dataType : "json",
+			success : function(data) {
+				return asyncProcess(data.LOC_MST);
+			}
+				});
+		},
+		  limit: 9999,
+		  templates: {
+		  empty: [
+			  '<div style="padding:3px 20px">',
+				'No results found',
+			  '</div>',
+			].join('\n'),
+			suggestion: function(data) {
+			return '<div><p class="item-suggestion">'+data.LOC+'</p></div>';
+			//return '<div onclick="document.form.FROMWAREHOUSE.value = \''+data.LOCDESC+'\'"><p class="item-suggestion">'+data.LOC+'</p><br/><p class="item-suggestion">DESC:'+data.LOCDESC+'</p></div>';
+			}
+		  }
+		}).on('typeahead:open',function(event,selection){
+			var element = $(this).parent().parent().find('.select-icon').find('.glyphicon');
+			element.toggleClass("glyphicon-menu-up",true);
+			element.toggleClass("glyphicon-menu-down",false);
+		}).on('typeahead:close',function(){
+			var element = $(this).parent().parent().find('.select-icon').find('.glyphicon');
+			element.toggleClass("glyphicon-menu-up",false);
+			element.toggleClass("glyphicon-menu-down",true);
+		});
+	
+
+
 	/* Supplier Auto Suggestion */
 	$('#vendname').typeahead({
 		  hint: true,
@@ -2181,6 +2231,10 @@ function isNumberKey(evt, element, id) {
 
 
 function addRow(event){
+	 var loccheckbox = document.querySelector('input[name="selectloc"]');
+	 var batchcheckbox = document.querySelector('input[name="checkNoBatch"]');
+		var location= document.getElementById('LOCT').value;
+    
 	event.preventDefault(); 
     event.stopPropagation();
 	var curency = $("input[name=CURRENCYID]").val();
@@ -2216,10 +2270,15 @@ function addRow(event){
 	body += '<input type="text" name="uom" class="form-control uomSearch" onchange="checkprduom(this.value,this)" placeholder="UOM">';
 	body += '</td>';
 	body += '<td class="invEl">';
-	body += '<input type="text" name="loc" class="form-control locSearch" onchange="checkprdloc(this.value,this)" placeholder="Location">';
+	 if (loccheckbox.checked) {
+		body += '<input type="text" name="loc" value = "'+location+'" class="form-control locSearch" onchange="checkprdloc(this.value,this)" placeholder="Location">';
+    } else {
+		body += '<input type="text" name="loc" class="form-control locSearch" onchange="checkprdloc(this.value,this)" placeholder="Location">';
+    }
 	body += '</td>';
 	body += '<td class="invEl">';
-	body += '<input type="text" name="batch" value="NOBATCH" class="form-control batchSearch" placeholder="Batch">';
+//	body += '<input type="text" name="batch" value="NOBATCH" class="form-control batchSearch" placeholder="Batch">';
+	body += '<input type="text" name="batch" value="" class="form-control batchSearch" placeholder="Batch">';
 	body += '</td>';
 	body += '<td class="item-qty text-right"><input type="text" data-rl="0.000" data-msq="0.000" data-soh="0.000" data-eq="0.000" data-aq="0.000" name="qty" class="form-control text-right" value="1.000" onchange="calculateAmount(this)" onkeypress="return isNumberKey(event,this,4)"></td>';
 	body += '<td>';
@@ -3117,7 +3176,8 @@ function addSuggestionToTable(){
 		
 		//Imthiyas added (press Enter Key for item to appear)
 			$(".itemSearch").on('keydown', function(event) {
-			    if (event.key === 'Enter') {
+//			    if (event.key === 'Tab' || event.key === 'Enter') {
+					if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Enter'))) {
 			        const item = $(this).val();
 			        $.ajax({
 			            type: "POST",
@@ -3536,14 +3596,16 @@ function addSuggestionToTable(){
 			}
 		  }
 		}).on('typeahead:open',function(event,selection){
-			CheckinvqtyVal(this,selection.QTY);
 			var menuElement = $(this).parent().find(".tt-menu");
 			menuElement.next().show();
+//			CheckinvqtyVal(this,selection.QTY);
 		}).on('typeahead:close',function(){
 			var menuElement = $(this).parent().find(".tt-menu");
 			setTimeout(function(){ menuElement.next().hide();}, 150);
 		}).on('typeahead:select',function(event,selection){
 			CheckinvqtyVal(this,selection.QTY);
+			$(this).closest('tr').find('input[name="qty"]').focus();
+			$(this).closest('tr').find('input[name="qty"]').select();
 		$("input[name=ITEMINVQTY]").val(selection.QTY);	
 		});
 		
@@ -3559,17 +3621,21 @@ function addSuggestionToTable(){
 			                ACTION : "GET_BATCH_DATA",
 							ITEMNO : $(this).closest('tr').find('input[name="item"]').val(),
 							UOM : $(this).closest('tr').find('input[name="uom"]').val(),
-							LOC : $(this).closest('tr').find('input[name="loc"]').val()
+							LOC : $(this).closest('tr').find('input[name="loc"]').val(),
+							QUERY : $(this).closest('tr').find('input[name="batch"]').val()
 			            },
 			            dataType: "json",
 			            success: function(data) {
 			                if (data.batches && data.batches.length > 0) {
 			                    const selection = data.batches[0];
+//			                    alert(selection.QTY);
 			                    CheckinvqtyVal(this,selection.QTY);
 			                    $(this).closest('tr').find("input[name ='ITEMINVQTY']").val(selection.QTY);
 			                } else {
 			                    $(this).closest('tr').find('input[name="ITEMINVQTY"]').val("");
 			                }
+			                $(this).closest('tr').find('input[name="qty"]').focus();
+							$(this).closest('tr').find('input[name="qty"]').select();
 			            }.bind(this),
 			            error: function() {
 			                alert('Error fetching item data.');
@@ -3735,6 +3801,7 @@ function removeSuggestionToTable(){
 function loadItemData(obj, catalogPath, account, cost,salesuom, productId, nonStkFlag,price){
 	var numberOfDecimal = $("#numberOfDecimal").val();
 	var deductInv = $("input[name=DEDUCT_INV]").val();
+	var loccheckbox = document.querySelector('input[name="selectloc"]');
 	
 	$(obj).closest('tr').find("td:nth-child(1)").find('input[name=basecost]').val(cost);
 	$(obj).closest('tr').find("input[name=uom]").val(salesuom);
@@ -4000,10 +4067,17 @@ function loadItemData(obj, catalogPath, account, cost,salesuom, productId, nonSt
 					loadUnitPriceToolTip(obj);
 					loadItemDescToolTip(obj);
 						if(deductInv=="1") {
+					if (!loccheckbox.checked) {
 					$(obj).closest('tr').find('input[name="loc"]').typeahead('val', "'");
 					$(obj).closest('tr').find('input[name="loc"]').typeahead('val', "");
 					$(obj).closest('tr').find('input[name="loc"]').focus();
 					$(obj).closest('tr').find('input[name="loc"]').select();
+					}else{
+					$(obj).closest('tr').find('input[name="batch"]').typeahead('val', "NOBATCH");
+					$(obj).closest('tr').find('input[name="batch"]').typeahead('val', "NOBATCH");
+					$(obj).closest('tr').find('input[name="batch"]').focus();
+					$(obj).closest('tr').find('input[name="batch"]').select();
+					}
 					} else {
 					$(obj).closest('tr').find('input[name="qty"]').focus();
 					$(obj).closest('tr').find('input[name="qty"]').select();
@@ -4135,10 +4209,17 @@ function loadItemData(obj, catalogPath, account, cost,salesuom, productId, nonSt
 						loadUnitPriceToolTip(obj);
 						loadItemDescToolTip(obj);
 							if(deductInv=="1") {
+					if (!loccheckbox.checked) {
 					$(obj).closest('tr').find('input[name="loc"]').typeahead('val', "'");
 					$(obj).closest('tr').find('input[name="loc"]').typeahead('val', "");
 					$(obj).closest('tr').find('input[name="loc"]').focus();
 					$(obj).closest('tr').find('input[name="loc"]').select();
+					}else{
+					$(obj).closest('tr').find('input[name="batch"]').typeahead('val', "NOBATCH");
+					$(obj).closest('tr').find('input[name="batch"]').typeahead('val', "NOBATCH");
+					$(obj).closest('tr').find('input[name="batch"]').focus();
+					$(obj).closest('tr').find('input[name="batch"]').select();
+					}
 					} else {
 					$(obj).closest('tr').find('input[name="qty"]').focus();
 					$(obj).closest('tr').find('input[name="qty"]').select();
@@ -4270,10 +4351,17 @@ function loadItemData(obj, catalogPath, account, cost,salesuom, productId, nonSt
 						loadUnitPriceToolTip(obj);
 						loadItemDescToolTip(obj);
 							if(deductInv=="1") {
+					if (!loccheckbox.checked) {
 					$(obj).closest('tr').find('input[name="loc"]').typeahead('val', "'");
 					$(obj).closest('tr').find('input[name="loc"]').typeahead('val', "");
 					$(obj).closest('tr').find('input[name="loc"]').focus();
 					$(obj).closest('tr').find('input[name="loc"]').select();
+					}else{
+					$(obj).closest('tr').find('input[name="batch"]').typeahead('val', "NOBATCH");
+					$(obj).closest('tr').find('input[name="batch"]').typeahead('val', "NOBATCH");
+					$(obj).closest('tr').find('input[name="batch"]').focus();
+					$(obj).closest('tr').find('input[name="batch"]').select();
+					}
 					} else {
 					$(obj).closest('tr').find('input[name="qty"]').focus();
 					$(obj).closest('tr').find('input[name="qty"]').select();
@@ -5732,12 +5820,13 @@ function calculateAmount(obj){
 		
 //		alert(qty);
 //		alert(iteminvqty);
-	if(loc!=''){
+	if(loc!=''&& batch!=''){
 		if(iteminvqty=='0.000'){
 			alert('No Inventory For this Product')
 			qty = parseFloat(0).toFixed(3);
 		}else{
-			if(parseFloat(qty)  >= parseFloat(iteminvqty)){
+//			if (parseFloat(qty) >= parseFloat(iteminvqty)) {
+			if (parseFloat(qty) > parseFloat(iteminvqty)) {
 				alert('Inventory Qty is '+iteminvqty+' ')
 				qty = iteminvqty;
 			}
@@ -6422,3 +6511,46 @@ function getshipaddr(){
 		$("input[name=SHIP_EMAIL]").val($("input[name=SHIPEMAIL]").val());
 		$("select[name=SHIP_STATE]").val($("input[name=SHIPSTATE]").val());
 		}
+	
+	
+function checkAllLoc(isChk) {
+    var location= document.getElementById('LOCT').value;
+    if(location==''){
+		alert('Select location To apply');
+		document.getElementById("LOCT").focus();
+		return false;
+	}
+	
+	/*var loccheckbox = document.querySelector('input[name="selectloc"]');
+		loccheckbox.addEventListener('change', function() {
+    		calculateAmount(this);
+		});*/
+
+    var rows = document.querySelectorAll('.line-item-table tbody tr');
+    rows.forEach(function(row) {
+        var loc = row.querySelector('input[name="loc"]');
+        if (loc) {
+            if (isChk) {
+                loc.value = location;
+            } else {
+                loc.value = '';
+            }
+        }
+    });
+}
+
+function checkNOBATCH(isChk){	
+
+    var rows = document.querySelectorAll('.line-item-table tbody tr');
+    rows.forEach(function(row) {
+        var loc = row.querySelector('input[name="batch"]');
+        if (isChk) {
+            loc.value = 'NOBATCH';
+        } else {
+            loc.value = '';
+        }
+    });
+}
+
+function ClearAllLoc(isChk){
+} 		

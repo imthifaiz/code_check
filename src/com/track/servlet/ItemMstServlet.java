@@ -826,7 +826,8 @@ public class ItemMstServlet extends HttpServlet implements IMLogger {
 						
 						if(PRD_CLS_ID.length()>0) 
 						{
-							JSONObject deptJson=new PrdClassDAO().getprdclsName(plant, (String) PRD_CLS_ID); 
+//							JSONObject deptJson=new PrdClassDAO().getprdclsName(plant, (String) PRD_CLS_ID); 
+							JSONObject deptJson=new PrdClassDAO().getprdclsNames(plant, (String) PRD_CLS_ID); 
 							PRD_CLS_DESC = deptJson.getString("PRD_CLS_DESC"); 
 						 }
 						 

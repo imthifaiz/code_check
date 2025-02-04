@@ -66,10 +66,7 @@ document.form1.submit();
 	//storeInLocalStorage('OutboundOrderSalesSummary_SORT',$('#SORT').val());
 } */
 
-function changecomptype(count){
-	  $("input[name ='INTER']").val(count);
-	  onGo();
-	}
+
 function changetype(count){
 	  $("input[name ='RADIOSEARCH']").val(1);
 	  onGo();
@@ -94,6 +91,9 @@ PlantMstDAO plantMstDAO = new PlantMstDAO();
 
 String fieldDesc="";
 String USERID ="",PLANT="",ITEM = "",CUSTOMER="",PRD_DESCRIP="", QTY ="",FROM_DATE ="",  TO_DATE = "",fdate="",tdate="",RADIOSEARCH="1",LOC="",POSSEARCH="1",INTER="1";
+String[] CHILD  = request.getParameterValues("ischild");
+if(CHILD == null)
+	 CHILD = new String[0];
 String html = "",SORT="";
 int Total=0,STOCK_EXPIRE_INT=0,STOCK_CLAIM_INT=0, STOCK_FLOATING_INT=0,STOCK_SALE_INT=0;
 String SumColor="";
@@ -117,7 +117,7 @@ String ENABLE_POS = plantMstDAO.getispos(PLANT);
 POSSEARCH = StrUtils.fString(request.getParameter("POSSEARCH"));
 INTER = StrUtils.fString(request.getParameter("INTER"));
 if(INTER.equalsIgnoreCase("") || INTER.equalsIgnoreCase("null"))
-	INTER="1";
+	INTER="0";
 if(RADIOSEARCH.equalsIgnoreCase("") || RADIOSEARCH.equalsIgnoreCase("null"))
 	RADIOSEARCH="1";
 if(POSSEARCH.equalsIgnoreCase("") || POSSEARCH.equalsIgnoreCase("null"))
@@ -311,12 +311,38 @@ for(int i =0; i<curQryList.size(); i++) {
 			  <div class="col-sm-4 ac-box">
 					<label class="control-label col-sm-3" for="view" style="right: 50px;font-weight: bold;">Inter CO :</label>
 				  	<label class="radio-inline" style="right: 40px;">
-  					<input name="INTER" type="radio" value="0" id="allcomp" <% if(INTER.equals("0")){ %> checked <% }%> value="<%=StrUtils.forHTMLTag(INTER)%>" onclick="changecomptype(this.value)"> <b>EXCL</b></label>
+  					<input name="INTER" type="radio" value="0" id="allcomp" checked onclick="changecomptype('0',this.value)"> <b>EXCL</b></label>
   					<label class="radio-inline" style="right: 40px;">
-  					<input name="INTER" type="radio" value="1" id="currentcomp"  <% if(INTER.equals("1")){ %> checked <% }%>  value="<%=StrUtils.forHTMLTag(INTER)%>" onclick="changecomptype(this.value)"> <b>INCL</b></label>
+  					<input name="INTER" type="radio" value="1" id="currentcomp" onclick="changecomptype('1',this.value)"> <b>INCL</b></label>
 		</div>
 		
   		</div>
+  		
+  				<div class="row" id="pchild"><div class="col-sm-2.5">		    	 
+  		<label class="control-label col-sm-2" for="search"></label>
+  		</div><div class="col-sm-2">
+  		</div><div class="col-sm-2">
+  		</div>
+  		<div class="col-sm-4 ac-box">
+		<table class="table childcmp-table">
+								<tbody>
+									<tr>
+										<td class="text-center"><input
+											class="form-control text-left childCompany"
+											name="childCompany" type="text"
+											placeholder="Select Child Comany" maxlength="100" style="width: 200px;"></td>
+											
+											<td class="text-center"> <!-- imti added -->
+											<input name="ischildCompany" type="checkbox" onclick="isChecked(this)"  style="right: 280px;position: absolute;top: 15px;">  
+											<input name="ischild" type="hidden" value="empty">
+											</td>
+									</tr>
+								</tbody>
+							</table>
+			</div>			
+  		</div>
+  		
+						
   		<div class="row" style="padding:3px">
   		<div class="col-sm-2">
   		</div>
@@ -470,9 +496,11 @@ for(int i =0; i<curQryList.size(); i++) {
   var RADIOSEARCH = '<%=RADIOSEARCH%>';  
   var POSSEARCH = '<%=POSSEARCH%>';
   var INTER = '<%=INTER%>';    
+  var CHILD = '<%=CHILD%>';    
        <%
+       String childs = String.join(",", CHILD);
 // 	   invQryList = shipdao.getproductReorderqty(PLANT,ITEM,PRD_DESCRIP,CUSTOMER,LOC,SORT,FROM_DATE,TO_DATE,POSSEARCH);
-	   invQryList = shipdao.getAllCompProductReorderqty(PLANT,ITEM,PRD_DESCRIP,CUSTOMER,LOC,SORT,FROM_DATE,TO_DATE,POSSEARCH,INTER);
+	   invQryList = shipdao.getAllCompProductReorderqty(PLANT,ITEM,PRD_DESCRIP,CUSTOMER,LOC,SORT,FROM_DATE,TO_DATE,POSSEARCH,INTER,childs);
        if(invQryList.size() <=0)
        {
      	  cntRec =true;
@@ -1159,6 +1187,9 @@ for(int i =0; i<curQryList.size(); i++) {
  
  $(document).ready(function(){
 
+	 $(".childcmp-table").hide();  
+	  $("#pchild").hide();
+	  
     $('.Show').click(function() {
 	    $('#target').show(500);
 	    $('.ShowSingle').hide(0);
@@ -1609,6 +1640,77 @@ function showImage(src){
      });
  }
 
+ function changecomptype(vals,count){
+		var plant= '<%=PLANT%>';
+		  $("input[name ='INTER']").val(vals);
+		  if(vals==1){
+			  $(".childcmp-table").show();
+			  $("#pchild").show();
+			  setparent(plant);
+		  }else{
+			  $(".childcmp-table").hide();  
+			  $("#pchild").hide();  
+			  onGo();
+		  }
+		}
+
+ function isChecked(obj,vals){
+	 if ($(obj).is(":checked")){
+		 $(obj).closest('tr').find("input[name=ischild]").val(vals);
+	 }else{
+		 $(obj).closest('tr').find("input[name=ischild]").val('empty');
+	 }
+}
+
+ function setparent(plant){
+		var urlStr = "../Parentchildcmp/GET_CHILD_PLANT_DATA_DESC";
+		$.ajax( {
+			type : "POST",
+			url : urlStr,
+			async : true,
+			data : {
+				CMD : "GET_CHILD_PLANT_DATA_DESC",
+				parent : plant
+			},
+			dataType : "json",
+			success : function(child) {
+				//alert(JSON.stringify(data));
+				//console.log(JSON.stringify(child));
+				//console.log(child.CHILDLIST.length);
+				$(".childcmp-table tbody").html("");
+				if(child.CHILDLIST.length > 0){
+					var body="";
+					$.each(child.CHILDLIST, function( key, data ) {
+						console.log(data.CHILD_PLANT);
+						body += '<tr>';
+						body += '<td class="text-center">';
+						body += '<input class="form-control text-left" name="childCompany" type="text"  value="'+data.CHILD_PLNTDESC+'" readonly style="width: 200px;">';
+						body += '</td>';
+						body += '<td class="text-center" style="position:relative;">';
+							body += '<input name="ischildCompany" onclick="isChecked(this,this.value)" value="'+data.CHILD_PLANT+'" type="checkbox" checked style="right: 280px;position: absolute;top: 15px;" >';
+							body += '<input name="ischild" value="'+data.CHILD_PLANT+'" type="hidden" >';
+						body += '</td>';
+						body += '</tr>';
+					});
+					$(".childcmp-table tbody").append(body);
+				}else{
+					var body="";
+					body += '<tr>';
+					body += '<td>Child Company</td>';
+					body += '<td class="text-center">';
+					body += '<input class="form-control text-left childCompany" name="childCompany" type="text" style="width: 200px;">';
+					body += '</td>';
+					body += '<td class="text-center">';
+					body += '<input name="ischildCompany" onclick="isChecked(this,this.value)" type="checkbox" style="right: 280px;position: absolute;top: 15px;">';
+					body += '<input name="ischild" value="empty" type="hidden">';
+					body += '</td>';
+					body += '</tr>';
+					$(".childcmp-table tbody").append(body);
+				}
+			}
+		});
+	}
+	
  function loadPurchaseData(item) {
 	 var numberOfDecimal = '<%=numberOfDecimal%>';
 	 var fdate = '<%=FROM_DATE%>'; 

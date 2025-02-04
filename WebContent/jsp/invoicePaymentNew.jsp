@@ -203,6 +203,11 @@ for(int i =0; i<curQryList.size(); i++) {
     right: -12%;
     top: 15px;
 }
+
+tfoot{
+    width: calc( 100% - 1em );
+    font-weight: bold;
+}
 </style>
 <div class="container-fluid m-t-20">
 	 <div>
@@ -348,6 +353,11 @@ for(int i =0; i<curQryList.size(); i++) {
 						
 			</div>	
 			
+			<div class="col-lg-4 form-group">
+						 <input type="checkbox" id="paycaltype" name="paycaltype">
+  						 <label for="paycaltype">Amount Calculated By Bill AMount</label><br>
+					</div>
+			
 		</div>
 		<div class="form-group">
 			<label class="control-label col-form-label col-sm-2 required">Deposit To</label>
@@ -491,6 +501,19 @@ for(int i =0; i<curQryList.size(); i++) {
 					<tbody id="invoicelisttablebody">
 						
 					</tbody>
+					<tfoot>
+									<tr>
+										<td></td>
+										<td class='text-center'>Total</td>
+										<td></td>
+										<td class="text-center tbillamt"></td>
+										<td></td>
+										<td class="text-center tcbillamt"></td>
+										<td class="text-center tbilldue"></td>
+										<td class="text-center tpayamt"></td>
+										<td></td>
+									</tr>
+								</tfoot>
 				</table>
 			</div>
 		</div>

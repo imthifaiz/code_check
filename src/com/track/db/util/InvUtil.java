@@ -3321,14 +3321,16 @@ ConvertUnitCostToOrderCurrency2 = " (CAST(ISNULL("
 //sql2.append(" / CAST((SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID=ISNULL(P.CURRENCYID,'"+baseCurrency+"')) AS DECIMAL(20,5)) * RECQTY");
 //sql2.append(" AS DECIMAL(20,5)) AS UNITCOST ");
 //sql2.append(" from ["+plant+"_RECVDET] R LEFT JOIN ["+plant+"_POHDR] P ON R.PONO = P.PONO LEFT JOIN ["+plant+"_PODET] T ON T.PONO = P.PONO AND R.ITEM=T.ITEM where R.item =b.ITEM AND TRAN_TYPE IN('IB','GOODSRECEIPTWITHBATCH') " + sRecvCondition +"  ) A )  ");
-StringBuffer sql2 = new StringBuffer(" ((SELECT CASE WHEN  (SELECT COUNT(CURRENCYID) FROM ["+plant+"_RECVDET] R WHERE ITEM=B.ITEM AND CURRENCYID IS NOT NULL AND TRAN_TYPE IN('IB','GOODSRECEIPTWITHBATCH','INVENTORYUPLOAD','DE-KITTING','KITTING') "+sRecvCondition+")>0  THEN ");
-sql2.append(" (Select ISNULL(CAST(ISNULL(SUM(A.UNITCOST),0)/SUM(A.RECQTY) AS DECIMAL(20,5)),0) AS AVERGAGE_COST from ");
-sql2.append(" (select RECQTY,CAST("+ConvertUnitCostToOrderCurrency+" * CAST((SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')AS DECIMAL(20,5)) ");
-sql2.append(" / CAST((SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID=ISNULL(P.CURRENCYID,'"+baseCurrency+"')) AS DECIMAL(20,5)) ");
-sql2.append("   * RECQTY AS DECIMAL(20,5)) AS UNITCOST ");
-sql2.append("   from ["+plant+"_RECVDET] R LEFT JOIN ["+plant+"_POHDR] P ON R.PONO = P.PONO LEFT JOIN ["+plant+"_PODET] T ON T.PONO = P.PONO AND R.ITEM=T.ITEM where R.item =b.ITEM AND ISNULL(R.UNITCOST,0) != 0 AND TRAN_TYPE IN('IB','GOODSRECEIPTWITHBATCH','INVENTORYUPLOAD','DE-KITTING','KITTING') " + sRecvCondition +"  ) A )  ");
-/////////sql2.append(" ELSE CAST(((B.COST)*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,5))   END ) AS COST_PC   ");
-sql2.append(" ELSE (SELECT CASE WHEN (SELECT COUNT(*) FROM ["+plant+"_RECVDET] WHERE ITEM=b.ITEM AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING') )>0 THEN (SELECT (SUM(UNITCOST)) FROM ["+plant+"_RECVDET] C where item = b.item and c.BATCH = b.BATCH and c.LOC=b.LOC AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING')) ELSE CAST(((B.COST)*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,5))   END)   END )/ISNULL((select u.QPUOM from ["+plant+"_UOM] u where u.UOM=b.PURCHASEUOM),1)) AS COST_PC   ");
+
+//imti commented cost_pc
+//StringBuffer sql2 = new StringBuffer(" ((SELECT CASE WHEN  (SELECT COUNT(CURRENCYID) FROM ["+plant+"_RECVDET] R WHERE ITEM=B.ITEM AND CURRENCYID IS NOT NULL AND TRAN_TYPE IN('IB','GOODSRECEIPTWITHBATCH','INVENTORYUPLOAD','DE-KITTING','KITTING') "+sRecvCondition+")>0  THEN ");
+//sql2.append(" (Select ISNULL(CAST(ISNULL(SUM(A.UNITCOST),0)/SUM(A.RECQTY) AS DECIMAL(20,5)),0) AS AVERGAGE_COST from ");
+//sql2.append(" (select RECQTY,CAST("+ConvertUnitCostToOrderCurrency+" * CAST((SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')AS DECIMAL(20,5)) ");
+//sql2.append(" / CAST((SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID=ISNULL(P.CURRENCYID,'"+baseCurrency+"')) AS DECIMAL(20,5)) ");
+//sql2.append("   * RECQTY AS DECIMAL(20,5)) AS UNITCOST ");
+//sql2.append("   from ["+plant+"_RECVDET] R LEFT JOIN ["+plant+"_POHDR] P ON R.PONO = P.PONO LEFT JOIN ["+plant+"_PODET] T ON T.PONO = P.PONO AND R.ITEM=T.ITEM where R.item =b.ITEM AND ISNULL(R.UNITCOST,0) != 0 AND TRAN_TYPE IN('IB','GOODSRECEIPTWITHBATCH','INVENTORYUPLOAD','DE-KITTING','KITTING') " + sRecvCondition +"  ) A )  ");
+///////////sql2.append(" ELSE CAST(((B.COST)*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,5))   END ) AS COST_PC   ");
+//sql2.append(" ELSE (SELECT CASE WHEN (SELECT COUNT(*) FROM ["+plant+"_RECVDET] WHERE ITEM=b.ITEM AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING') )>0 THEN (SELECT (SUM(UNITCOST)) FROM ["+plant+"_RECVDET] C where item = b.item and c.BATCH = b.BATCH and c.LOC=b.LOC AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING')) ELSE CAST(((B.COST)*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,5))   END)   END )/ISNULL((select u.QPUOM from ["+plant+"_UOM] u where u.UOM=b.PURCHASEUOM),1)) AS COST_PC   ");
 
     
     try {
@@ -3339,7 +3341,8 @@ sql2.append(" ELSE (SELECT CASE WHEN (SELECT COUNT(*) FROM ["+plant+"_RECVDET] W
             // Added stkuom to the query
            //---Modified by Bruhan on Feb 27 2014, Description: To display location data's in uppercase
              String aQuery = "SELECT *,case when 0<ISNULL(UOMQTY,0) then (convert(float,(QTY/UOMQTY))) else QTY end INVUOMQTY,convert(float,QTY) as STKQTY,0 as BILLED_QTY,0 as UNBILLED_QTY,"
-             		+ ""+sql.toString()+","+sql2.toString()+" FROM (select b.PURCHASEUOM,a.ITEM,b.ITEMDESC,b.prd_cls_id as PRDCLSID,isnull(b.prd_dept_id,'') as PRD_DEPT_ID,isnull(b.prd_brand_id,'') as PRD_BRAND_ID,ISNULL((select ISNULL(u.CUOM,u.UOM) from "+ plant +"_UOM u where u.UOM=(case when '"+UOM+"'='' then ISNULL(b.INVENTORYUOM,'') else '"+UOM+"' end)),'') as STKUOM,b.itemtype as ITEMTYPE,UPPER(a.LOC) LOC,a.UserFld4 as BATCH, (sum(QTY)) QTY,ISNULL(CAST(((sum(b.UNITPRICE))*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,4)),0) as LIST_PRICE,sum(b.COST) as COST," +INVENTORYUOM+","+ 
+//             		+ ""+sql.toString()+","+sql2.toString()+" FROM (select b.PURCHASEUOM,a.ITEM,b.ITEMDESC,b.prd_cls_id as PRDCLSID,isnull(b.prd_dept_id,'') as PRD_DEPT_ID,isnull(b.prd_brand_id,'') as PRD_BRAND_ID,ISNULL((select ISNULL(u.CUOM,u.UOM) from "+ plant +"_UOM u where u.UOM=(case when '"+UOM+"'='' then ISNULL(b.INVENTORYUOM,'') else '"+UOM+"' end)),'') as STKUOM,b.itemtype as ITEMTYPE,UPPER(a.LOC) LOC,a.UserFld4 as BATCH, (sum(QTY)) QTY,ISNULL(CAST(((sum(b.UNITPRICE))*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,4)),0) as LIST_PRICE,sum(b.COST) as COST," +INVENTORYUOM+","+ 
+             		+ ""+sql.toString()+" FROM (select b.PURCHASEUOM,a.ITEM,b.ITEMDESC,b.prd_cls_id as PRDCLSID,isnull(b.prd_dept_id,'') as PRD_DEPT_ID,isnull(b.prd_brand_id,'') as PRD_BRAND_ID,ISNULL((select ISNULL(u.CUOM,u.UOM) from "+ plant +"_UOM u where u.UOM=(case when '"+UOM+"'='' then ISNULL(b.INVENTORYUOM,'') else '"+UOM+"' end)),'') as STKUOM,b.itemtype as ITEMTYPE,UPPER(a.LOC) LOC,a.UserFld4 as BATCH, (sum(QTY)) QTY,ISNULL(CAST(((sum(b.UNITPRICE))*(SELECT CURRENCYUSEQT  FROM ["+plant+"_CURRENCYMST] WHERE  CURRENCYID='"+currencyid+"')) AS DECIMAL(20,4)),0) as LIST_PRICE,sum(b.COST) as COST," +INVENTORYUOM+","+ 
              		" ISNULL((select u.QPUOM from [" +plant+ "_UOM] u where u.UOM="+tableUOM+"),1) as UOMQTY    from "
                             + "["
                             + plant

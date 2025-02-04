@@ -688,7 +688,7 @@ if (tableInventorySummary){
 				"contentType": "application/x-www-form-urlencoded; charset=utf-8",
 		        "dataType": "json",
 		        "dataSrc": function(data){
-		        	if(typeof data.items[0].item === 'undefined'){
+		        	if(typeof data.items[0].pono === 'undefined'){
 		        		return [];
 		        	}else {for(var dataIndex = 0; dataIndex < data.items.length; dataIndex ++){
 		        			data.items[dataIndex]['Index'] = dataIndex + 1;

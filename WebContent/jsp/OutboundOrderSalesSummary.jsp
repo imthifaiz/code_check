@@ -598,9 +598,9 @@ if (arrCust.size() > 0) {
                 totalCostValue = StrUtils.addZeroes(Totcost, numberOfDecimal);
                 
                 //added average cost in sales order sales summary report
-//              String convertedcost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(PLANT,"",(String)lineArr.get("NAME"));
-//              double sconvertedcost=Double.parseDouble(convertedcost);
-//              convertedcost = StrUtils.addZeroes(sconvertedcost, numberOfDecimal);
+//                 String convertedcost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(PLANT,"",(String)lineArr.get("NAME"));
+//                 double sconvertedcost=Double.parseDouble(convertedcost);
+//                 convertedcost = StrUtils.addZeroes(sconvertedcost, numberOfDecimal);
                           
           %>
           var totQty = <%=totQtyVal%>;

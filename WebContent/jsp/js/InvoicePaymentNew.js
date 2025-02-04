@@ -6,10 +6,6 @@ function paidamountchanged(invoiceamt,paidnode)
 	var numberOfDecimal = document.getElementById("numberOfDecimal").value;
 	var invoiceamount=parseFloat(invoiceamt);
 	var paidamount=parseFloat(paidnode.value);
-		if(isNaN(paidamount)){
-		paidamount = "0";
-	}
-
 	if(paidamount>invoiceamount)
 		{
 			alert("Please enter amount equal/less than invoice amount");
@@ -25,33 +21,7 @@ function paidamountchanged(invoiceamt,paidnode)
 			alert("Please enter amount equal/less than received amount");
 			paidnode.value=parseFloat("0").toFixed(numberOfDecimal);
 		}*/
-		
-		if ($('#paycaltype').is(":checked")){
-  		autocalculatebasecurrency(parseFloat(paidamounttotal).toFixed(numberOfDecimal));
-	}else{
-		if(paidamounttotal>amountreceived)
-			{
-				var difamt = parseFloat(paidnode.value)-(parseFloat(paidamounttotal)-parseFloat(amountreceived))
-				alert("Please enter amount equal/less than received amount.");
-				paidnode.value=parseFloat(difamt).toFixed(numberOfDecimal);
-			}
-	}
-	
 	callTotalDetail(numberOfDecimal);
-}
-
-function autocalculatebasecurrency(amountnode){
-	
-	var numberOfDecimal = document.getElementById("numberOfDecimal").value;	
-	var baseCurrency = document.getElementById("CURRENCYUSEQT").value;
-	$("input[name ='amount_Curr']").val(amountnode);
-	$("input[name ='conv_amount_Curr']").val(amountnode);
-	var baseamount=parseFloat(amountnode) / parseFloat(baseCurrency);
-	baseamount=parseFloat(baseamount).toFixed(numberOfDecimal);
-	
-	$("input[name ='amount']").val(baseamount);
-	calculateTotalbasecurrency(baseamount);
-
 }
 
 function v_amountchanged(amountnode)
@@ -70,8 +40,6 @@ function v_amountchanged(amountnode)
 		    $(this).val(parseFloat("0.0").toFixed(numberOfDecimal));
 		});
 		v_calculatetotal();
-		
-		//v_calculatecurrency();
 		
 	}else{
 		$("input[name ='v_amount']").val(parseFloat("0").toFixed(numberOfDecimal));
@@ -102,8 +70,6 @@ function amountchanged(amountnode)
 		});
 		calculatetotal();
 		
-		//calculatecurrency();
-		
 	}else{
 		$("input[name ='amount']").val('0');
 		document.getElementById('amountreceived').innerHTML='';
@@ -128,25 +94,15 @@ function callTotalDetail(numberOfDecimal)
 }
 function totalpaidamount()
 {
-	var numberOfDecimal = $("#numberOfDecimal").val();
 	var x = document.getElementsByClassName("paymentamountclass");
 	var i;
 	var totalamount=0;
 	var amount;
-	var billamt =0;
 	for (i = 0; i < x.length; i++) {
 		amount=parseFloat(x[i].value);
-		totalamount+=parseFloat(amount);
-		billamt+=parseFloat(amount);
+		totalamount+=amount;
 	}
-//	$('input[name = "imti"]').each(function() {
-//		amount=$(this).val();
-//		totalamount+=parseFloat(amount);
-//		billamt+=parseFloat(amount);
-//	});
-	$("td.tpayamt").html(parseFloat(totalamount).toFixed(numberOfDecimal));
-//	calculatebasecurrency_new(totalamount);
-	calculatebasecurrency_new($("input[name ='amount_Curr']").val());
+	calculatebasecurrency_new(totalamount);
 	return totalamount;
 }
 function customerchanged()
@@ -169,9 +125,6 @@ function customerchanged()
 	        	$("#invoicelisttablebody").html("");
 	        	var json = $.parseJSON(data);
 	        	invoiceList=json.custlist;
-	        	var tbillamt = 0;
-	        	var tcbillamt = 0;
-	        	var tbilldue = 0;
 	        	if(invoiceList.length>0)
         		{
 	        		$.each(json.custlist,function(i,v){
@@ -212,12 +165,10 @@ function customerchanged()
 					        				"<td class='text-center'>"+balanceamount+"</td>";
 					        		if(obj.CREDIT > 0){
 					        			tableapp += "<td class='text-center'><input type='text' style='border:1px solid #eee' disabled class='paymentamountclass' id="+key+" name="+key+" value='"+zeroshow+"' onchange='paidamountchanged("+balanceamount+",this)' onkeypress='return isNumberKey(event,this,4)'></input></td>";
-//					        			tableapp += "<td class='text-center'><input type='text' style='border:1px solid #eee' disabled class='paymentamountclass' id="+key+" name='imti' value='"+zeroshow+"' onchange='paidamountchanged("+balanceamount+",this)' onkeypress='return isNumberKey(event,this,4)'></input></td>";
 					        			tableapp +=	'<td class="text-center"><button type="button" class="btn btn-default acredits" onClick="aCredit('+v.ID+',\''+v.DONO+'\',\''+v.CUSTNO+'\',\''+v.INVOICE+'\',\''+balanceamount+'\',\''+v.CURRENCYID+'\',\''+v.CURRENCYUSEQT+'\')" id="applycrd" data-toggle="modal" data-target="#applycredit">Apply Credits</button></td>';
 					        			tableapp +=	"</tr>";
 					        		}else{
 					        			tableapp += "<td class='text-center'><input type='text' style='border:1px solid #eee' class='paymentamountclass' id="+key+" name="+key+" value='"+zeroshow+"' onchange='paidamountchanged("+balanceamount+",this)' onkeypress='return isNumberKey(event,this,4)'></input></td>";
-//					        			tableapp += "<td class='text-center'><input type='text' style='border:1px solid #eee' class='paymentamountclass' id="+key+" name='imti' value='"+zeroshow+"' onchange='paidamountchanged("+balanceamount+",this)' onkeypress='return isNumberKey(event,this,4)'></input></td>";
 					        			if(obj.ALLCREDIT > 0){
 					        				tableapp +=	'<td class="text-center"><button type="button" class="btn btn-default acredits" onClick="aCredit('+v.ID+',\''+v.DONO+'\',\''+v.CUSTNO+'\',\''+v.INVOICE+'\',\''+balanceamount+'\',\''+v.CURRENCYID+'\',\''+v.CURRENCYUSEQT+'\')"  data-toggle="modal" data-target="#applycredit">Apply Credits</button></td>';
 					        			}else{
@@ -229,18 +180,6 @@ function customerchanged()
 			        		
 			        		
 					        		$("#invoicelisttablebody").append(tableapp);
-					        		
-					        		tbillamt = parseFloat(tbillamt)+parseFloat(covunitCostValue);
-						        	tcbillamt = parseFloat(tcbillamt)+parseFloat(amount);
-						        	tbilldue = parseFloat(tbilldue)+parseFloat(balanceamount);
-						        	
-						        	/*$("td.tbillamt").html("");
-						        	$("td.tcbillamt").html("");
-						        	$("td.tbilldue").html("");*/
-						        	
-						        	$("td.tbillamt").html(parseFloat(tbillamt).toFixed(numberOfDecimal));
-						        	$("td.tcbillamt").html(parseFloat(tcbillamt).toFixed(numberOfDecimal));
-						        	$("td.tbilldue").html(parseFloat(tbilldue).toFixed(numberOfDecimal));
 	        		        	}
 	        		        }
 	        			});
@@ -252,12 +191,9 @@ function customerchanged()
 	        	else
         		{
         			$("#invoicelisttablebody").html("");
-        			$("td.tbillamt").html(parseFloat(tbillamt).toFixed(numberOfDecimal));
-	    	        	$("td.tcbillamt").html(parseFloat(tcbillamt).toFixed(numberOfDecimal));
-	    	        	$("td.tbilldue").html(parseFloat(tbilldue).toFixed(numberOfDecimal));
         		}
 	        	
-//	        	callTotalDetail(numberOfDecimal);
+	        	callTotalDetail(numberOfDecimal);
 	        	sortTable();
 	            
 	        },
@@ -1477,8 +1413,6 @@ $("#v_CURRENCY").typeahead({
 
 function validatePayment(){
 	
-	//calculatecurrency();
-	
 	var bankCharges = document.form1.bankcharges.value;
 	var paymentmode = document.form1.payment_mode.value;
 	var depositto = document.form1.paid_through_account_name.value;
@@ -1593,8 +1527,6 @@ function validatePayment(){
 }
 
 function v_validatePayment(){
-	
-	//v_calculatecurrency();
 	
 	var bankCharges = document.v_form1.v_bankcharges.value;
 	var paymentmode = document.v_form1.v_payment_mode.value;
@@ -2605,31 +2537,6 @@ function getvoucher_Currencyid(CURRENCYID,CURRENCYUSEQT){
 	$("input[name ='v_amount_Curr']").val(baseamount);
     
 }
-/*function calculatecurrency(){
-	
-var numberOfDecimal = document.getElementById("numberOfDecimal").value;	
-var baseCurrency = document.getElementById("CURRENCYUSEQT").value;
-var amountnode = document.getElementById("amount_paid").value;
-
-var baseamount=parseFloat(amountnode) * parseFloat(baseCurrency);
-$("input[name ='conv_amount_Curr']").val(baseamount);
-baseamount=parseFloat(baseamount).toFixed(numberOfDecimal);
-$("input[name ='amoun_Curr']").val(baseamount);
-
-}
-function v_calculatecurrency(){
-	
-	var numberOfDecimal = document.getElementById("numberOfDecimal").value;	
-	var baseCurrency = document.getElementById("v_CURRENCYUSEQT").value;
-	var amountnode = document.getElementById("v_amount").value;
-
-	var baseamount=parseFloat(amountnode) * parseFloat(baseCurrency);
-	$("input[name ='v_conv_amount_Curr']").val(baseamount);
-	baseamount=parseFloat(baseamount).toFixed(numberOfDecimal);
-	$("input[name ='v_amount_Curr']").val(baseamount);
-	
-
-}*/
 function currencychanged(data)
 {
 	//calculatecurrency();
@@ -2747,15 +2654,15 @@ function calculatebasecurrency_new(data){
 	var numberOfDecimal = document.getElementById("numberOfDecimal").value;	
 	var baseCurrency = document.getElementById("CURRENCYUSEQT").value;
 	
-	$("input[name ='amount_Curr']").val(parseFloat(data).toFixed(numberOfDecimal));
+	/*$("input[name ='amount_paid_Curr']").val(parseFloat(data).toFixed(numberOfDecimal));
 	var amountnode = data;
-	$("input[name ='conv_amount_Curr']").val(amountnode);
+	$("input[name ='conv_amount_paid_Curr']").val(amountnode);
 	var baseamount=parseFloat(amountnode) / parseFloat(baseCurrency);
 	baseamount=parseFloat(baseamount).toFixed(numberOfDecimal);
-	$("input[name ='amount']").val(baseamount);
-	calculateTotalbasecurrency_new(baseamount);
+	$("input[name ='amount_paid']").val(baseamount);
+	calculateTotalbasecurrency_new(baseamount);*/
 	
-	/*$("input[name ='amount']").val(parseFloat(data).toFixed(numberOfDecimal));
+	$("input[name ='amount']").val(parseFloat(data).toFixed(numberOfDecimal));
 	var amountnode = data;
 	var baseamount=parseFloat(amountnode) * parseFloat(baseCurrency);
 	baseamount=parseFloat(baseamount).toFixed(numberOfDecimal);
@@ -2763,7 +2670,7 @@ function calculatebasecurrency_new(data){
 	$("input[name ='conv_amount_Curr']").val(baseamount);
 	$("input[name ='amount_Curr']").val(baseamount);
 	
-	calculateTotalbasecurrency_new(parseFloat(data).toFixed(numberOfDecimal));*/
+	calculateTotalbasecurrency_new(parseFloat(data).toFixed(numberOfDecimal));
 	
 
 }

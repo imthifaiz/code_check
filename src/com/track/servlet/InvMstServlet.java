@@ -876,16 +876,10 @@ public class InvMstServlet extends HttpServlet implements IMLogger {
                                 }
                                 
                                 String costpccheck = "0.0";
-                                if((String)lineArr.get("AVERAGE_COST") == null) {
+                                if((String)lineArr.get("COST_PC") == null) {
                                 }else {
-                                	costpccheck = (String)lineArr.get("AVERAGE_COST");
+                                	costpccheck = (String)lineArr.get("COST_PC");
                                 }
-//                                
-//                                String costpccheck = "0.0";
-//                                if((String)lineArr.get("COST_PC") == null) {
-//                                }else {
-//                                	costpccheck = (String)lineArr.get("COST_PC");
-//                                }
                                
                                 sumprdQty = sumprdQty + Double.parseDouble((String)lineArr.get("QTY"));
                                 double avgCost =Double.parseDouble(avgcostcheck);

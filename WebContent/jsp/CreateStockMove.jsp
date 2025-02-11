@@ -720,7 +720,7 @@ a:focus {
 			
 			<div class="col-sm-12 txn-buttons">
 						<div class="dropup">
-					    <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">Save as Open
+					    <button class="btn btn-success dropdown-toggle" id="stkmovebtn" type="button" data-toggle="dropdown">Save as Open
 					    <span class="caret"></span></button>
 					    <ul class="dropdown-menu">
 					      <li><a id="addbtn" onclick="return addaction(1,<%=istranidExist%>)">Save as Open</a></li>

@@ -315,9 +315,11 @@ boolean irevexist = journalDAO.getisexistTridandTrtype(plant, journalid, "CONTRA
 						//custDAO.getCustName(aPlant, journalDetail.get)
 						String accountcode = coaDAO.GetAccountCodeByName(journalDetail.getACCOUNT_NAME(), plant);
 						String dec = journalDetail.getDESCRIPTION();
+						if(!dec.equalsIgnoreCase("--")){
 						if(dec.contains("-")){
 							String[] decInfo = dec.split("-");
 							dec = decInfo[0];
+						}
 						}
 			  		%>
 				  		<tr>

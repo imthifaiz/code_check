@@ -35,6 +35,9 @@
 				        		<input type="hidden" name="POUNITCOST" value=""> 
 				        		<input type="hidden" name="POSUPID" value=""> 
 				        		<input type="hidden" name="PONUMBEROFDECIMAL" value=""> 
+				        		<input type="hidden" name="frmdate" value=""> 
+				        		<input type="hidden" name="todate" value=""> 
+				        		<input type="hidden" name="cust" value=""> 
 				        		
 					   		</div>
 			        	</div>

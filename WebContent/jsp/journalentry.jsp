@@ -123,7 +123,7 @@ curDate = _dateUtils.getDate();
 		</div>
 		<div class="form-group">	
 			<div class="col-sm-2">
-				<label class="control-label col-form-label">Reference#</label>
+				<label class="control-label col-form-label required">Reference#</label>
 			</div>
 			<div class="col-sm-4">
 				<input type="text" class="form-control" id="reference" autocomplete="off" name="reference">
@@ -782,6 +782,7 @@ function journalcredit(node)
 	$("#btnBillOpen").click(function(){
 		var totdebitamt= parseFloat($('#total-debitamount').html());
 		var totcreditamt=parseFloat($('#total-creditamount').html());
+		var reference = document.form1.reference.value;
 		var isItemValid = true;
 		$("#sub_total").val(totdebitamt);
 		$("#total_amount").val(totcreditamt);
@@ -790,6 +791,12 @@ function journalcredit(node)
 		var ValidNumber   = document.form1.ValidNumber.value;
 		   if(ValidNumber != "") {alert("You have reached the limit of "+ValidNumber+" journal's you can create"); return false; }
 		//RESVI END
+		
+			if(reference == ""){
+				alert("Please Enter Reference.");
+				$("input[name ='reference']").focus();
+				return false;
+			}	
 		
 		$("input[name ='journal_account_name']").each(function() {
 		    if($(this).val() == ""){	    	

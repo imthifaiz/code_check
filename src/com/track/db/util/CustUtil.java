@@ -70,6 +70,7 @@ public class CustUtil {
 				accountHt.put("SUBACCOUNTNAME", "");
 				accountHt.put("OPENINGBALANCE", "");
 				accountHt.put("OPENINGBALANCEDATE", "");
+				accountHt.put("ACCOUNTGROUPTYPEID", "2");
 				accountHt.put("CRAT", dateutils.getDateTime());
 				accountHt.put("CRBY", ht.get("CRBY").toString());
 				accountHt.put("UPAT", dateutils.getDateTime());
@@ -124,6 +125,7 @@ public class CustUtil {
 				accountHt.put("SUBACCOUNTNAME", "");
 				accountHt.put("OPENINGBALANCE", "");
 				accountHt.put("OPENINGBALANCEDATE", "");
+				accountHt.put("ACCOUNTGROUPTYPEID", "3");
 				accountHt.put("CRAT", dateutils.getDateTime());
 				accountHt.put("CRBY", ht.get("CRBY").toString());
 				accountHt.put("UPAT", dateutils.getDateTime());

@@ -74,6 +74,17 @@ public class CoaUtil {
 		return listQry;
 	}
 	
+	public List<Map<String, String>> getAccountType1(String plant) {
+		
+		List<Map<String, String>> listQry = null;
+		try {
+			listQry = coaDao.selectAccountType1(plant);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listQry;
+	}
+	
 	public List<Map<String, String>> getAccountDetailType(String plant, String group, String type) {
 
 		List<Map<String, String>> listQry = null;
@@ -106,10 +117,10 @@ public class CoaUtil {
 
 	public boolean updateTable(String plant, String accountId, String accountName, String account_type,
 			String account_det_type, String description, String account_is_sub, String account_subAcct,
-			String account_balance, String account_balanceDate,String landedcost,String account_is_exp_gst) {
+			String account_balance, String account_balanceDate,String landedcost,String account_is_exp_gst,String acctypeid1) {
 		boolean accountupdated = false;
 		try {
-			accountupdated = coaDao.updateTable(plant, accountId, accountName, account_type, account_det_type, description, account_is_sub, account_subAcct, account_balance, account_balanceDate,landedcost,account_is_exp_gst);
+			accountupdated = coaDao.updateTable(plant, accountId, accountName, account_type, account_det_type, description, account_is_sub, account_subAcct, account_balance, account_balanceDate,landedcost,account_is_exp_gst,acctypeid1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -132,6 +132,13 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 			response.getWriter().write(jsonObjectResult.toString());
 			response.getWriter().flush();
 			response.getWriter().close();
+		} else if (action.equalsIgnoreCase("getAccountType1")) {
+			jsonObjectResult = this.getAccountType1(request, response);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(jsonObjectResult.toString());
+			response.getWriter().flush();
+			response.getWriter().close();
 		} else if (action.equalsIgnoreCase("checkAccountCode")) {
 			jsonObjectResult = this.getcheckAccountCode(request, response);
 			response.setContentType("application/json");
@@ -359,6 +366,7 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 		String plant = StrUtils.fString((String) request.getSession().getAttribute("PLANT")).trim();
 		String username = StrUtils.fString((String) request.getSession().getAttribute("LOGIN_USER")).trim();
 		String accountType = StrUtils.fString(request.getParameter("acc_type"));
+		String accountType1 = StrUtils.fString(request.getParameter("acc_type1"));
 		String accountDetType = StrUtils.fString(request.getParameter("acc_det_type_id"));
 		String accountName = StrUtils.fString(request.getParameter("acc_name"));
 		String description = StrUtils.fString(request.getParameter("acc_desc"));
@@ -392,12 +400,19 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 		DateUtils dateutils = new DateUtils();
 		boolean accountCreated = false;
 		String result = "";
+		String acctypeid1="1";
+		if (!accountType1.equalsIgnoreCase(""))
+		{
+			JSONObject coaJson = coaDAO.getAccountType1ByName(plant, accountType1);
+			acctypeid1=(String) coaJson.getString("id");
+		}
 		JSONObject resultJson = new JSONObject();
 		Hashtable<String, String> accountHt = new Hashtable<>();
 		accountHt.put("PLANT", plant);
 		accountHt.put("ACCOUNTTYPE", accountType);
 		accountHt.put("ACCOUNTDETAILTYPE", accountDetType);
 		accountHt.put("ACCOUNT_NAME", accountName);
+		accountHt.put("ACCOUNTGROUPTYPEID", acctypeid1);
 		accountHt.put("DESCRIPTION", description);
 		accountHt.put("ISSUBACCOUNT", isSubAccount);
 		accountHt.put("ISEXPENSEGST", isExpGstAccount);
@@ -589,6 +604,7 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 		String accountId = StrUtils.fString((String) request.getParameter("acc_id"));
 		String description = StrUtils.fString((String) request.getParameter("eacc_desc"));
 		String account_type = StrUtils.fString((String) request.getParameter("eacc_type"));
+		String account_type1 = StrUtils.fString((String) request.getParameter("eacc_type1"));
 		String account_det_type = StrUtils.fString((String) request.getParameter("eacc_det_type_id"));
 		String accountName = StrUtils.fString((String) request.getParameter("eacc_name"));
 		String account_is_sub = StrUtils.fString((String) request.getParameter("eacc_is_sub"));
@@ -620,11 +636,20 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 		JSONObject resultJson = new JSONObject();
 		UserTransaction ut = null;
 		try {
+			
+			String acctypeid1="1";
+			if (!account_type1.equalsIgnoreCase(""))
+			{
+				JSONObject coaJson = coaDAO.getAccountType1ByName(plant, account_type1);
+				acctypeid1=(String) coaJson.getString("id");
+			}
+			
 			ut = DbBean.getUserTranaction();
 			ut.begin();
 			Hashtable<String, String> ht = new Hashtable<String, String>();
 			ht.put("PLANT", plant);
 			ht.put("ACCOUNTTYPE", account_type);
+			ht.put("ACCOUNTGROUPTYPEID", acctypeid1);
 			ht.put("ACCOUNTDETAILTYPE", account_det_type);
 			ht.put("ACCOUNT_NAME", accountName);
 			ht.put("ISSUBACCOUNT", account_is_sub);
@@ -642,7 +667,7 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 			}
 			if (!chkaccount)
 				accountupdated = coaUtil.updateTable(plant, accountId, accountName, account_type, account_det_type,
-						description, account_is_sub, account_subAcct, account_balance, account_balanceDate,landedcost,account_is_exp_gst);
+						description, account_is_sub, account_subAcct, account_balance, account_balanceDate,landedcost,account_is_exp_gst,acctypeid1);
 			
 			if (accountupdated) {
 				
@@ -929,6 +954,41 @@ public class ChartOfAccountServlet extends HttpServlet implements IMLogger {
 		resultJson.put("results", groupArray);
 
 		return resultJson;
+	}
+
+	public JSONObject getAccountType1(HttpServletRequest request, HttpServletResponse response) {
+		
+		String plant = StrUtils.fString((String) request.getSession().getAttribute("PLANT")).trim();
+		JSONObject resultJson = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		JSONArray jsonArrayErr = new JSONArray();
+		CoaUtil coaUtil = new CoaUtil();
+		List<Map<String, String>> listQry = coaUtil.getAccountType1(plant);
+		
+		if (listQry.size() > 0) {
+			for (int i = 0; i < listQry.size(); i++) {
+				Map<String, String> m = listQry.get(i);
+				JSONObject resultJsonInt = new JSONObject();
+				resultJsonInt.put("ACCOUNTTYPE", m.get("ACCOUNTTYPE"));
+				resultJsonInt.put("ID", StrUtils.fString((String) m.get("ID")));
+				jsonArray.add(resultJsonInt);
+			}
+		resultJson.put("groups", jsonArray);
+		JSONObject resultJsonInt = new JSONObject();
+		resultJsonInt.put("ERROR_MESSAGE", "NO ERRORS!");
+		resultJsonInt.put("ERROR_CODE", "100");
+		jsonArrayErr.add(resultJsonInt);
+		resultJson.put("errors", jsonArrayErr);
+	} else {
+		JSONObject resultJsonInt = new JSONObject();
+		resultJsonInt.put("ERROR_MESSAGE", "NO ORDER RECORD FOUND!");
+		resultJsonInt.put("ERROR_CODE", "99");
+		jsonArrayErr.add(resultJsonInt);
+		jsonArray.add("");
+		resultJson.put("errors", jsonArrayErr);
+	}
+		return resultJson;
+
 	}
 
 	

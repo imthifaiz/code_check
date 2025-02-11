@@ -330,7 +330,7 @@ public class DynamicProductServlets extends HttpServlet implements IMLogger {
                 String inLoc =(String)lineArr.get("LOC");
                 String inUom =(String)lineArr.get("INVENTORYUOM");
                 String inStkqty =(String)lineArr.get("QTY");
-                
+                htInvMst.clear();
                 htInvMst.put(IDBConstants.PLANT, PLANT);
     			htInvMst.put(IDBConstants.ITEM, inItem);
     			htInvMst.put("BATCH", inBatch);
@@ -340,8 +340,6 @@ public class DynamicProductServlets extends HttpServlet implements IMLogger {
     			flag = new StockTakeDAO().isExisit(htInvMst, "");
     			
     			if(!flag) {
-    				
-				htInvMst.clear();
 				htInvMst.clear();
 				htInvMst.put(IDBConstants.PLANT, PLANT);
 				htInvMst.put(IDBConstants.ITEM, inItem);

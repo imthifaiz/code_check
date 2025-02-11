@@ -27,6 +27,15 @@
 							</div>
 					</div>
 					<div class="form-group">
+						<label class="control-label col-form-label col-sm-4 ">Account Sub Group</label>				
+	                     <div class="col-sm-6">
+							<input type="text" class="form-control" id="eacc_type1" name="eacc_type1">
+							<span class="select-icon" style="right: 25px;">
+							<i class="glyphicon glyphicon-menu-down"></i>
+							</span>
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="control-label col-form-label col-sm-4 required">Account
 							Type</label>
 						<div class="col-sm-6">
@@ -161,9 +170,11 @@ $(document).ready(function() {
 	$(".alert").hide();
 	var EditsubAccountList;
 	var EditAccountTypeList;
+	var EditAccountTypeList1;
 	//var actType=$('#acc_typeH').val();
 	//alert(actType);
 	EditloadAccount();
+	EditloadAccount1();
 	
 	//EditAccDetailType(3);
 	EditloadSubAccount();
@@ -190,6 +201,59 @@ $(document).ready(function() {
 				
 			}
 		});
+	}
+	function EditloadAccount1()
+	{
+		$('#eacc_type1').typeahead({
+			hint : true,
+			minLength : 0,
+			searchOnFocus : true
+			},
+			{
+			display : 'ACCOUNTTYPE',
+			async : true,
+			source : function(query, process, asyncProcess) {
+				var urlStr = "/track/ChartOfAccountServlet";
+				$.ajax({
+					type : "POST",
+					url : urlStr,
+					async : true,
+					data : {
+						action : "getAccountType1"
+					},
+					dataType : "json",
+					success : function(data) {
+						return asyncProcess(data.groups);
+					}
+				});
+			},
+			limit : 9999,
+			templates : {
+				empty : [ '<div style="padding:3px 20px">',
+						'No results found', '</div>', ].join('\n'),
+				suggestion : function(data) {
+					return '<p>'+ data.ACCOUNTTYPE +'</p>';
+				}
+			}
+			}).on('typeahead:render',function(event,selection){
+				var menuElement = $(this).parent().find(".tt-menu");
+				var top = menuElement.height()+35;
+				top+="px";	
+				if(menuElement.next().hasClass("footer")){
+					menuElement.next().remove();  
+				}
+				menuElement.next().width(menuElement.width());
+				menuElement.next().css({ "top": top,"padding":"3px 20px" });
+				if($(this).parent().find(".tt-menu").css('display') != "block")
+					menuElement.next().hide();
+			}).on('typeahead:open',function(){
+			$("#eacc_type1").typeahead('val', '');
+			var menuElement = $(this).parent().find(".tt-menu");
+			menuElement.next().show();
+			}).on('typeahead:close',function(){
+				var menuElement = $(this).parent().find(".tt-menu");
+				setTimeout(function(){ menuElement.next().hide();}, 150);
+			});
 	}
 	/* function selectAccType(id)
 	{

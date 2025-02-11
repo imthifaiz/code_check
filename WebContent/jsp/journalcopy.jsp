@@ -114,7 +114,7 @@ int journalno=journalcount+1;
 		</div>
 		<div class="form-group">	
 			<div class="col-sm-2">
-				<label class="control-label col-form-label">Reference#</label>
+				<label class="control-label col-form-label required">Reference#</label>
 			</div>
 			<div class="col-sm-4">
 				<input type="text" class="form-control" id="reference" name="reference" value="<%=journalHeader.getREFERENCE()%>" autocomplete="off">
@@ -156,9 +156,11 @@ int journalno=journalcount+1;
 				if(i<2)
 				{
 					String dec = journDetail.getDESCRIPTION();
+					if(!dec.equalsIgnoreCase("--")){
 					if(dec.contains("-")){
 						String[] decInfo = dec.split("-");
 						dec = decInfo[0];
+					}
 					}
 			%>
 			  <tr>
@@ -766,6 +768,15 @@ function journalcredit(node)
 		var isItemValid = true;
 		$("#sub_total").val(totdebitamt);
 		$("#total_amount").val(totcreditamt);
+
+		var reference = document.form1.reference.value;
+
+		if(reference == ""){
+			alert("Please Enter Reference.");
+			$("input[name ='reference']").focus();
+			return false;
+		}
+		
 		$("input[name ='journal_account_name']").each(function() {
 		    if($(this).val() == ""){	    	
 		    	alert("The journal account field cannot be empty.");

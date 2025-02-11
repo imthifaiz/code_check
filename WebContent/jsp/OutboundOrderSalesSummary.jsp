@@ -755,7 +755,7 @@ if (arrCust.size() > 0) {
 
     	  storeUserPreferences(); */
    	 $('#tableIssueSummary').DataTable({
-   		"lengthMenu": [[50, 100, 500], [50, 100, 500]],
+   		"lengthMenu": [[100, 500, 1000], [100, 500, 1000]],
    		searching: true, // Enable searching
         search: {
             regex: true,   // Enable regular expression searching

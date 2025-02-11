@@ -1385,6 +1385,10 @@ for(int i =0; i<curQryList.size(); i++) {
  	document.MultiProductForm.printdate.value='<%=printdate%>';
  	document.MultiProductForm.PAGE_TYPE.value='PRDBARCODESALES';
  	
+ 	document.MultiProductForm.frmdate.value='<%=FROM_DATE%>';
+ 	document.MultiProductForm.todate.value='<%=TO_DATE%>';
+ 	document.MultiProductForm.cust.value='<%=CUSTOMER%>';
+ 	
  	document.MultiProductForm.POPLANT.value='<%=PLANT%>';
  	document.MultiProductForm.POITEM.value=item;
  	PoMulti(item);

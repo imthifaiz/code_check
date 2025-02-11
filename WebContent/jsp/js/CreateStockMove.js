@@ -207,6 +207,10 @@ function addaction(type,exist){
 		return false;
 	}
 	
+	var button = document.getElementById("stkmovebtn");
+	button.disabled = true;
+	setTimeout(function() {button.disabled = false;}, 50000);
+	
 	if(type==1){
 		printaction(type,exist);
 	}else{

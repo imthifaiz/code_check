@@ -319,6 +319,7 @@ var tableDataNested;
 	         	$("#edit_account_modal #eacc_name").val(data.results.account_name);
 	         	$("#edit_account_modal #eacc_name").prop('readonly', true);
 	         	//$("#edit_account_modal #acc_typeH").val(data.results.account_type);
+	         	$("#edit_account_modal #eacc_type1").val(data.results.account_type1);
 	         	$("#edit_account_modal #eacc_det_type_id").val(data.results.account_det_id);
 	         	$("#edit_account_modal #eacc_det_type").val(data.results.account_det_type);
 	         	$("#edit_account_modal #eacc_desc").val(data.results.account_desc);

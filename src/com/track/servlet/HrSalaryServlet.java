@@ -265,7 +265,7 @@ public class HrSalaryServlet extends HttpServlet implements IMLogger {
 					JSONObject coaJson=coaDAO.getCOAByName(plant, salarytype);
 					String uid = coaJson.getString("id");
 					
-					coaDAO.updateTable(plant, uid, emptype, "11", "30", "", "1", "85", "", "", "","0");
+					coaDAO.updateTable(plant, uid, emptype, "11", "30", "", "1", "85", "", "", "","0","");
 					
 					
 					Hashtable htMovHis = new Hashtable();

@@ -487,7 +487,7 @@ if(systatus.equalsIgnoreCase("INVENTORY"))
   	<div class="col-sm-12" align="center"> 
 <!--   	<button type="button" class="Submit btn btn-success"  value="Print"  name="action" onclick="javascript:return onRePrint('100X50');"><b>Generate Barcode 100X50 mm</b></button> -->
   	<button type=submit class="Submit btn btn-danger"  id="clearbtn" name="action"  onClick="return clearaction()"><b>Delete</b></button>&nbsp;&nbsp;
-  	<button type="button" class="Submit btn btn-success"  value="Print"  name="action" onClick="return process()"><b>Stock Take Process</b></button>&nbsp;&nbsp;
+  	<button type="button"  id="stkbtn" class="Submit btn btn-success"  value="Print"  name="action" onClick="return process()"><b>Stock Take Process</b></button>&nbsp;&nbsp;
   	 </div>
   	</div>
        
@@ -711,6 +711,10 @@ if(systatus.equalsIgnoreCase("INVENTORY"))
 	  }
 
 	  function process(){
+		  	 var button = document.getElementById("stkbtn");
+		     button.disabled = true;
+		     setTimeout(function() {button.disabled = false;}, 50000);
+
 			 document.form1.action  = "/track/salesorder/MANUALSTOCKTAKE_ADDPROCESS";
 			 document.form1.submit();
 			 $("#LOCS1").typeahead('val', '');

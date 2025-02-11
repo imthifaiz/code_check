@@ -231,6 +231,63 @@ public class CoaDAO extends BaseDAO {
 		}
 		return groupList;
 	}
+	public List<Map<String, String>> selectAccountType1(String plant) throws Exception {
+		java.sql.Connection con = null;
+		List<Map<String, String>> groupList = new ArrayList<>();
+		String query = "";
+		List<String> args = null;
+		try {
+			/* Instantiate the list */
+			args = new ArrayList<String>();
+			
+			con = com.track.gates.DbBean.getConnection();
+			query = "select a.PLANT,a.ID as id,ACCOUNTTYPE from ["+plant+"_FINACCOUNTGROUPTYPE] a where a.plant=?";
+			PreparedStatement ps = con.prepareStatement(query);
+			
+			/* Storing all the query param argument in list squentially */
+			args.add(plant);
+			
+			this.mLogger.query(this.printQuery, query);
+			
+			groupList = selectData(ps, args);
+			System.out.println(groupList);
+		} catch (Exception e) {
+			this.mLogger.exception(this.printLog, "", e);
+			throw e;
+		} finally {
+			if (con != null) {
+				DbBean.closeConnection(con);
+			}
+		}
+		return groupList;
+	}
+	
+	public JSONObject getAccountType1ByName(String plant, String name) {
+		JSONObject mainObj = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		JSONObject dataObj = new JSONObject();
+		String query = "SELECT * FROM [" + plant + "_FINACCOUNTGROUPTYPE] WHERE ACCOUNTTYPE = '" + name + "'";
+		Connection con = null;
+		try {
+			con = DbBean.getConnection();
+			Statement stmt = con.createStatement();
+			ResultSet rset = stmt.executeQuery(query);
+			
+			while (rset.next()) {
+				
+				mainObj.put("id", rset.getString("id"));
+				mainObj.put("account_type", rset.getString("ACCOUNTTYPE"));
+			}
+		} catch (NamingException | SQLException e) {
+			mainObj.put("responseText", "failed");
+			e.printStackTrace();
+		} finally {
+			if (con != null) {
+				DbBean.closeConnection(con);
+			}
+		}
+		return mainObj;
+	}
 	
 	public List<Map<String, String>> selectAccountDetailType(String plant, String group, String type) throws Exception {
 		java.sql.Connection con = null;
@@ -404,13 +461,13 @@ public class CoaDAO extends BaseDAO {
 
 	public boolean updateTable(String plant, String accountId, String accountName, String account_type,
 			String account_det_type, String description, String account_is_sub, String account_subAcct,
-			String account_balance, String account_balanceDate,String landedcost,String account_is_exp_gst) {
+			String account_balance, String account_balanceDate,String landedcost,String account_is_exp_gst,String acctypeid1) {
 		//JSONObject mainObj = new JSONObject();
 		boolean accountupdated = false;
 		String query = "update " + plant + "_FINCHARTOFACCOUNTS set account_name = '" + accountName
 				+ "', ACCOUNTDETAILTYPE = '" + account_det_type + "', ISSUBACCOUNT = '" + account_is_sub
 				+ "', SUBACCOUNTNAME = '" + account_subAcct + "', OPENINGBALANCE = '" + account_balance + "', OPENINGBALANCEDATE = '" + account_balanceDate
-				+ "', ACCOUNTTYPE = '" + account_type + "', description = '" + description + "',LANDEDCOSTCAL='"+landedcost+"',ISEXPENSEGST='"+account_is_exp_gst+"' where id = '"
+				+ "', ACCOUNTTYPE = '" + account_type + "', description = '" + description + "',LANDEDCOSTCAL='"+landedcost+"',ISEXPENSEGST='"+account_is_exp_gst+"',ACCOUNTGROUPTYPEID='"+acctypeid1+"' where id = '"
 				+ accountId + "'";
 		Connection con = null;
 		try {
@@ -447,7 +504,7 @@ public class CoaDAO extends BaseDAO {
 	public JSONObject readTableRecord(String plant, String id) {
 		JSONObject mainObj = new JSONObject();
 		JournalDAO journaldao = new JournalDAO();
-		String query = "select a.ID,a.ACCOUNT_NAME,ISNULL(a.ACCOUNT_CODE,'') AS ACCOUNT_CODE,ISNULL(b.ACCOUNT_CODE,'') AS ACCOUNTDET_CODE,a.ACCOUNTDETAILTYPE as DETAILID,a.ACCOUNTTYPE,a.DESCRIPTION,a.ISSUBACCOUNT,ISNULL(a.ISEXPENSEGST,0) ISEXPENSEGST,a.SUBACCOUNTNAME,a.OPENINGBALANCE,a.OPENINGBALANCEDATE,b.ACCOUNTDETAILTYPE,ISNULL(a.LANDEDCOSTCAL,0) as LANDEDCOSTCAL,c.MAINACCOUNTID as MAINACCID from " + plant + "_FINCHARTOFACCOUNTS a join " + plant +"_FINACCOUNTDETAILTYPE b on b.ID=a.ACCOUNTDETAILTYPE join " + plant + "_FINACCOUNTTYPE c on c.ID=a.ACCOUNTTYPE where a.ID ='" + id + "'";
+		String query = "select a.ID,a.ACCOUNT_NAME,ISNULL(a.ACCOUNT_CODE,'') AS ACCOUNT_CODE,ISNULL(b.ACCOUNT_CODE,'') AS ACCOUNTDET_CODE,a.ACCOUNTDETAILTYPE as DETAILID,a.ACCOUNTTYPE,a.DESCRIPTION,a.ISSUBACCOUNT,ISNULL(a.ISEXPENSEGST,0) ISEXPENSEGST,a.SUBACCOUNTNAME,a.OPENINGBALANCE,a.OPENINGBALANCEDATE,b.ACCOUNTDETAILTYPE,ISNULL(a.LANDEDCOSTCAL,0) as LANDEDCOSTCAL,c.MAINACCOUNTID as MAINACCID,ISNULL((SELECT ACCOUNTTYPE FROM "+ plant +"_FINACCOUNTGROUPTYPE F WHERE F.ID=isnull(ACCOUNTGROUPTYPEID,1) ),'') ACCOUNTTYPE1 from " + plant + "_FINCHARTOFACCOUNTS a join " + plant +"_FINACCOUNTDETAILTYPE b on b.ID=a.ACCOUNTDETAILTYPE join " + plant + "_FINACCOUNTTYPE c on c.ID=a.ACCOUNTTYPE where a.ID ='" + id + "'";
 		Connection con = null;
 		try {
 			con = DbBean.getConnection();
@@ -468,6 +525,7 @@ public class CoaDAO extends BaseDAO {
 				dataObj.put("account_det_id", rset.getString("DETAILID"));
 				dataObj.put("account_det_type", rset.getString("ACCOUNTDET_CODE")+"  "+rset.getString("ACCOUNTDETAILTYPE"));
 				dataObj.put("account_type", rset.getString("ACCOUNTTYPE"));
+				dataObj.put("account_type1", rset.getString("ACCOUNTTYPE1"));
 				dataObj.put("account_desc", rset.getString("DESCRIPTION"));
 				dataObj.put("issub_account", rset.getString("ISSUBACCOUNT"));
 				dataObj.put("isexp_gst", rset.getString("ISEXPENSEGST"));
@@ -495,7 +553,7 @@ public class CoaDAO extends BaseDAO {
 	}
 	public JSONObject CoaFullRecord(String plant, String id) {
 		JSONObject mainObj = new JSONObject();
-		String query = "select a.ID,a.ACCOUNT_NAME,a.ACCOUNTDETAILTYPE as DETAILID,a.ACCOUNTTYPE,c.ACCOUNTTYPE as ACCOUNTTYPENAME,a.DESCRIPTION,a.ISSUBACCOUNT,a.SUBACCOUNTNAME,a.OPENINGBALANCE,a.OPENINGBALANCEDATE,b.ACCOUNTDETAILTYPE,ISNULL(a.LANDEDCOSTCAL,0) as LANDEDCOSTCAL,c.MAINACCOUNTID as MAINACCID,d.MAINACCOUNT as MAINACCNAME from " + plant + "_FINCHARTOFACCOUNTS a join " + plant +"_FINACCOUNTDETAILTYPE b on b.ID=a.ACCOUNTDETAILTYPE join " + plant + "_FINACCOUNTTYPE c on c.ID=a.ACCOUNTTYPE left join " + plant + "_FINMAINACCOUNT d on c.MAINACCOUNTID=d.ID where a.ID ='" + id + "'";
+		String query = "select a.ID,a.ACCOUNT_NAME,a.ACCOUNTDETAILTYPE as DETAILID,a.ACCOUNTTYPE,c.ACCOUNTTYPE as ACCOUNTTYPENAME,a.DESCRIPTION,a.ISSUBACCOUNT,a.SUBACCOUNTNAME,a.OPENINGBALANCE,a.OPENINGBALANCEDATE,b.ACCOUNTDETAILTYPE,ISNULL(a.LANDEDCOSTCAL,0) as LANDEDCOSTCAL,c.MAINACCOUNTID as MAINACCID,d.MAINACCOUNT as MAINACCNAME,ISNULL((SELECT ACCOUNTTYPE FROM "+ plant +"_FINACCOUNTGROUPTYPE F WHERE F.ID=isnull(ACCOUNTGROUPTYPEID,1) ),'') ACCOUNTTYPE1 from " + plant + "_FINCHARTOFACCOUNTS a join " + plant +"_FINACCOUNTDETAILTYPE b on b.ID=a.ACCOUNTDETAILTYPE join " + plant + "_FINACCOUNTTYPE c on c.ID=a.ACCOUNTTYPE left join " + plant + "_FINMAINACCOUNT d on c.MAINACCOUNTID=d.ID where a.ID ='" + id + "'";
 		this.mLogger.query(this.printQuery, query);
 		Connection con = null;
 		try {
@@ -511,6 +569,7 @@ public class CoaDAO extends BaseDAO {
 				dataObj.put("account_det_type", rset.getString("ACCOUNTDETAILTYPE"));
 				dataObj.put("account_type", rset.getString("ACCOUNTTYPE"));
 				dataObj.put("account_type_name", rset.getString("ACCOUNTTYPENAME"));
+				dataObj.put("account_type_name1", rset.getString("ACCOUNTTYPE1"));
 				dataObj.put("account_desc", rset.getString("DESCRIPTION"));
 				dataObj.put("issub_account", rset.getString("ISSUBACCOUNT"));
 				dataObj.put("sub_account", rset.getString("SUBACCOUNTNAME"));

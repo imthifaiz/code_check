@@ -3709,5 +3709,211 @@ public List<ReconciliationPojo> getJournalDetailsByAccountTodateDeposits(String 
 	return ReconciliationPojoList;	
 }
 
+public ArrayList getJournalsByBankDateWithoutAttachGP( String plant, String fromDate,
+		String toDate) {
+	ArrayList arrList = new ArrayList();
+	String sCondition = "",dtCondStr="",extraCon="";
+	StringBuffer sql;
+	 Hashtable htData = new Hashtable();
+	try {
+
+        		dtCondStr ="and CAST((SUBSTRING(ISNULL(JA.BANKDATE,JB.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(JA.BANKDATE,JB.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(JA.BANKDATE,JB.JOURNAL_DATE), 1, 2)) AS date)";
+        		extraCon= "order by MAINACCNAME ";
+        		
+        		if(fromDate.length() > 0 && toDate.length() > 0){
+        			sCondition = sCondition + dtCondStr + "BETWEEN '"+fromDate+"' AND '"+toDate+"'";
+        		}else if(fromDate.length() > 0 && toDate.length() == 0) {
+        			sCondition = sCondition + dtCondStr + " >= '"+fromDate+"'";
+        		}else if(fromDate.length() == 0 && toDate.length() > 0){
+        			sCondition = sCondition + dtCondStr + " <= '"+toDate+"'";
+        		}   
+                 
+		           sql = new StringBuffer("SELECT JA.ACCOUNT_NAME,JA.ACCOUNT_ID,JA.DEBITS,JA.CREDITS,ISNULL(a.ACCOUNT_CODE,'0') AS ACCOUNT_CODE,a.ID,"
+		           		+ " a.ACCOUNTTYPE,c.ACCOUNTTYPE as ACCOUNTTYPENAME,b.ACCOUNTDETAILTYPE,d.MAINACCOUNT as MAINACCNAME"
+		           		+ " FROM "+ plant+"_FINJOURNALDET AS JA JOIN "+ plant+"_FINJOURNALHDR AS JB ON JA.JOURNALHDRID = JB.ID"
+		           		+ " join "+ plant+"_FINCHARTOFACCOUNTS a ON JA.ACCOUNT_ID=a.ID join "+ plant+"_FINACCOUNTDETAILTYPE b on b.ID=a.ACCOUNTDETAILTYPE join "+ plant+"_FINACCOUNTTYPE c on c.ID=a.ACCOUNTTYPE left join "+ plant+"_FINMAINACCOUNT d on c.MAINACCOUNTID=d.ID "
+		           		+ " left join "+ plant+"_FINACCOUNTGROUPTYPE G ON G.ID=ISNULL(a.ACCOUNTGROUPTYPEID,1) "
+		           		+ " WHERE ISNULL(G.ACCOUNTTYPE, '')='' "
+		           		+ sCondition
+		           		+ " UNION ALL "
+		           		+ " SELECT ISNULL(G.ACCOUNTTYPE, '') ACCOUNT_NAME,G.ID ACCOUNT_ID,    SUM(JA.DEBITS) AS DEBITS,     SUM(JA.CREDITS) AS CREDITS,ISNULL(b.ACCOUNT_CODE,'0') AS ACCOUNT_CODE,G.ID,"
+		           		+ " a.ACCOUNTTYPE,c.ACCOUNTTYPE as ACCOUNTTYPENAME,b.ACCOUNTDETAILTYPE,d.MAINACCOUNT as MAINACCNAME"
+		           		+ " FROM "+ plant+"_FINJOURNALDET AS JA JOIN "+ plant+"_FINJOURNALHDR AS JB ON JA.JOURNALHDRID = JB.ID"
+		           		+ " join "+ plant+"_FINCHARTOFACCOUNTS a ON JA.ACCOUNT_ID=a.ID join "+ plant+"_FINACCOUNTDETAILTYPE b on b.ID=a.ACCOUNTDETAILTYPE join "+ plant+"_FINACCOUNTTYPE c on c.ID=a.ACCOUNTTYPE left join "+ plant+"_FINMAINACCOUNT d on c.MAINACCOUNTID=d.ID "
+		           		+ " left join "+ plant+"_FINACCOUNTGROUPTYPE G ON G.ID=ISNULL(a.ACCOUNTGROUPTYPEID,1) "
+		           		+ " WHERE ISNULL(G.ACCOUNTTYPE, '')!='' "
+		           		+ sCondition
+		           		+ " GROUP BY G.ACCOUNTTYPE,G.ID,a.ACCOUNTTYPE,ISNULL(b.ACCOUNT_CODE,'0'),c.ACCOUNTTYPE,b.ACCOUNTDETAILTYPE,d.MAINACCOUNT");
+		           
+				  arrList = this.selectForReport(sql.toString(), htData, extraCon);
+   
+
+	 }catch (Exception e) {
+		this.mLogger.exception(this.printLog,
+				"Exception :repportUtil :: getJournalSummaryView:", e);
+	}
+	return arrList;
+}
+
+public List<TrialBalanceDetails> getTrialBalanceDetBankDateByAccountByTypeId(String plant,String account,String fromDate,String toDate)throws Exception {	
+//	boolean flag = false;	
+//	int journalHdrId = 0;	
+	Connection connection = null;	
+	PreparedStatement ps = null;	
+	String query = "";	
+	String subquery = "", typequery = "";	
+	
+	List<TrialBalanceDetails> trialBalanceDetails=new ArrayList<TrialBalanceDetails>();	
+	
+	
+	try {	    	
+		connection = DbBean.getConnection();	
+		
+		
+		if(fromDate.length() > 0 && toDate.length() == 0) {
+			typequery= "SELECT CASE WHEN (DEBITS = (SELECT ISNULL(SUM(CREDITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID)  - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "WHEN (CREDITS = (SELECT ISNULL(SUM(DEBITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID) - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "ELSE  'SUB' END AS TRANSACTION_TYPE, JOURNALHDRID "	
+					+ "FROM ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID "
+					+ "join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID where a1.ACCOUNTGROUPTYPEID='"+account+"' AND CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date) "	
+					+">= '"+fromDate+"' GROUP BY DEBITS,JOURNALHDRID,CREDITS";	
+			
+			subquery= "select det.JOURNALHDRID from ["+ plant +"_"+TABLE_DETAIL+"] det inner join ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID where a.ACCOUNTGROUPTYPEID='"+account+"' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+">= '"+fromDate+"'";	
+			
+			query= "select det.JOURNALHDRID,JOURNAL_DATE,det.DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,CREDITS as DEBITS,DEBITS as CREDITS,det.ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "	
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID WHERE a.ACCOUNTGROUPTYPEID<>'"+account+"' AND det.JOURNALHDRID IN ("+subquery+") AND D.TRANSACTION_TYPE='MAIN' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+">= '"+fromDate+"'";	
+			
+			query+= " UNION ALL ";	
+			
+			query+= "select det.JOURNALHDRID,JOURNAL_DATE,det.DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,DEBITS,CREDITS, "	
+					+ "ISNULL((select (SELECT  ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] A WHERE A.JOURNALHDRID = HDR1.ID" 	
+					+ " AND ((A.CREDITS = (SELECT SUM(DEBITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID)  - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' ) ) OR" 	
+					+ " (A.DEBITS = (SELECT SUM(CREDITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID) - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )))"	
+					+ " ) ACCOUNT_NAME"	
+					+ " from ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID " 	
+					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
+					+ " CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date)" 	
+					+ " >= '"+fromDate+"' and det1.JOURNALHDRID = det.JOURNALHDRID"	
+					+ "),'') as ACCOUNT_NAME "	
+					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+">= '"+fromDate+"'";	
+			
+		}else if(fromDate.length() == 0 && toDate.length() > 0) {
+			typequery= "SELECT CASE WHEN (DEBITS = (SELECT ISNULL(SUM(CREDITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID)  - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet1 join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet1.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "WHEN (CREDITS = (SELECT ISNULL(SUM(DEBITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID) - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet1 join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet1.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "ELSE  'SUB' END AS TRANSACTION_TYPE, JOURNALHDRID "	
+					+ "FROM ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID inner join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID where a1.ACCOUNTGROUPTYPEID='"+account+"' AND CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"<= '"+toDate+"' GROUP BY DEBITS,JOURNALHDRID,CREDITS";	
+			
+			subquery= "select det.JOURNALHDRID from ["+ plant +"_"+TABLE_DETAIL+"] det inner join ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID where a1.ACCOUNTGROUPTYPEID='"+account+"' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"<= '"+toDate+"'";	
+			
+			query= "select det.JOURNALHDRID,JOURNAL_DATE,ISNULL((SELECT top 1 jdet.ACCOUNT_NAME FROM ["+ plant +"_"+TABLE_DETAIL+"] jdet WHERE jdet.JOURNALHDRID=det.JOURNALHDRID),'') AS DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,CREDITS as DEBITS,DEBITS as CREDITS,det.ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "	
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID WHERE a.ACCOUNTGROUPTYPEID<>'"+account+"' AND det.JOURNALHDRID IN ("+subquery+") AND D.TRANSACTION_TYPE='MAIN' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"<= '"+toDate+"'";	
+			
+			query+= " UNION ALL ";	
+			
+			query+= "select det.JOURNALHDRID,JOURNAL_DATE,det.DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,DEBITS,CREDITS, "	
+					+ "ISNULL((select (SELECT  ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] A WHERE A.JOURNALHDRID = HDR1.ID" 	
+					+ " AND ((A.CREDITS = (SELECT SUM(DEBITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID)  - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' ) ) OR" 	
+					+ " (A.DEBITS = (SELECT SUM(CREDITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID) - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )))"	
+					+ " ) ACCOUNT_NAME"	
+					+ " from ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID" 	
+					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
+					+ " CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date)" 	
+					+ " <= '"+toDate+"' and det1.JOURNALHDRID = det.JOURNALHDRID"	
+					+ "),'') as ACCOUNT_NAME "	
+					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"<= '"+toDate+"'";	
+			
+		}else if(fromDate.length() == 0 && toDate.length() == 0) {
+			typequery= "SELECT CASE WHEN (DEBITS = (SELECT ISNULL(SUM(CREDITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID)  - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet1 join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet1.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "WHEN (CREDITS = (SELECT ISNULL(SUM(DEBITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID) - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet1 join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet1.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "ELSE  'SUB' END AS TRANSACTION_TYPE, JOURNALHDRID "	
+					+ "FROM ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID where a1.ACCOUNTGROUPTYPEID='"+account+"' "	
+					+" GROUP BY DEBITS,JOURNALHDRID,CREDITS";	
+			
+			subquery= "select det.JOURNALHDRID from ["+ plant +"_"+TABLE_DETAIL+"] det inner join ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID where a1.ACCOUNTGROUPTYPEID='"+account+"' ";	
+			
+			query= "select det.JOURNALHDRID,JOURNAL_DATE,ISNULL((SELECT top 1 jdet.ACCOUNT_NAME FROM ["+ plant +"_"+TABLE_DETAIL+"] jdet WHERE jdet.JOURNALHDRID=det.JOURNALHDRID),'') AS DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,CREDITS as DEBITS,DEBITS as CREDITS,det.ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "	
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID WHERE a.ACCOUNTGROUPTYPEID<>'"+account+"' AND det.JOURNALHDRID IN ("+subquery+") AND D.TRANSACTION_TYPE='MAIN' ";	
+			
+			query+= " UNION ALL ";	
+			
+			query+= "select det.JOURNALHDRID,JOURNAL_DATE,ISNULL((SELECT top 1 jdet.ACCOUNT_NAME FROM ["+ plant +"_"+TABLE_DETAIL+"] jdet WHERE jdet.JOURNALHDRID=det.JOURNALHDRID),'') AS DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,DEBITS,CREDITS, "	
+					+ "ISNULL((select (SELECT  ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] A WHERE A.JOURNALHDRID = HDR1.ID" 	
+					+ " AND ((A.CREDITS = (SELECT SUM(DEBITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID)  - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' ) ) OR" 	
+					+ " (A.DEBITS = (SELECT SUM(CREDITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID) - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )))"	
+					+ " ) ACCOUNT_NAME"	
+					+ " from ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID" 	
+					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
+					+ " det1.JOURNALHDRID = det.JOURNALHDRID"	
+					+ "),'') as ACCOUNT_NAME "	
+					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' ";	
+			
+		}else {
+			typequery= "SELECT CASE WHEN (DEBITS = (SELECT ISNULL(SUM(CREDITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID)  - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "WHEN (CREDITS = (SELECT ISNULL(SUM(DEBITS),0) FROM ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = det1.JOURNALHDRID) - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )) THEN 'MAIN' "	
+					+ "ELSE  'SUB' END AS TRANSACTION_TYPE, JOURNALHDRID "	
+					+ "FROM ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID where a1.ACCOUNTGROUPTYPEID='"+account+"' AND CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"BETWEEN '"+fromDate+"' AND '"+toDate+"' GROUP BY DEBITS,JOURNALHDRID,CREDITS";	
+			
+			subquery= "select det.JOURNALHDRID from ["+ plant +"_"+TABLE_DETAIL+"] det inner join ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID where a.ACCOUNTGROUPTYPEID='"+account+"' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"BETWEEN '"+fromDate+"' AND '"+toDate+"'";	
+			
+			query= "select det.JOURNALHDRID,JOURNAL_DATE,ISNULL((SELECT top 1 jdet.ACCOUNT_NAME FROM ["+ plant +"_"+TABLE_DETAIL+"] jdet WHERE jdet.JOURNALHDRID=det.JOURNALHDRID),'') AS DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,CREDITS as DEBITS,DEBITS as CREDITS,det.ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "	
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID WHERE a.ACCOUNTGROUPTYPEID<>'"+account+"' AND det.JOURNALHDRID IN ("+subquery+") AND D.TRANSACTION_TYPE='MAIN' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"BETWEEN '"+fromDate+"' AND '"+toDate+"'";	
+			
+			query+= " UNION ALL ";	
+			
+			query+= "select det.JOURNALHDRID,JOURNAL_DATE,det.DESCRIPTION,hdr.TRANSACTION_TYPE,TRANSACTION_ID,REFERENCE,DEBITS,CREDITS, "	
+					+ "ISNULL((select (SELECT  ACCOUNT_NAME from ["+ plant +"_"+TABLE_DETAIL+"] A WHERE A.JOURNALHDRID = HDR1.ID" 	
+					+ " AND ((A.CREDITS = (SELECT SUM(DEBITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID)  - (SELECT ISNULL(SUM(CREDITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' ) ) OR" 	
+					+ " (A.DEBITS = (SELECT SUM(CREDITS) from ["+ plant +"_"+TABLE_DETAIL+"] WHERE JOURNALHDRID = A.JOURNALHDRID) - (SELECT ISNULL(SUM(DEBITS),0) from ["+ plant +"_"+TABLE_DETAIL+"] adet join "+ plant +"_FINCHARTOFACCOUNTS ab ON adet.ACCOUNT_ID=ab.ID  WHERE JOURNALHDRID = det1.JOURNALHDRID AND ab.ACCOUNTGROUPTYPEID <> '"+account+"' AND adet.ACCOUNT_NAME LIKE '%Discounts%' )))"	
+					+ " ) ACCOUNT_NAME"	
+					+ " from ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID" 	
+					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
+					+ " CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date)" 	
+					+ " BETWEEN '"+fromDate+"' AND '"+toDate+"' and det1.JOURNALHDRID = det.JOURNALHDRID"	
+					+ "),'') as ACCOUNT_NAME "	
+					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
+					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
+					+"BETWEEN '"+fromDate+"' AND '"+toDate+"'";	
+		}
+		
+		
+		this.mLogger.query(this.printQuery, query);	
+		if(connection != null){	
+			ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);	
+			ResultSet rst = ps.executeQuery();	
+			while (rst.next()) {	
+				TrialBalanceDetails trialBalanceDetail=new TrialBalanceDetails();	
+				ResultSetToObjectMap.loadResultSetIntoObject(rst, trialBalanceDetail);	
+				trialBalanceDetails.add(trialBalanceDetail);	
+			}   	
+			this.mLogger.query(this.printQuery, query);	
+			
+		}	
+		
+		
+	} catch (Exception e) {	
+		this.mLogger.exception(this.printLog, "", e);	
+		
+		throw e;	
+	} finally {	
+		if (connection != null) {	
+			DbBean.closeConnection(connection);	
+		}	
+	}	
+	return trialBalanceDetails;	
+}
+
 
 }

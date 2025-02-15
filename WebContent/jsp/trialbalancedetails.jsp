@@ -46,6 +46,9 @@
 	}
 	List<TrialBalanceDetails> trialBalanceDetails=new ArrayList<TrialBalanceDetails>();
 	//trialBalanceDetails=journalService.getTrialBalanceDetailsByAccountByType(plant, account, fromDate, toDate);
+	if(accountName.contains("DEBITOR") || accountName.contains("CREDITOR"))
+	trialBalanceDetails=new JournalDAO().getTrialBalanceDetBankDateByAccountByTypeId(plant, account, fromDate, toDate);
+	else
 	trialBalanceDetails=new JournalDAO().getTrialBalanceDetBankDateByAccountByType(plant, account, fromDate, toDate);
 	Double totalDebit=0.00;
 	Double totalCredit=0.00;

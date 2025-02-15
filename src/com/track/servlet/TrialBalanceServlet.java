@@ -181,6 +181,76 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				resp.getWriter().close();
 			}
 
+		}else if (action.equalsIgnoreCase("getTrialBalancegp") || action.equalsIgnoreCase("getTrialBalanceAsExcelgp")) {
+			String fromDate = StrUtils.fString(req.getParameter("fromDate")).trim();
+			String toDate = StrUtils.fString(req.getParameter("toDate")).trim();
+			List<Journal> journalList = null;
+			JSONArray jarray = new JSONArray();
+			Map<Integer, TrialBalance> trialBalArr = new Hashtable<Integer, TrialBalance>();
+			try {
+				
+				journalList = new JournalDAO().getJournalsByBankDateWithoutAttachGP(plant, fromDate, toDate);
+				if (journalList.size() > 0) {					
+					for (int iCnt =0; iCnt<journalList.size(); iCnt++){
+                    Map lineArr = (Map) journalList.get(iCnt);
+                    
+                    TrialBalance trialBal = new TrialBalance();
+					trialBal.setAccount_id(Integer.parseInt((String)lineArr.get("ACCOUNT_ID")));
+					String accountcode = (String)lineArr.get("ACCOUNT_CODE");
+					trialBal.setAccount_name(accountcode+" "+((String)lineArr.get("ACCOUNT_NAME")));
+					trialBal.setAccount_type((String)lineArr.get("ACCOUNTTYPE"));
+					trialBal.setExtended_type((String)lineArr.get("ACCOUNTDETAILTYPE"));
+					trialBal.setMain_account((String)lineArr.get("MAINACCNAME"));
+					double CREDITS = Double.parseDouble((String)lineArr.get("CREDITS"));
+					double DEBITS = Double.parseDouble((String)lineArr.get("DEBITS"));
+					trialBal.setNet_credit(CREDITS);								
+
+					trialBal.setNet_debit(DEBITS);
+					trialBal.setNet_balance(DEBITS - CREDITS);
+					System.out.println("11==========="+(DEBITS - CREDITS));
+					trialBalArr.put(Integer.parseInt((String)lineArr.get("ACCOUNT_ID")), trialBal);
+                    
+					}
+				}
+				
+				trialBalArr.forEach((k, v) -> {
+					jarray.add(v);
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+//				if (action.equalsIgnoreCase("getTrialBalanceAsExcel") && !fromDate.isEmpty()) {
+			if (action.equalsIgnoreCase("getTrialBalanceAsExcelgp")) {
+				PlantMstDAO _PlantMstDAO = new PlantMstDAO();
+
+				HSSFWorkbook workbook = null;
+				try {
+					String numberOfDecimal = _PlantMstDAO.getNumberOfDecimal(plant);
+					workbook = populateExcel("Trial Balance", toDate, jarray.toString(), numberOfDecimal,plant);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+				workbook.write(outByteStream);
+				byte[] outArray = outByteStream.toByteArray();
+				resp.setContentType("application/ms-excel");
+				resp.setContentLength(outArray.length);
+				resp.setHeader("Expires:", "0"); // eliminates browser caching
+				resp.setHeader("Content-Disposition", "attachment; filename=TrialBalance.xls");
+				OutputStream outStream = resp.getOutputStream();
+				outStream.write(outArray);
+				outStream.flush();
+				outStream.close();
+			} else {
+				resp.setContentType("application/json");
+				resp.setCharacterEncoding("UTF-8");
+				System.out.println(jarray.toString());
+				resp.getWriter().write(jarray.toString());
+				resp.getWriter().flush();
+				resp.getWriter().close();
+			}
+
 		} else if (action.equalsIgnoreCase("getTrialBalanceDetails")) {
 			JSONArray jarray = new JSONArray();
 			String account = StrUtils.fString(req.getParameter("account")).trim();

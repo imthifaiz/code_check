@@ -3796,7 +3796,7 @@ public List<TrialBalanceDetails> getTrialBalanceDetBankDateByAccountByTypeId(Str
 					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
 					+ " CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date)" 	
 					+ " >= '"+fromDate+"' and det1.JOURNALHDRID = det.JOURNALHDRID"	
-					+ "),'') as ACCOUNT_NAME "	
+					+ "),a.ACCOUNT_NAME) as ACCOUNT_NAME "	
 					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
 					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
 					+">= '"+fromDate+"'";	
@@ -3826,7 +3826,7 @@ public List<TrialBalanceDetails> getTrialBalanceDetBankDateByAccountByTypeId(Str
 					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
 					+ " CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date)" 	
 					+ " <= '"+toDate+"' and det1.JOURNALHDRID = det.JOURNALHDRID"	
-					+ "),'') as ACCOUNT_NAME "	
+					+ "),a.ACCOUNT_NAME) as ACCOUNT_NAME "	
 					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
 					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
 					+"<= '"+toDate+"'";	
@@ -3853,7 +3853,7 @@ public List<TrialBalanceDetails> getTrialBalanceDetBankDateByAccountByTypeId(Str
 					+ " from ["+ plant +"_"+TABLE_DETAIL+"] det1 inner join ["+ plant +"_"+TABLE_HEADER+"] hdr1 on hdr1.ID=det1.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a1 ON det1.ACCOUNT_ID=a1.ID" 	
 					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
 					+ " det1.JOURNALHDRID = det.JOURNALHDRID"	
-					+ "),'') as ACCOUNT_NAME "	
+					+ "),a.ACCOUNT_NAME) as ACCOUNT_NAME "	
 					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
 					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' ";	
 			
@@ -3882,7 +3882,7 @@ public List<TrialBalanceDetails> getTrialBalanceDetBankDateByAccountByTypeId(Str
 					+ " where a1.ACCOUNTGROUPTYPEID='"+account+"' AND "	
 					+ " CAST((SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det1.BANKDATE,hdr1.JOURNAL_DATE), 1, 2)) AS date)" 	
 					+ " BETWEEN '"+fromDate+"' AND '"+toDate+"' and det1.JOURNALHDRID = det.JOURNALHDRID"	
-					+ "),'') as ACCOUNT_NAME "	
+					+ "),a.ACCOUNT_NAME) as ACCOUNT_NAME "	
 					+ "from ["+ plant +"_"+TABLE_DETAIL+"] det JOIN ["+ plant +"_"+TABLE_HEADER+"] hdr on hdr.ID=det.JOURNALHDRID join "+ plant +"_FINCHARTOFACCOUNTS a ON det.ACCOUNT_ID=a.ID "					
 					+ "JOIN  ("+typequery+")D ON det.JOURNALHDRID = D.JOURNALHDRID where a.ACCOUNTGROUPTYPEID='"+account+"' AND D.TRANSACTION_TYPE='SUB' AND CAST((SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 7, 4) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 4, 2) + SUBSTRING(ISNULL(det.BANKDATE,hdr.JOURNAL_DATE), 1, 2)) AS date) "	
 					+"BETWEEN '"+fromDate+"' AND '"+toDate+"'";	

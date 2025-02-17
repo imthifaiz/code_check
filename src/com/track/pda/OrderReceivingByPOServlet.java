@@ -57,8 +57,10 @@ import com.track.db.object.JournalHeader;
 import com.track.db.object.PoDet;
 import com.track.db.object.PoHdr;
 import com.track.db.util.BillUtil;
+import com.track.db.util.DOUtil;
 import com.track.db.util.EmailMsgUtil;
 import com.track.db.util.InvUtil;
+import com.track.db.util.ItemUtil;
 import com.track.db.util.LocUtil;
 import com.track.db.util.MasterUtil;
 import com.track.db.util.POUtil;
@@ -2773,7 +2775,18 @@ public class OrderReceivingByPOServlet extends DynamicFileServlet implements IML
        					throw new Exception("Receiving Loc :" + ITEM_LOC
        							+ " is not User Assigned Location");
 
-       				}     	
+       				}
+       				
+       				
+       				String Averagecost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(PLANT,UNITMO,item);
+       				
+       				
+       		        Hashtable htCondition = new Hashtable();
+       		        htCondition.put(IConstants.ITEM,item);
+       		        htCondition.put(IConstants.PLANT,PLANT);
+       		        Hashtable htUpdate = new Hashtable();
+       		        htUpdate.put("AVERAGECOST",Averagecost);
+       				boolean itemUpdated = new ItemUtil().updateItem(htUpdate,htCondition);
        				
        				if (transactionHandler == true) {
        					Hashtable htCond = new Hashtable();

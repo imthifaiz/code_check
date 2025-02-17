@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.UserTransaction;
 
+import com.track.constants.IConstants;
 import com.track.constants.IDBConstants;
 import com.track.constants.TransactionConstants;
 import com.track.dao.CoaDAO;
@@ -27,7 +29,9 @@ import com.track.db.object.HrEmpSalaryMst;
 import com.track.db.object.HrHolidayMst;
 import com.track.db.object.ParentChildCmpDet;
 import com.track.db.util.CoaUtil;
+import com.track.db.util.DOUtil;
 import com.track.db.util.ItemMstUtil;
+import com.track.db.util.ItemUtil;
 import com.track.gates.DbBean;
 import com.track.service.HrEmpSalaryService;
 import com.track.service.ParentChildCmpDetService;
@@ -79,6 +83,26 @@ public class ParentChildServlet extends HttpServlet implements IMLogger {
 				String resultok = StrUtils.fString(request.getParameter("resultok"));
 				request.setAttribute("result", result);
 				request.setAttribute("resultok", resultok);
+				
+				List movQryList = new ItemUtil().queryItemMstForSearchCriteriaNew("","","","","","","",plant,"",0,0);
+				if (movQryList.size() > 0) {
+				for(int i =0; i<movQryList.size(); i++) {
+				Vector arrCustLine = (Vector)movQryList.get(i);
+							
+				String Averagecost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(plant,(String)arrCustLine.get(33),(String)arrCustLine.get(0));
+				
+				if(Averagecost.equals("0.0")) 
+					Averagecost= (String)arrCustLine.get(13);
+				
+					Hashtable htCondition = new Hashtable();
+			        htCondition.put(IConstants.ITEM,(String)arrCustLine.get(0));
+			        htCondition.put(IConstants.PLANT,plant);
+			        Hashtable htUpdate = new Hashtable();
+			        htUpdate.put("AVERAGECOST",Averagecost);
+					boolean itemUpdated = new ItemUtil().updateItem(htUpdate,htCondition);
+				}
+				}
+				
 				RequestDispatcher rd = request.getRequestDispatcher("/jsp/Parentchildcmp.jsp");
 				rd.forward(request, response);
 			} catch (Exception e) {
@@ -135,6 +159,26 @@ public class ParentChildServlet extends HttpServlet implements IMLogger {
 				String resultok = StrUtils.fString(request.getParameter("resultok"));
 				request.setAttribute("result", result);
 				request.setAttribute("resultok", resultok);
+				
+				List movQryList = new ItemUtil().queryItemMstForSearchCriteriaNew("","","","","","","",plant,"",0,0);
+				if (movQryList.size() > 0) {
+				for(int i =0; i<movQryList.size(); i++) {
+				Vector arrCustLine = (Vector)movQryList.get(i);
+							
+				String Averagecost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(plant,(String)arrCustLine.get(33),(String)arrCustLine.get(0));
+				
+				if(Averagecost.equals("0.0")) 
+					Averagecost= (String)arrCustLine.get(13);
+				
+					Hashtable htCondition = new Hashtable();
+			        htCondition.put(IConstants.ITEM,(String)arrCustLine.get(0));
+			        htCondition.put(IConstants.PLANT,plant);
+			        Hashtable htUpdate = new Hashtable();
+			        htUpdate.put("AVERAGECOST",Averagecost);
+					boolean itemUpdated = new ItemUtil().updateItem(htUpdate,htCondition);
+				}
+				}
+				
 				RequestDispatcher rd = request.getRequestDispatcher("/jsp/Parentchildcmp.jsp");
 				rd.forward(request, response);
 			} catch (Exception e) {

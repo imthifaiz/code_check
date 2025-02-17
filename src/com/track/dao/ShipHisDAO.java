@@ -1463,7 +1463,9 @@ public ArrayList getproductcustomersaleswithzeroqty(String plant,String item,Str
 		   				sql.append("ISNULL('/track/ReadFileServlet/?fileLocation='+CATLOGPATH,'../jsp/dist/img/NO_IMG.png') AS CATALOG, ");
 		   				
 //		   				sql.append("ROUND(ISNULL(SUM(PO.TOTAL_UNITCOST), 0),5) - ISNULL(E.EXCOST, 0) AS TOTCOST, ");//imt
-		   				sql.append("ROUND(ISNULL(SUM(A.AVERAGECOST*PO.QTYOR), 0),5) - ISNULL(E.EXCOST, 0) AS TOTCOST, ");
+//		   				sql.append("ROUND(ISNULL(SUM(A.AVERAGECOST*PO.QTYOR), 0),5) - ISNULL(E.EXCOST, 0) AS TOTCOST, ");//imt2
+		   				sql.append("ISNULL(CASE WHEN ISNULL(A.AVERAGECOST,'') = '' THEN ROUND(ISNULL(SUM(A.COST*PO.QTYOR), 0),5)- ISNULL(E.EXCOST, 0) ELSE ROUND(SUM(A.AVERAGECOST*PO.QTYOR),2) - ISNULL(E.EXCOST, 0) END , 0) AS TOTCOST, ");//imt2
+		   				
 		   				
 //		   				sql.append("ISNULL(SUM(PO.TOTAL_UNITPRICE - PO.TOTAL_DISCOUNT) - ISNULL(E.EXPRICE, 0), 0) AS TOTAMT, ");//imt
 		   				sql.append("ISNULL(CASE WHEN ISNULL(PO.ITEM_RATES, 1) = 1 THEN SUM((PO.TOTAL_UNITPRICE - PO.TOTAL_DISCOUNT) - ISNULL(E.EXPRICE, 0) )-SUM(PO.TOTAL_UNITPRICE) + ((SUM(PO.TOTAL_UNITPRICE) / (100 + PO.OUTBOUND_GST)) * 100) ELSE SUM(PO.TOTAL_UNITPRICE - PO.TOTAL_DISCOUNT) - ISNULL(E.EXPRICE, 0)END ,  0)AS TOTAMT,  ");

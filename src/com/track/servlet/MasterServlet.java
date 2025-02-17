@@ -22,6 +22,7 @@ import com.track.db.object.LOC_TYPE_MST3;
 import com.track.db.util.ClearanceUtil;
 import com.track.db.util.CurrencyUtil;
 import com.track.db.util.CustUtil;
+import com.track.db.util.DOUtil;
 import com.track.db.util.EmployeeUtil;
 import com.track.db.util.GstTypeUtil;
 import com.track.db.util.HTReportUtil;
@@ -6002,8 +6003,6 @@ public class MasterServlet extends HttpServlet implements IMLogger{
 			for(int i =0; i<movQryList.size(); i++) {
 			Vector arrCustLine = (Vector)movQryList.get(i);
 						
-			
-			
 			JSONObject resultJsonInt = new JSONObject();
 			resultJsonInt.put("17", (String)arrCustLine.get(17));
 			resultJsonInt.put("ITEM", (String)arrCustLine.get(0));

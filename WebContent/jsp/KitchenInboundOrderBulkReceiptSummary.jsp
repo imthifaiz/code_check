@@ -642,6 +642,12 @@ function onReceiveAndBill(form){
 						var resultV = resultVal.grno;
 						document.form.GRNO.value= resultV;
 						//alert("ok");
+						var button = document.getElementById("btnRedeives");
+						var buttons = document.getElementById("btnbacks");
+						button.disabled = true;
+						setTimeout(function() {button.disabled = false;}, 90000);
+						buttons.disabled = true;
+						setTimeout(function() {buttons.disabled = false;}, 90000);
 						document.form.action ="/track/OrderReceivingByPOServlet?action=BulkReceive&createBill=Y";
 						document.form.submit();
 					} else {
@@ -1247,13 +1253,13 @@ function toDataURL(src, callback, outputFormat) {
       <!-- <button type="button" class="Submit btn btn-default" onClick="onReceive(document.form);"><b>Receive</b></button>&nbsp;&nbsp; -->
       <div class="dropup">
 		<%--https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_dropdown-menu-dropup&stacked=h --%>
-	    <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">Receive
+	    <button class="btn btn-success dropdown-toggle" id="btnRedeives" type="button" data-toggle="dropdown">Receive
 	    <span class="caret"></span></button>
 	    <ul class="dropdown-menu">
 	      <li><a id="btnRedeive" href="#" onclick="onReceiveAndBill(document.form);">Receive</a></li>
 	      <li><a id="btnReceiveEmail" href="#" onclick="onReceiveAndBillAndEmail(document.form);">Receive and Send Email</a></li>
 	    </ul>
-	    <button type="button" class="Submit btn btn-default" onClick="window.location.href='../home'"><b>Back</b></button>
+	    <button type="button" id="btnbacks" class="Submit btn btn-default" onClick="window.location.href='../home'"><b>Back</b></button>
 	  </div>
       </div>
       </div>

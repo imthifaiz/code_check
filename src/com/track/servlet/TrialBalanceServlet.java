@@ -17,8 +17,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -157,7 +159,10 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				HSSFWorkbook workbook = null;
 				try {
 					String numberOfDecimal = _PlantMstDAO.getNumberOfDecimal(plant);
-					workbook = populateExcel("Trial Balance", toDate, jarray.toString(), numberOfDecimal,plant);
+					ArrayList plntList = _PlantMstDAO.getPlantMstDetails(plant);
+					Map plntMap = (Map) plntList.get(0);
+					String PLNTDESC = (String) plntMap.get("PLNTDESC");
+					workbook = populateExcel(""+PLNTDESC+" (Trial Balance) ", toDate, jarray.toString(), numberOfDecimal,plant);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -227,7 +232,10 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				HSSFWorkbook workbook = null;
 				try {
 					String numberOfDecimal = _PlantMstDAO.getNumberOfDecimal(plant);
-					workbook = populateExcel("Trial Balance", toDate, jarray.toString(), numberOfDecimal,plant);
+					ArrayList plntList = _PlantMstDAO.getPlantMstDetails(plant);
+					Map plntMap = (Map) plntList.get(0);
+					String PLNTDESC = (String) plntMap.get("PLNTDESC");
+					workbook = populateExcel(""+PLNTDESC+" (Trial Balance) ", toDate, jarray.toString(), numberOfDecimal,plant);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -685,6 +693,12 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 		/* attach the font to the style created earlier */
 		my_style.setFont(my_font);
 		
+		HSSFCellStyle TOT_STYLE = workbook.createCellStyle();
+		HSSFFont TOT_FONT = workbook.createFont();
+		TOT_FONT.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		TOT_FONT.setFontHeightInPoints((short)11);
+		TOT_STYLE.setFont(TOT_FONT);
+		
 		HSSFCellStyle rightAligned = workbook.createCellStyle();
 		rightAligned.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
@@ -729,28 +743,39 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				row4Data1.setCellValue(new HSSFRichTextString(accountcode+" "+StrUtils.fString(object.getString("account_name"))));*/
 				row4Data1.setCellValue(new HSSFRichTextString(StrUtils.fString(object.getString("account_name"))));
 				HSSFCell row4Data2 = row4.createCell(1);
+				
+//				HSSFCellStyle style = workbook.createCellStyle();
+//				HSSFDataFormat format = workbook.createDataFormat();
+//				style.setDataFormat(format.getFormat("0.00")); 
+
 
 				String netDebitVal = StrUtils.fString(object.getString("net_debit"));
 				netDebitVal = StrUtils.addZeroes(Double.parseDouble(netDebitVal), noOfDecimal);
-				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+//				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+				double snetDebitVal = Double.parseDouble(netDebitVal);
 
-				row4Data2.setCellValue(new HSSFRichTextString(netDebitVal));
+//				row4Data2.setCellValue(new HSSFRichTextString(netDebitVal));
+				row4Data2.setCellValue(snetDebitVal);
 				row4Data2.setCellStyle(rightAligned);
 
 				String netCreditVal = StrUtils.fString(object.getString("net_credit"));
 				netCreditVal = StrUtils.addZeroes(Double.parseDouble(netCreditVal), noOfDecimal);
-				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+//				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+				double snetCreditVal = Double.parseDouble(netCreditVal);
 
 				HSSFCell row4Data3 = row4.createCell(2);
-				row4Data3.setCellValue(new HSSFRichTextString(netCreditVal));
+//				row4Data3.setCellValue(new HSSFRichTextString(netCreditVal));
+				row4Data3.setCellValue(snetCreditVal);
 				row4Data3.setCellStyle(rightAligned);
 				
 				String netBalanceVal = StrUtils.fString(object.getString("net_balance"));
 				netBalanceVal = StrUtils.addZeroes(Double.parseDouble(netBalanceVal), noOfDecimal);
-				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+//				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+				double snetBalanceVal = Double.parseDouble(netBalanceVal);
 
 				HSSFCell row4Data4 = row4.createCell(3);
-				row4Data4.setCellValue(new HSSFRichTextString(netBalanceVal));
+//				row4Data4.setCellValue(new HSSFRichTextString(netBalanceVal));
+				row4Data4.setCellValue(snetBalanceVal);
 				row4Data4.setCellStyle(rightAligned);
 				
 				dataRow++;
@@ -774,26 +799,32 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 
 				String netDebitVal = StrUtils.fString(object.getString("net_debit"));
 				netDebitVal = StrUtils.addZeroes(Double.parseDouble(netDebitVal), noOfDecimal);
-				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+//				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+				double snetDebitVal = Double.parseDouble(netDebitVal);
 
 				String netCreditVal = StrUtils.fString(object.getString("net_credit"));
 				netCreditVal = StrUtils.addZeroes(Double.parseDouble(netCreditVal), noOfDecimal);
-				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+//				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+				double snetCreditVal = Double.parseDouble(netCreditVal);
 				
 				String netBalanceVal = StrUtils.fString(object.getString("net_balance"));
 				netBalanceVal = StrUtils.addZeroes(Double.parseDouble(netBalanceVal), noOfDecimal);
-				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+//				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+				double snetBalanceVal = Double.parseDouble(netCreditVal);
 
 				HSSFCell rowLiaData2 = rowLia1.createCell(1);
-				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+//				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+				rowLiaData2.setCellValue(snetDebitVal);
 				rowLiaData2.setCellStyle(rightAligned);
 
 				HSSFCell rowLiaData3 = rowLia1.createCell(2);
-				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+//				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+				rowLiaData3.setCellValue(snetCreditVal);
 				rowLiaData3.setCellStyle(rightAligned);
 				
 				HSSFCell rowLiaData4 = rowLia1.createCell(3);
-				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+//				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+				rowLiaData4.setCellValue(snetBalanceVal);
 				rowLiaData4.setCellStyle(rightAligned);
 				
 				liaDataRow++;
@@ -817,26 +848,32 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 
 				String netDebitVal = StrUtils.fString(object.getString("net_debit"));
 				netDebitVal = StrUtils.addZeroes(Double.parseDouble(netDebitVal), noOfDecimal);
-				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+//				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+				double snetDebitVal = Double.parseDouble(netDebitVal);
 
 				String netCreditVal = StrUtils.fString(object.getString("net_credit"));
 				netCreditVal = StrUtils.addZeroes(Double.parseDouble(netCreditVal), noOfDecimal);
-				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+//				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+				double snetCreditVal = Double.parseDouble(netCreditVal);
 				
 				String netBalanceVal = StrUtils.fString(object.getString("net_balance"));
 				netBalanceVal = StrUtils.addZeroes(Double.parseDouble(netBalanceVal), noOfDecimal);
-				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+//				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+				double snetBalanceVal = Double.parseDouble(netBalanceVal);
 
 				HSSFCell rowLiaData2 = rowLia1.createCell(1);
-				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+//				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+				rowLiaData2.setCellValue(snetDebitVal);
 				rowLiaData2.setCellStyle(rightAligned);
 
 				HSSFCell rowLiaData3 = rowLia1.createCell(2);
-				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+//				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+				rowLiaData3.setCellValue(snetCreditVal);
 				rowLiaData3.setCellStyle(rightAligned);
 				
 				HSSFCell rowLiaData4 = rowLia1.createCell(3);
-				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+//				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+				rowLiaData4.setCellValue(snetBalanceVal);
 				rowLiaData4.setCellStyle(rightAligned);
 				equityDataRow++;
 			}
@@ -859,26 +896,32 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 
 				String netDebitVal = StrUtils.fString(object.getString("net_debit"));
 				netDebitVal = StrUtils.addZeroes(Double.parseDouble(netDebitVal), noOfDecimal);
-				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+//				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+				double snetDebitVal = Double.parseDouble(netDebitVal);
 
 				String netCreditVal = StrUtils.fString(object.getString("net_credit"));
 				netCreditVal = StrUtils.addZeroes(Double.parseDouble(netCreditVal), noOfDecimal);
-				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+//				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+				double snetCreditVal = Double.parseDouble(netCreditVal);
 				
 				String netBalanceVal = StrUtils.fString(object.getString("net_balance"));
 				netBalanceVal = StrUtils.addZeroes(Double.parseDouble(netBalanceVal), noOfDecimal);
-				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+//				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+				double snetBalanceVal = Double.parseDouble(netBalanceVal);
 
 				HSSFCell rowLiaData2 = rowLia1.createCell(1);
-				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+//				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+				rowLiaData2.setCellValue(snetDebitVal);
 				rowLiaData2.setCellStyle(rightAligned);
 
 				HSSFCell rowLiaData3 = rowLia1.createCell(2);
-				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+//				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+				rowLiaData3.setCellValue(snetCreditVal);
 				rowLiaData3.setCellStyle(rightAligned);
 				
 				HSSFCell rowLiaData4 = rowLia1.createCell(3);
-				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+//				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+				rowLiaData4.setCellValue(snetBalanceVal);
 				rowLiaData4.setCellStyle(rightAligned);
 				incomeDataRow++;
 			}
@@ -914,26 +957,32 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 
 				String netDebitVal = StrUtils.fString(object.getString("net_debit"));
 				netDebitVal = StrUtils.addZeroes(Double.parseDouble(netDebitVal), noOfDecimal);
-				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+//				netDebitVal = Numbers.toMillionFormat(Double.parseDouble(netDebitVal), noOfDecimal);
+				double snetDebitVal = Double.parseDouble(netDebitVal);
 
 				String netCreditVal = StrUtils.fString(object.getString("net_credit"));
 				netCreditVal = StrUtils.addZeroes(Double.parseDouble(netCreditVal), noOfDecimal);
-				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+//				netCreditVal = Numbers.toMillionFormat(Double.parseDouble(netCreditVal), noOfDecimal);
+				double snetCreditVal = Double.parseDouble(netCreditVal);
 				
 				String netBalanceVal = StrUtils.fString(object.getString("net_balance"));
 				netBalanceVal = StrUtils.addZeroes(Double.parseDouble(netBalanceVal), noOfDecimal);
-				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+//				netBalanceVal = Numbers.toMillionFormat(Double.parseDouble(netBalanceVal), noOfDecimal);
+				double snetBalanceVal = Double.parseDouble(netBalanceVal);
 
 				HSSFCell rowLiaData2 = rowLia1.createCell(1);
-				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+//				rowLiaData2.setCellValue(new HSSFRichTextString(netDebitVal));
+				rowLiaData2.setCellValue(snetDebitVal);
 				rowLiaData2.setCellStyle(rightAligned);
 
 				HSSFCell rowLiaData3 = rowLia1.createCell(2);
-				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+//				rowLiaData3.setCellValue(new HSSFRichTextString(netCreditVal));
+				rowLiaData3.setCellValue(snetCreditVal);
 				rowLiaData3.setCellStyle(rightAligned);
 				
 				HSSFCell rowLiaData4 = rowLia1.createCell(3);
-				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+//				rowLiaData4.setCellValue(new HSSFRichTextString(netBalanceVal));
+				rowLiaData4.setCellValue(snetBalanceVal);
 				rowLiaData4.setCellStyle(rightAligned);
 				expenseDataRow++;
 			}
@@ -947,28 +996,31 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 
 		String totalDebitVal = StrUtils.fString(String.valueOf(totalNetdebit));
 		totalDebitVal = StrUtils.addZeroes(Double.parseDouble(totalDebitVal), noOfDecimal);
-		totalDebitVal = Numbers.toMillionFormat(Double.parseDouble(totalDebitVal), noOfDecimal);
+//		totalDebitVal = Numbers.toMillionFormat(Double.parseDouble(totalDebitVal), noOfDecimal);
+		double stotalDebitVal = Double.parseDouble(totalDebitVal);
 
 		String totalCreditVal = StrUtils.fString(String.valueOf(totalNetCredit));
 		totalCreditVal = StrUtils.addZeroes(Double.parseDouble(totalCreditVal), noOfDecimal);
-		totalCreditVal = Numbers.toMillionFormat(Double.parseDouble(totalCreditVal), noOfDecimal);
+//		totalCreditVal = Numbers.toMillionFormat(Double.parseDouble(totalCreditVal), noOfDecimal);
+		double stotalCreditVal = Double.parseDouble(totalCreditVal);
 		
 		String totalBalanceVal = StrUtils.fString(String.valueOf(totalNetBalance));
 		totalBalanceVal = StrUtils.addZeroes(Double.parseDouble(totalBalanceVal), noOfDecimal);
-		totalBalanceVal = Numbers.toMillionFormat(Double.parseDouble(totalBalanceVal), noOfDecimal);
+//		totalBalanceVal = Numbers.toMillionFormat(Double.parseDouble(totalBalanceVal), noOfDecimal);
+		double stotalBalanceVal = Double.parseDouble(totalBalanceVal);
 
 		HSSFCell cellTotal1 = rowTotal.createCell(1);
-		cellTotal1.setCellValue(totalDebitVal);
-		cellTotal1.setCellStyle(rightAligned);
+		cellTotal1.setCellValue(stotalDebitVal);
+		cellTotal1.setCellStyle(TOT_STYLE);
 
 		HSSFCell cellTotal2 = rowTotal.createCell(2);
-		cellTotal2.setCellValue(totalCreditVal);
-		cellTotal2.setCellStyle(rightAligned);
+		cellTotal2.setCellValue(stotalCreditVal);
+		cellTotal2.setCellStyle(TOT_STYLE);
 		
 		
 		HSSFCell cellTotal3 = rowTotal.createCell(3);
-		cellTotal3.setCellValue(totalBalanceVal);
-		cellTotal3.setCellStyle(rightAligned);
+		cellTotal3.setCellValue(stotalBalanceVal);
+		cellTotal3.setCellStyle(TOT_STYLE);
 
 		spreadsheet.autoSizeColumn(0);
 		spreadsheet.autoSizeColumn(1);

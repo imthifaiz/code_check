@@ -593,7 +593,7 @@ function postDatePickerInit(){
 	function downTBExcel()
 	{
 		//alert("coming");
-		window.location = "/track/TrialBalanceServlet?action=getTrialBalanceAsExcel&fromDate="+fromDateFormatted+"&toDate="+toDateFormatted;
+		window.location = "/track/TrialBalanceServlet?action=getTrialBalanceAsExcelgp&fromDate="+fromDateFormatted+"&toDate="+toDateFormatted;
 	}
 // 	$("#tbsexcel").on('click', function() 
 //     {
@@ -614,7 +614,7 @@ function postDatePickerInit(){
 			type : "GET",
 			url: '/track/TrialBalanceServlet',
 			data : {
-				action : "getTrialBalanceAsExcel",
+				action : "getTrialBalanceAsExcelgp",
 				excelHeaderTitle: titleNm,
 				excelHeaderDate: dateStr, 
 				excelData: json

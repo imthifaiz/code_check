@@ -38,6 +38,8 @@
 				        		<input type="hidden" name="frmdate" value=""> 
 				        		<input type="hidden" name="todate" value=""> 
 				        		<input type="hidden" name="cust" value=""> 
+				        		<input type="hidden" name="intercomp" value=""> 
+				        		
 				        		
 					   		</div>
 			        	</div>

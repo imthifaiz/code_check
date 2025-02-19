@@ -216,17 +216,30 @@ if(action.equalsIgnoreCase("bankreconcilationview")) {
 		try {
 			String msg = StrUtils.fString(request.getParameter("msg"));
 			request.setAttribute("Msg", msg);
-			ArrayList al = new PlantMstDAO().getPlantMstDetails(plant);
-			Map map = (Map) al.get(0);
-			String ISTRIALGROUP = (String) map.get("ISTRIALGROUP");
+//			ArrayList al = new PlantMstDAO().getPlantMstDetails(plant);
+//			Map map = (Map) al.get(0);
+//			String ISTRIALGROUP = (String) map.get("ISTRIALGROUP");
 			RequestDispatcher rd = request.getRequestDispatcher("/jsp/trialbalance.jsp");
-			if(ISTRIALGROUP.equalsIgnoreCase("1")) 
-				rd = request.getRequestDispatcher("/jsp/Grouptrialbalance.jsp");
+//			if(ISTRIALGROUP.equalsIgnoreCase("1")) 
+//				rd = request.getRequestDispatcher("/jsp/Grouptrialbalance.jsp");
 		rd.forward(request, response);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
 }
+	
+	if(action.equalsIgnoreCase("trialbalancegroup")) {
+		
+		
+		try {
+			String msg = StrUtils.fString(request.getParameter("msg"));
+			request.setAttribute("Msg", msg);
+			RequestDispatcher rd = request.getRequestDispatcher("/jsp/Grouptrialbalance.jsp");
+			rd.forward(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 if(action.equalsIgnoreCase("parenttrialbalance")) {
 		

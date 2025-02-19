@@ -32,6 +32,7 @@
 	String numberOfDecimal = plantMstDAO.getNumberOfDecimal(plant);
 	String account=StrUtils.fString(request.getParameter("account")).trim();
 	String accountName=StrUtils.fString(request.getParameter("accname")).trim();
+	String view=StrUtils.fString(request.getParameter("view")).trim();
 	String fromDate= StrUtils.fString(request.getParameter("fromDate")).trim();
 	String toDate= StrUtils.fString(request.getParameter("toDate")).trim();
 	String fromdateString="";
@@ -81,7 +82,11 @@
 	<div class="box">
 
 		<div class="box-header menu-drop">
+		<%if(view.contains("GROUP")){ %>
+			 <h1 style="font-size: 18px;cursor:pointer;" class="box-title pull-right" onclick="window.location.href='../accountant/trialbalancegroup'">
+		<%}else {%>
 			 <h1 style="font-size: 18px;cursor:pointer;" class="box-title pull-right" onclick="window.location.href='../accountant/trialbalance'">
+		<%}%>
               <i class="glyphicon glyphicon-remove"></i>
               </h1>
                <div class="row">

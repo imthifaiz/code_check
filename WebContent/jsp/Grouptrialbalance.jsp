@@ -5,7 +5,7 @@
 <%@page import="java.io.*" %>
 <%! @SuppressWarnings({"rawtypes"}) %>
 <%
-	String title = "Trial Balance";
+	String title = "Trial Balance Group";
 	String plant = StrUtils.fString((String) session.getAttribute("PLANT"));
 	String username = StrUtils.fString((String) session.getAttribute("LOGIN_USER"));
 	PlantMstDAO plantMstDAO = new PlantMstDAO();
@@ -52,7 +52,7 @@
 	 <ul class="breadcrumb backpageul">    
                 <li class="underline-on-hover"><a href="../home">Dashboard</a></li>	
                  <li><a href="../accounting/reports"><span class="underline-on-hover">Accounting Reports</span></a></li>	
-                <li><label>Trial Balance</label></li>                                   
+                <li><label>Trial Balance Group</label></li>                                   
             </ul>
         <!-- Thanzith Modified on 28.02.2022 --> 
 
@@ -661,7 +661,7 @@ function callDetails(account)
 function newcallDetails(account,accountName)
 {
 	//alert("Called");
-	window.location.href="../accountant/trialbaldetail?account="+account+"&accname="+accountName+"&fromDate="+fromDateFormatted+"&toDate="+toDateFormatted+"";
+	window.location.href="../accountant/trialbaldetail?view=GROUP&account="+account+"&accname="+accountName+"&fromDate="+fromDateFormatted+"&toDate="+toDateFormatted+"";
 	}
 function generateEmail(attachName)
 {

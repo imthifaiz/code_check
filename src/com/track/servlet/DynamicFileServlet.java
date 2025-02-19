@@ -1783,7 +1783,7 @@ public class DynamicFileServlet extends HttpServlet implements IMLogger {
 		boolean IsaddedHdr = false;
 		boolean IsUpdate = false;
 		String POITEM="",POITEMDESC="",POvendname="",POCURRENCY="",POCURRENCYUSEQT="",POUOM="",POQTY="",POPRICE="",POAMT="",POSUPID="";
-		String frmdate ="",todate ="",cust ="";
+		String frmdate ="",todate ="",cust ="",inter="";
 		try {
 			
 			POITEM=StrUtils.fString(request.getParameter("ITEM_BARCODE"));
@@ -1800,6 +1800,7 @@ public class DynamicFileServlet extends HttpServlet implements IMLogger {
 			frmdate =StrUtils.fString(request.getParameter("frmdate"));
 			todate =StrUtils.fString(request.getParameter("todate"));
 			cust =StrUtils.fString(request.getParameter("cust"));
+			inter =StrUtils.fString(request.getParameter("intercomp"));
 			
 			String collectionDate=DateUtils.getDate();
 			String collectionTime=DateUtils.getTimeHHmm();
@@ -1981,7 +1982,7 @@ public class DynamicFileServlet extends HttpServlet implements IMLogger {
 			if(errorval.equalsIgnoreCase(""))
 				if (fileName.equals("SaveMultipur"))	
 //					response.sendRedirect("../purchaseestimate/multipoestdetail?POMULTIESTNO="+POMULTIESTNO+" ");
-					response.sendRedirect("../salesorder/reordersummary?FROM_DATE="+frmdate+"&TO_DATE="+todate+"&CUSTCODE="+cust+"&result="+res+" ");
+					response.sendRedirect("../salesorder/reordersummary?FROM_DATE="+frmdate+"&TO_DATE="+todate+"&CUSTCODE="+cust+"&INTER="+inter+"&result="+res+" ");
 				else
 					response.sendRedirect("../inhouse/printbarcode?PAGE_TYPE="+PAGE_TYPE+"&PRINT_TYPE="+printtype+"&result="+errorval);
 		} catch (Exception ex){}

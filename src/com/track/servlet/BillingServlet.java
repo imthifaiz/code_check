@@ -1148,9 +1148,13 @@ public class BillingServlet extends HttpServlet implements IMLogger {
 								journalDetail.setACCOUNT_NAME((String) billDet.get("ACCOUNT_NAME"));
 								if(!orddiscounttype.toString().equalsIgnoreCase("%")) {
 									journalDetail.setDEBITS(Double.parseDouble(billDet.get("Amount").toString()) - Double.parseDouble(orderdiscount.toString())/billDetInfoList.size());
+									if(itemRates.equalsIgnoreCase("1"))
+										journalDetail.setDEBITS(Double.parseDouble(subTotal) - Double.parseDouble(orderdiscount.toString())/billDetInfoList.size());
 								}else {
 									Double jodamt = (Double.parseDouble(billDet.get("Amount").toString())/100)*Double.parseDouble(orderdiscount.toString());
 									journalDetail.setDEBITS(Double.parseDouble(billDet.get("Amount").toString()) -jodamt);
+									if(itemRates.equalsIgnoreCase("1"))
+										journalDetail.setDEBITS(Double.parseDouble(subTotal) -jodamt);
 								}
 								
 								boolean isLoop=false;
@@ -2880,9 +2884,15 @@ public class BillingServlet extends HttpServlet implements IMLogger {
 							
 							if(!orddiscounttype.toString().equalsIgnoreCase("%")) {
 								journalDetail.setDEBITS(Double.parseDouble(billDet.get("Amount").toString()) - Double.parseDouble(orderdiscount.toString())/billDetInfoList.size());
+								if(itemRates.equalsIgnoreCase("1"))
+									journalDetail.setDEBITS(Double.parseDouble(subTotal) - Double.parseDouble(orderdiscount.toString())/billDetInfoList.size());
 							}else {
 								Double jodamt = (Double.parseDouble(billDet.get("Amount").toString())/100)*Double.parseDouble(orderdiscount.toString());
 								journalDetail.setDEBITS(Double.parseDouble(billDet.get("Amount").toString()) -jodamt);
+								if(itemRates.equalsIgnoreCase("1"))
+									journalDetail.setDEBITS(Double.parseDouble(subTotal) -jodamt);
+									
+								
 							}
 							
 							//journalDetail.setDEBITS(Double.parseDouble(billDet.get("Amount").toString())-Double.parseDouble(orderdiscount)/billDetInfoList.size());

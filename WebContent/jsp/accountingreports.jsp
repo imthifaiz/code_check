@@ -1,6 +1,8 @@
 <%@page import="java.util.ArrayList"%>
 <%@ page import="com.track.util.*"%>
 <%@ page import="com.track.constants.*"%>
+<%@ page import="com.track.dao.PlantMstDAO"%>
+<%@ page import="java.util.Map"%>
 <%String title = "Reports"; %>
 <%@include file="sessionCheck.jsp" %>
 <jsp:include page="header2.jsp" flush="true">
@@ -21,6 +23,7 @@
 <%
 java.util.ArrayList menulist = (java.util.ArrayList)session.getAttribute("DROPDOWN_MENU");
 java.util.ArrayList menuListWithSequence = (java.util.ArrayList)session.getAttribute("DROPDOWN_MENU_WITH_SEQUENCE");
+String plant = StrUtils.fString((String) request.getSession().getAttribute("PLANT")).trim();
 StrUtils strUtils = new StrUtils();
 String region = strUtils.fString((String) session.getAttribute("REGION"));
 ArrayList<String> addlist = new ArrayList<String>();
@@ -62,6 +65,11 @@ acclist.add("Detailed General Ledger");
 acclist.add("Journal");
 acclist.add("Consolidated Journal");
 acclist.add("Trail Balance");
+ArrayList al = new PlantMstDAO().getPlantMstDetails(plant);
+Map map = (Map) al.get(0);
+String ISTRIALGROUP = (String) map.get("ISTRIALGROUP");
+if(ISTRIALGROUP.equalsIgnoreCase("1")) 
+acclist.add("Trail Balance Group");
 acclist.add("Consolidated Trail Balance");
 
 ArrayList<String> projectlist = new ArrayList<String>();

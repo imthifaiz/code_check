@@ -53,9 +53,12 @@ function ExportReport()
 
 
 function onGo(){
-    //storeUserPreferences();
 document.form1.action="../salesorder/reordersummary";
 document.form1.submit();
+}
+
+function storeUserPreferences(vals){
+	storeInLocalStorage('view_inv_list_withcost_cog_FROM_DATE', $('#INTER').val(vals));
 }
 
 /* function storeUserPreferences(){
@@ -90,7 +93,7 @@ PlantMstDAO plantMstDAO = new PlantMstDAO();
 
 
 String fieldDesc="";
-String USERID ="",PLANT="",ITEM = "",CUSTOMER="",PRD_DESCRIP="", QTY ="",FROM_DATE ="",  TO_DATE = "",fdate="",tdate="",RADIOSEARCH="1",LOC="",POSSEARCH="1",INTER="1";
+String USERID ="",PLANT="",ITEM = "",CUSTOMER="",PRD_DESCRIP="", QTY ="",FROM_DATE ="",  TO_DATE = "",fdate="",tdate="",RADIOSEARCH="1",LOC="",POSSEARCH="1",INTER="0";
 String[] CHILD  = request.getParameterValues("ischild");
 if(CHILD == null)
 	 CHILD = new String[0];
@@ -107,6 +110,8 @@ String systatus = session.getAttribute("SYSTEMNOW").toString();
 USERID= session.getAttribute("LOGIN_USER").toString();
 ITEM    = StrUtils.fString(request.getParameter("ITEM"));
 CUSTOMER    = StrUtils.fString(request.getParameter("CUSTCODE"));
+if(CUSTOMER.equalsIgnoreCase(""))
+	CUSTOMER    = StrUtils.fString(request.getParameter("CUSTOMER"));
 LOC    = StrUtils.fString(request.getParameter("LOC"));
 SORT = StrUtils.fString(request.getParameter("SORT"));
 PRD_DESCRIP = StrUtils.fString(request.getParameter("PRD_DESCRIP"));
@@ -116,8 +121,10 @@ RADIOSEARCH = StrUtils.fString(request.getParameter("RADIOSEARCH"));
 String ENABLE_POS = plantMstDAO.getispos(PLANT);
 POSSEARCH = StrUtils.fString(request.getParameter("POSSEARCH"));
 INTER = StrUtils.fString(request.getParameter("INTER"));
+System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   "+INTER);
 if(INTER.equalsIgnoreCase("") || INTER.equalsIgnoreCase("null"))
-	INTER="0";
+	INTER="1";
+System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   "+INTER);
 if(RADIOSEARCH.equalsIgnoreCase("") || RADIOSEARCH.equalsIgnoreCase("null"))
 	RADIOSEARCH="1";
 if(POSSEARCH.equalsIgnoreCase("") || POSSEARCH.equalsIgnoreCase("null"))
@@ -125,7 +132,7 @@ if(POSSEARCH.equalsIgnoreCase("") || POSSEARCH.equalsIgnoreCase("null"))
 		POSSEARCH="1";
 	else
 		POSSEARCH="1";
-//System.out.println("RADIOSEARCH:"+RADIOSEARCH);
+System.out.println("RADIOSEARCH:"+RADIOSEARCH);
 String SETCURRENTDATE_ADVANCE_SEARCH = session.getAttribute("SETCURRENTDATE_ADVANCE_SEARCH").toString();
 boolean displaySummaryExport=false,displaySummaryEdit=false;
 if(systatus.equalsIgnoreCase("ACCOUNTING"))
@@ -311,9 +318,9 @@ for(int i =0; i<curQryList.size(); i++) {
 			  <div class="col-sm-4 ac-box">
 					<label class="control-label col-sm-3" for="view" style="right: 50px;font-weight: bold;">Inter CO :</label>
 				  	<label class="radio-inline" style="right: 40px;">
-  					<input name="INTER" type="radio" value="0" id="allcomp" checked onclick="changecomptype('0',this.value)"> <b>EXCL</b></label>
+  					<input name="INTER" type="radio" value="0" id="allcomp" <%if(INTER.equalsIgnoreCase("0")) {%>checked <% }%> onclick="changecomptype('0',this.value)"> <b>EXCL</b></label>
   					<label class="radio-inline" style="right: 40px;">
-  					<input name="INTER" type="radio" value="1" id="currentcomp" onclick="changecomptype('1',this.value)"> <b>INCL</b></label>
+  					<input name="INTER" type="radio" value="1" id="currentcomp" <%if(INTER.equalsIgnoreCase("1")) {%>checked <% }%>  onclick="changecomptype('1',this.value)"> <b>INCL</b></label>
 		</div>
 		
   		</div>
@@ -1186,7 +1193,7 @@ for(int i =0; i<curQryList.size(); i++) {
 
  
  $(document).ready(function(){
-
+	 getLocalStorageValue('view_inv_list_withcost_cog_FROM_DATE','', 'INTER');
 	 $(".childcmp-table").hide();  
 	  $("#pchild").hide();
 	  
@@ -1388,6 +1395,7 @@ for(int i =0; i<curQryList.size(); i++) {
  	document.MultiProductForm.frmdate.value='<%=FROM_DATE%>';
  	document.MultiProductForm.todate.value='<%=TO_DATE%>';
  	document.MultiProductForm.cust.value='<%=CUSTOMER%>';
+ 	document.MultiProductForm.intercomp.value='<%=INTER%>';
  	
  	document.MultiProductForm.POPLANT.value='<%=PLANT%>';
  	document.MultiProductForm.POITEM.value=item;
@@ -1651,10 +1659,12 @@ function showImage(src){
 			  $(".childcmp-table").show();
 			  $("#pchild").show();
 			  setparent(plant);
+			  storeUserPreferences(vals);
 		  }else{
+			  storeUserPreferences(vals);
 			  $(".childcmp-table").hide();  
 			  $("#pchild").hide();  
-			  onGo();
+// 			  onGo();
 		  }
 		}
 

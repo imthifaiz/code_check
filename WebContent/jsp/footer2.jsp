@@ -6,7 +6,7 @@
   <%if ("Dashboard".equals(request.getParameter("title"))){ %>
   <footer class="main-footer" style="margin: 0px;">
     <p>
-        Version 25.02.17.01 Copyright Sunpro Inno Apps Pte Ltd &copy; 2024, All rights reserved.  
+        Version 25.02.19.01 Copyright Sunpro Inno Apps Pte Ltd &copy; 2024, All rights reserved.  
 <!--         Version 25.01.06.01 Copyright Sunpro Inno Apps Pte Ltd &copy; 2024, All rights reserved.   -->
    <!-- Version 22.06.01.01 Copyright U-CLO Pte Ltd &copy; 2022, All rights reserved. --> 
     </p>

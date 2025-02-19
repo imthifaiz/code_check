@@ -1886,10 +1886,12 @@ public ArrayList getAllCompProductReorderqty(String plant,String item,String ite
           	}
           	
           	
+          	if(isCompbased.equalsIgnoreCase("0")) {
             commonElements.retainAll(nonEmptyParts); 
             addcomp.clear();
             commonElements.add(plant);
             addcomp = commonElements;
+          	}
 
       	}
       	

@@ -155,13 +155,13 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 //				if (action.equalsIgnoreCase("getTrialBalanceAsExcel") && !fromDate.isEmpty()) {
 			if (action.equalsIgnoreCase("getTrialBalanceAsExcel")) {
 				PlantMstDAO _PlantMstDAO = new PlantMstDAO();
-
+				String PLNTDESC ="";
 				HSSFWorkbook workbook = null;
 				try {
 					String numberOfDecimal = _PlantMstDAO.getNumberOfDecimal(plant);
 					ArrayList plntList = _PlantMstDAO.getPlantMstDetails(plant);
 					Map plntMap = (Map) plntList.get(0);
-					String PLNTDESC = (String) plntMap.get("PLNTDESC");
+					 PLNTDESC = (String) plntMap.get("PLNTDESC");
 					workbook = populateExcel(""+PLNTDESC+" (Trial Balance) ", toDate, jarray.toString(), numberOfDecimal,plant);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -172,7 +172,7 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				resp.setContentType("application/ms-excel");
 				resp.setContentLength(outArray.length);
 				resp.setHeader("Expires:", "0"); // eliminates browser caching
-				resp.setHeader("Content-Disposition", "attachment; filename=TrialBalance.xls");
+				resp.setHeader("Content-Disposition", "attachment; filename=TrialBalance ("+PLNTDESC+").xls");
 				OutputStream outStream = resp.getOutputStream();
 				outStream.write(outArray);
 				outStream.flush();
@@ -228,13 +228,13 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 //				if (action.equalsIgnoreCase("getTrialBalanceAsExcel") && !fromDate.isEmpty()) {
 			if (action.equalsIgnoreCase("getTrialBalanceAsExcelgp")) {
 				PlantMstDAO _PlantMstDAO = new PlantMstDAO();
-
+				String PLNTDESC ="";
 				HSSFWorkbook workbook = null;
 				try {
 					String numberOfDecimal = _PlantMstDAO.getNumberOfDecimal(plant);
 					ArrayList plntList = _PlantMstDAO.getPlantMstDetails(plant);
 					Map plntMap = (Map) plntList.get(0);
-					String PLNTDESC = (String) plntMap.get("PLNTDESC");
+					PLNTDESC = (String) plntMap.get("PLNTDESC");
 					workbook = populateExcel(""+PLNTDESC+" (Trial Balance) ", toDate, jarray.toString(), numberOfDecimal,plant);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -245,7 +245,7 @@ public class TrialBalanceServlet extends HttpServlet implements IMLogger {
 				resp.setContentType("application/ms-excel");
 				resp.setContentLength(outArray.length);
 				resp.setHeader("Expires:", "0"); // eliminates browser caching
-				resp.setHeader("Content-Disposition", "attachment; filename=TrialBalance.xls");
+				resp.setHeader("Content-Disposition", "attachment; filename=TrialBalance ("+PLNTDESC+").xls");
 				OutputStream outStream = resp.getOutputStream();
 				outStream.write(outArray);
 				outStream.flush();

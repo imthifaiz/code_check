@@ -3209,7 +3209,7 @@ public class DoHdrDAO extends BaseDAO {
    			" ELSE (SELECT CASE WHEN (SELECT COUNT(*) FROM "+aPlant+"_RECVDET WHERE ITEM='"+aItem+"' AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING') )>0\n" +
    			" THEN (SELECT SUM(UNITCOST) FROM "+aPlant+"_RECVDET C where item = '"+aItem+"' \n" +
    			" AND ISNULL(C.UNITCOST,0) != 0 AND tran_type IN('INVENTORYUPLOAD','DE-KITTING','KITTING')) ELSE \n" +
-   			" CAST(((SELECT M.COST / ISNULL((select ISNULL(QPUOM,1) from "+aPlant+"_UOM where UOM=M.SALESUOM),1) FROM "+aPlant+"_ITEMMST M WHERE M.ITEM = '"+aItem+"')*(SELECT CURRENCYUSEQT  FROM\n" +
+   			" CAST(((SELECT TOP 1 M.COST / ISNULL((select ISNULL(QPUOM,1) from "+aPlant+"_UOM where UOM=M.SALESUOM),1) FROM "+aPlant+"_ITEMMST M WHERE M.ITEM = '"+aItem+"')*(SELECT CURRENCYUSEQT  FROM\n" +
    			" "+aPlant+"_CURRENCYMST WHERE  CURRENCYID='"+currency+"')) AS DECIMAL(20,5))   END) END),0) "
    			+ " * (ISNULL((select ISNULL(QPUOM,1) from "+aPlant+"_UOM where UOM="+uom+"),1)) "
    			+ "AS AVERAGE_COST");

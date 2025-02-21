@@ -1166,6 +1166,8 @@ public class BillingServlet extends HttpServlet implements IMLogger {
 										if(accountId==journalDetail.getACCOUNT_ID()) {
 											isLoop=true;
 											Double sumDetit=journal.getDEBITS()+journalDetail.getDEBITS();
+											if(itemRates.equalsIgnoreCase("1"))
+												 sumDetit=journal.getDEBITS();
 											journalDetail.setDEBITS(sumDetit);
 											journalDetails.set(i, journalDetail);
 											break;
@@ -2905,6 +2907,8 @@ public class BillingServlet extends HttpServlet implements IMLogger {
 									if(accountId==journalDetail.getACCOUNT_ID()) {
 										isLoop=true;
 										Double sumDetit=journal.getDEBITS()+journalDetail.getDEBITS();
+										if(itemRates.equalsIgnoreCase("1"))
+											 sumDetit=journal.getDEBITS();
 										journalDetail.setDEBITS(sumDetit);
 										journalDetails.set(i, journalDetail);
 										break;
@@ -8817,6 +8821,8 @@ if(BILLSTATUS.equalsIgnoreCase("NOT BILLED"))
 							journalDetail.setACCOUNT_ID(Integer.parseInt(coaJson.getString("id")));
 							journalDetail.setACCOUNT_NAME((String) billDet.get("ACCOUNT_NAME"));
 							journalDetail.setDEBITS(Double.parseDouble(billDet.get("Amount").toString()) - Double.parseDouble(billhdr.getORDER_DISCOUNT().toString())/billDetInfoList.size());
+							if(billhdr.getITEM_RATES().equalsIgnoreCase("1"))
+								journalDetail.setDEBITS(Double.parseDouble(billhdr.getSUB_TOTAL().toString()) - Double.parseDouble(billhdr.getORDER_DISCOUNT().toString())/billDetInfoList.size());
 							boolean isLoop=false;
 							if(journalDetails.size()>0)
 							{
@@ -8826,6 +8832,8 @@ if(BILLSTATUS.equalsIgnoreCase("NOT BILLED"))
 									if(accountId==journalDetail.getACCOUNT_ID()) {
 										isLoop=true;
 										Double sumDetit=journal.getDEBITS()+journalDetail.getDEBITS();
+										if(billhdr.getITEM_RATES().equalsIgnoreCase("1"))
+											sumDetit=journal.getDEBITS();
 										journalDetail.setDEBITS(sumDetit);
 										journalDetails.set(i, journalDetail);
 										break;

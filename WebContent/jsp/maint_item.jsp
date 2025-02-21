@@ -3401,10 +3401,15 @@ if(cost.length()<0){
 	           if(COMP_INDUSTRY.equals("Retail")) {
 		 		if(chkdoutlet !=null) {
 						for(int i =0 ; i < chkdoutlet.length ; i++){
+							System.out.println(chkdoutlet);
 							String j = chkdoutlet[i];
-							String newOutletPrices = request.getParameter("newprice_"+j);
-							String splants = request.getParameter("childcompanyplant_"+j);
-							String sOutlets = request.getParameter("childoutlet_"+j);
+							System.out.println(j);
+							String newOutletPrices = request.getParameter("newpricep_"+j);
+							System.out.println(newOutletPrices);
+							String splants = request.getParameter("childcompanyplantp_"+j);
+							System.out.println(splants);
+							String sOutlets = request.getParameter("childoutletp_"+j);
+							System.out.println(sOutlets);
 							htCondition.clear();
 					        htCondition.put(IConstants.ITEM,sItem);
 					        htCondition.put(IConstants.PLANT,splants);
@@ -3429,7 +3434,7 @@ if(cost.length()<0){
 				        			  boolean posInserted = new POSHdrDAO().insertIntoPosOutletPrice(hPos);
 				        		  }else {
 				        			  boolean posUpdated = new POSHdrDAO().updatePosOutletPrice(hPos,htCond);
-				        			  itemUpdated = itemUtil.updateItem(htUptPrice,htCondition);
+// 				        			  itemUpdated = itemUtil.updateItem(htUptPrice,htCondition);
 				        		  }
 							}
 				 	}
@@ -4732,14 +4737,14 @@ if(cost.length()<0){
 									<input type="checkbox" name="checkoutlet" id="checkoutlet" value="<%=i%>" /></td>
 								<td class="text-center">
 									<input class="form-control text-left" name="childcompany" type="text" value="<%= plntdesc %>" placeholder="Company" autocomplete="off" readonly>
-									<input class="form-control" name="childcompanyplant_<%=i%>" type="hidden" value="<%= (String)arrCurrLine.get("PLANT") %>" ></td>
+									<input class="form-control" name="childcompanyplantp_<%=i%>" type="hidden" value="<%= (String)arrCurrLine.get("PLANT") %>" ></td>
 								<td class="text-center">
-									<input class="form-control text-left" name="childoutlet_<%=i%>" type="text" value="<%= (String)arrCurrLine.get("OUTLET") %>" placeholder="Outlet" autocomplete="off" readonly></td>
+									<input class="form-control text-left" name="childoutletp_<%=i%>" type="text" value="<%= (String)arrCurrLine.get("OUTLET") %>" placeholder="Outlet" autocomplete="off" readonly></td>
 								<td class="text-center">
 									<input class="form-control text-left" name="currentprice" type="text" value="<%=StrUtils.addZeroes(Double.parseDouble(outletprice), numberOfDecimal)%>" placeholder="Current Price" autocomplete="off" readonly></td>
 								<td class="text-center">
 <!-- 									<input class="form-control text-left" name="newprice" type="text" value="0.00" placeholder="New Price" autocomplete="off" onchange="checkprice(this)" onkeypress="return isNumberKey(event,this,4)"></td> -->
-									<input class="form-control text-left" name="newprice_<%=i%>" type="text" value="<%=StrUtils.addZeroes(Double.parseDouble(outletprice), numberOfDecimal)%>"  placeholder="New Price" autocomplete="off" onchange="checkprice(this)" onkeypress="return isNumberKey(event,this,4)"></td>
+									<input class="form-control text-left" name="newpricep_<%=i%>" type="text" value="<%=StrUtils.addZeroes(Double.parseDouble(outletprice), numberOfDecimal)%>"  placeholder="New Price" autocomplete="off" onchange="checkprice(this)" onkeypress="return isNumberKey(event,this,4)"></td>
 							</tr>
 						<%} %>
 						</tbody>

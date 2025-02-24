@@ -549,8 +549,8 @@ String projectname = "";
 				  			invoicedate = (String) invoiceHdr.get("INVOICE_DATE");
 				  			Invoiceamount = (String) invoiceHdr.get("TOTAL_AMOUNT");
 				  			double dInvoiceamount ="".equals(Invoiceamount) ? 0.0d :  Double.parseDouble(Invoiceamount);
-				  			Invoiceamount = Numbers.toMillionFormat(dInvoiceamount, numberOfDecimal);
-				  			
+// 				  			Invoiceamount = Numbers.toMillionFormat(dInvoiceamount, numberOfDecimal);
+				  			Invoiceamount = StrUtils.addZeroes(dInvoiceamount, numberOfDecimal);
 				  			covInvoiceamount= Numbers.toMillionFormat((Float.parseFloat(Invoiceamount)*Float.parseFloat( (String) invoiceHdr.get("CURRENCYUSEQT"))), numberOfDecimal);
 				  			invoicecurency = (String) invoiceHdr.get("CURRENCYID");
 				  			exchangeRate = (String) invoiceHdr.get("CURRENCYUSEQT");

@@ -3672,6 +3672,8 @@ public class JournalServlet extends HttpServlet implements IMLogger {
          try {
         
            String PLANT= StrUtils.fString(request.getParameter("PLANT"));
+           if(PLANT.equalsIgnoreCase(""))
+        	   PLANT = StrUtils.fString((String) request.getSession().getAttribute("PLANT")).trim();
            String FROM_DATE   = StrUtils.fString(request.getParameter("FDATE"));
            String TO_DATE = StrUtils.fString(request.getParameter("TDATE"));           
            String  REFERENCE = StrUtils.fString(request.getParameter("REFERENCE"));

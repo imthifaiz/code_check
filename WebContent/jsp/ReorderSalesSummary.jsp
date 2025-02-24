@@ -1411,6 +1411,10 @@ for(int i =0; i<curQryList.size(); i++) {
 	    currentItem = item; 
 // 	    PrdQty(item);
 		loadSalesData(item);
+		loadSalesReturnData(item);
+        loadPOSData(item);
+        loadPurchaseData(item);
+        loadPurchaseReturnData(item);
 	    $("#ItemQtyModal").modal();
 	}
 

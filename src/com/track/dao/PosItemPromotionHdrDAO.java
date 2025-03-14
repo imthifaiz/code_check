@@ -131,7 +131,9 @@ public class PosItemPromotionHdrDAO extends BaseDAO {
  					"           ,[QTY]" +
  					"           ,[DISCOUNT]" +
  					"           ,[DISCOUNT_TYPE]" +
- 					"           ,[LIMIT_OF_USAGE]) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+ 					"           ,[LIMIT_OF_USAGE]" +
+ 					"           ,[FINALPRICE]" +
+ 					"           ,[TOTALPRICE]) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
  			if(connection != null){
 	 			ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -157,6 +159,8 @@ public class PosItemPromotionHdrDAO extends BaseDAO {
 	 			ps.setDouble(19, poHdr.getDISCOUNT());
 	 			ps.setString(20, poHdr.getDISCOUNT_TYPE());
 	 			ps.setDouble(21, poHdr.getLIMIT_OF_USAGE());
+	 			ps.setDouble(22, poHdr.getFINALPRICE());
+	 			ps.setDouble(23, poHdr.getTOTALPRICE());
 
  			   int count=ps.executeUpdate();
 				
@@ -208,7 +212,9 @@ public class PosItemPromotionHdrDAO extends BaseDAO {
  					"           ,[QTY] = ?" +
  					"           ,[DISCOUNT] = ?" +
  					"           ,[DISCOUNT_TYPE] = ?" +
-					"           ,[LIMIT_OF_USAGE] = ? WHERE [ID] = "+id+" ";
+ 					"           ,[LIMIT_OF_USAGE] = ?" +
+ 					"           ,[TOTALPRICE] = ?" +
+					"           ,[FINALPRICE] = ? WHERE [ID] = "+id+" ";
 
 			if(connection != null){
 				ps = connection.prepareStatement(query);
@@ -232,6 +238,8 @@ public class PosItemPromotionHdrDAO extends BaseDAO {
 	 			ps.setDouble(17, poHdr.getDISCOUNT());
 	 			ps.setString(18, poHdr.getDISCOUNT_TYPE());
 	 			ps.setDouble(19, poHdr.getLIMIT_OF_USAGE());
+	 			ps.setDouble(20, poHdr.getTOTALPRICE());
+	 			ps.setDouble(21, poHdr.getFINALPRICE());
 //	 			ps.setInt(15, poHdr.getID());
 	 			
 			   int count=ps.executeUpdate();
@@ -393,8 +401,9 @@ public class PosItemPromotionHdrDAO extends BaseDAO {
 			
 			sQry = "SELECT PLANT,PROMOTION_NAME,PROMOTION_DESC,CUSTOMER_TYPE_ID,ISNULL(NOTES,'')NOTES,ISNULL(BY_VALUE,'')BY_VALUE,START_DATE,START_TIME,END_DATE,END_TIME,"
 					+ "ISNULL(IsActive,'')IsActive,ISNULL(UNITPRICE,0)UNITPRICE,ISNULL(QTY,0)QTY,ISNULL(DISCOUNT,0)DISCOUNT,ISNULL(DISCOUNT_TYPE,'')DISCOUNT_TYPE,ISNULL(LIMIT_OF_USAGE,0)LIMIT_OF_USAGE,"
+					+ "ISNULL(TOTALPRICE,0)TOTALPRICE,ISNULL(FINALPRICE,0)FINALPRICE,"
 					+ "STRING_AGG(OUTLET +'$'+ CAST(ID AS nvarchar), ',') AS OUTLET FROM ["+ plant +"_POSITEMPROMOTIONHDR] WHERE PLANT='"+plant+"' AND ID in("+Id+") "
-					+ "GROUP BY PROMOTION_NAME,PROMOTION_DESC,CUSTOMER_TYPE_ID,START_DATE,START_TIME,END_DATE,END_TIME,IsActive,LIMIT_OF_USAGE,DISCOUNT_TYPE,DISCOUNT,QTY,UNITPRICE,NOTES,BY_VALUE,PLANT;";
+					+ "GROUP BY PROMOTION_NAME,PROMOTION_DESC,CUSTOMER_TYPE_ID,START_DATE,START_TIME,END_DATE,END_TIME,IsActive,LIMIT_OF_USAGE,TOTALPRICE,FINALPRICE,DISCOUNT_TYPE,DISCOUNT,QTY,UNITPRICE,NOTES,BY_VALUE,PLANT;";
 			
 			
 			this.mLogger.query(this.printQuery, sQry);

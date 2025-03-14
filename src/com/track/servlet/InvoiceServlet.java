@@ -4934,7 +4934,8 @@ public class InvoiceServlet  extends HttpServlet implements IMLogger {
 							
 						}
 					}else {
-						response.sendRedirect("../invoice/summary?result="+ result);/* Redirect to Invoice Summary page */
+//						response.sendRedirect("../invoice/summary?result="+ result);/* Redirect to Invoice Summary page */
+						response.sendRedirect("../peppol/cxml?ID="+TranId);/* Redirect to Invoice Summary page */
 					}
 				}
 			}catch (Exception e) {

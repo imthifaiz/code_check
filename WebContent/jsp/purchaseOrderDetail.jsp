@@ -277,8 +277,7 @@ page-break-before : always;
 					</button>
 				<ul class="dropdown-menu" style="min-width: 0px;">
 						<li id=""><a href="../purchaseorder/convertToPurchase?pono=<%=pono%>">Convert To Purchase</a></li> 
-<%-- 						<li id=""><a href="../purchaseorder/convertToSales?pono=<%=pono%>">Convert To Sales</a></li> --%>
-						<li id="po-so"><a href="#">Convert To Sales</a></li>
+						<li id=""><a href="../purchaseorder/convertToSales?pono=<%=pono%>">Convert To Sales</a></li>
 					    <li id="so-delete"><a href="#">Delete</a></li>
 				  	</ul> 
 				  		<%}%>
@@ -630,11 +629,6 @@ Email: <%=EMAIL.trim()%>
 		            alert(data.responseText);
 		        }
 		    });
-	        return false; 
-		});
-		$("#po-so").click(function(){
-			showLoader();
-		     window.location.href="../purchaseorder/convertToSales?pono=<%=pono%>";
 	        return false; 
 		});
 	});

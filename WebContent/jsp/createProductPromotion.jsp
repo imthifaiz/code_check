@@ -174,6 +174,9 @@
 				<INPUT type="hidden" name="curency"  value="<%=DISPLAYID%>">
 	            <INPUT type="hidden" name="PRMDESC"  value="byqty">   <!-- imthi -->
 	            <INPUT type="hidden" name="FUNITPRICE"  value="">  
+	            <INPUT type="hidden" name="ITEMCOUNT"  value="0">  
+	            <INPUT type="hidden" name="TDISCOUNT"  value="0">  
+	            <INPUT type="hidden" name="TDISCOUNT1"  value="0">  
 				
 
 				<div class="form-group">
@@ -199,10 +202,24 @@
 			    </div>
 				</div>
 				
-				<div class="form-group DSHDR">
+				<div class="form-group" style="display:none;">
 				<label class="control-label col-form-label col-sm-2" for="Unit Price">Unit Price:</label>
         			<div class="col-sm-4">
         				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="UNITPRICE" value ="0.00" id="UNITPRICE" readonly>
+       				</div>
+				</div>	
+				
+				<div class="form-group DSHDR">
+				<label class="control-label col-form-label col-sm-2" for="Unit Price">Total Price:</label>
+        			<div class="col-sm-4">
+        				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="TOTPRICE" value ="0.00" id="TOTPRICE" readonly>
+       				</div>
+				</div>	
+				
+				<div class="form-group DSHDR">
+				<label class="control-label col-form-label col-sm-2" for="Unit Price">Final Price:</label>
+        			<div class="col-sm-4">
+        				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="FPRICE" value ="0.00" id="FPRICE" onchange="calculateFP(this,this.value)">
        				</div>
 				</div>	
 				
@@ -212,9 +229,9 @@
 						<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="DQTY" id="DQTY" value="1.000" onkeypress="return isNumberKey(event,this,4)">
 					</div>
 					
-					<label class="control-label col-form-label col-sm-1" for="time">Discount:</label>
+					<label class="control-label col-form-label col-sm-1" for="time" style="display:none;">Discount:</label>
 					
-					<div class="input-group my-group" style="width:195px;">
+					<div class="input-group my-group" style="width:195px;display:none;">
 				    <input name="DPRICE" type="text" class="form-control text-right"
 									value="0.00"  onchange="calculateDis(this,this.value)" onkeypress="return isNumberKey(event,this,4)">
 									<select name="DTYPE" class="discountPicker form-control"

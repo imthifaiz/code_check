@@ -158,8 +158,17 @@ public class ProductPromotionServlet extends HttpServlet implements IMLogger {
 								promotionHdr.setNOTES(StrUtils.fString(fileItem.getString()).trim());
 							}
 							
-							if (fileItem.getFieldName().equalsIgnoreCase("UNITPRICE")) {
+//							if (fileItem.getFieldName().equalsIgnoreCase("UNITPRICE")) {
+								if (fileItem.getFieldName().equalsIgnoreCase("TDISCOUNT")) {
 								promotionHdr.setUNITPRICE(Double.parseDouble(StrUtils.fString(fileItem.getString()).trim()));
+							}
+							
+							if (fileItem.getFieldName().equalsIgnoreCase("TOTPRICE")) {
+								promotionHdr.setTOTALPRICE(Double.parseDouble(StrUtils.fString(fileItem.getString()).trim()));
+							}
+							
+							if (fileItem.getFieldName().equalsIgnoreCase("FPRICE")) {
+								promotionHdr.setFINALPRICE(Double.parseDouble(StrUtils.fString(fileItem.getString()).trim()));
 							}
 							
 							if (fileItem.getFieldName().equalsIgnoreCase("DQTY")) {

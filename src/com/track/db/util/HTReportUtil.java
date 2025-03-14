@@ -13222,6 +13222,8 @@ System.out.println("Come in 2");
 					+ "A.TOTALDISCOUNT,\r\n"
 					+ "A.FLOATAMOUNT,\r\n"
 					+ "A.EXPENSE,\r\n"
+//					+ "A.CASH+(A.RETURNEDAMOUNT*2) as CASH,\r\n"
+//					+ "A.EXPECTEDDRAWERAMOUNT+(A.RETURNEDAMOUNT*2) as EXPECTEDDRAWERAMOUNT,\r\n"
 					+ "A.CASH,\r\n"
 					+ "A.EXPECTEDDRAWERAMOUNT,\r\n"
 					+ "A.DRAWERAMOUNT,\r\n"

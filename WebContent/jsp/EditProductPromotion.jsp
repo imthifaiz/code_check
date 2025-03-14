@@ -36,7 +36,7 @@
 	String sOutlet = StrUtils.InsertQuotes(StrUtils.fString(request.getParameter("OUTLET_NAME")));
 	String sOutCode = StrUtils.InsertQuotes(StrUtils.fString(request.getParameter("OUTCODE")));
 	String sOutCodess = StrUtils.InsertQuotes(StrUtils.fString(request.getParameter("OUTCODE")));
-	String promotion_name = "",promotion_desc = "", by_value = "",customer_type_id ="",outletname="",start_date ="",start_time ="",end_date ="",end_time ="",limit_of_usage ="",notes ="",isactive = "",fprice="",dqty="",dprice="",dtype="",dlimit="",totprice="",givprice="";
+	String promotion_name = "",promotion_desc = "", by_value = "",customer_type_id ="",outletname="",start_date ="",start_time ="",end_date ="",end_time ="",limit_of_usage ="",notes ="",isactive = "",fprice="",dqty="",dprice="",dtype="",dlimit="";
 	String ogprice="";
 // 	PosItemPromotionHdr posheader = posPromotionHdr.getPosHdrById(plant, ID);
     List viewlistQry = posPromotionHdr.getProductPromotionDetailsNew(plant,ID);
@@ -44,7 +44,7 @@
 //     	viewlistQry = posPromotionHdr.getProductPromotionDetails(plant,ID);
 //     }
 
-float fp=0,dis=0,itemprice=0;
+float fp=0,dis=0;
 float dpr=0,dfpr=0;
     for (int i = 0; i < viewlistQry.size(); i++) {
         Map map = (Map) viewlistQry.get(i);
@@ -61,8 +61,6 @@ float dpr=0,dfpr=0;
 	 	isactive = StrUtils.fString((String)map.get("IsActive"));
 	 	
 	 	fprice = StrUtils.fString((String)map.get("UNITPRICE"));
-	 	totprice = StrUtils.fString((String)map.get("TOTALPRICE"));
-	 	givprice = StrUtils.fString((String)map.get("FINALPRICE"));
 	 	dqty = StrUtils.fString((String)map.get("QTY"));
 	 	dprice = StrUtils.fString((String)map.get("DISCOUNT"));
 	 	dtype = StrUtils.fString((String)map.get("DISCOUNT_TYPE"));
@@ -70,7 +68,6 @@ float dpr=0,dfpr=0;
 	 	
 	 	fp = (int) Double.parseDouble(fprice);
 	 	dis = (int) Double.parseDouble(dprice);
-	 	itemprice = fp+dis;
 	 	
 	 	if(dtype.equalsIgnoreCase("%")){
 	 		 dpr = (fp * dis) / 100; 
@@ -201,9 +198,6 @@ float dpr=0,dfpr=0;
 	            <INPUT type="hidden" name="FUNITPRICE"  value="<%=ogprice%>">  
 	            <INPUT type="hidden" name="IMTI"  value="<%=sOutCode%>">  
 	            <INPUT type="hidden" name="IMTIS"  value="<%=sOutCodess%>">  
-	            <INPUT type="hidden" name="ITEMCOUNT"  value="0">  
-	            <INPUT type="hidden" name="TDISCOUNT"  value="<%=fprice%>">  
-	            <INPUT type="hidden" name="TDISCOUNT1"  value="0">  
 	            
 	            				<div class="form-group">
 				<label class="control-label col-form-label col-sm-2 required" for="Promotion name">Promotion Name:</label>
@@ -228,24 +222,10 @@ float dpr=0,dfpr=0;
 			    </div>
 				</div>
 				
-				<div class="form-group" style="display:none;">
+				<div class="form-group DSHDR">
 				<label class="control-label col-form-label col-sm-2" for="Unit Price">Unit Price:</label>
         			<div class="col-sm-4">
-        				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="UNITPRICE" id="UNITPRICE" value="<%=itemprice%>" readonly>
-       				</div>
-				</div>	
-				
-				<div class="form-group DSHDR">
-				<label class="control-label col-form-label col-sm-2" for="Unit Price">Total Price:</label>
-        			<div class="col-sm-4">
-        				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="TOTPRICE" value="<%=totprice%>" id="TOTPRICE" readonly>
-       				</div>
-				</div>	
-				
-				<div class="form-group DSHDR">
-				<label class="control-label col-form-label col-sm-2" for="Unit Price">Final Price:</label>
-        			<div class="col-sm-4">
-        				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="FPRICE" value="<%=givprice%>" id="FPRICE" onchange="calculateFP(this,this.value)">
+        				<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="UNITPRICE" id="UNITPRICE" value="<%=fprice%>" readonly>
        				</div>
 				</div>	
 				
@@ -255,9 +235,9 @@ float dpr=0,dfpr=0;
 						<INPUT class="form-control" type="TEXT" size="20" MAXLENGTH="100" name="DQTY" id="DQTY" value="<%=dqty%>" onkeypress="return isNumberKey(event,this,4)">
 					</div>
 					
-					<label class="control-label col-form-label col-sm-1" for="time" style="display:none;">Discount:</label>
+					<label class="control-label col-form-label col-sm-1" for="time">Discount:</label>
 					
-					<div class="input-group my-group" style="width:195px;display:none;">
+					<div class="input-group my-group" style="width:195px;">
 				    <input name="DPRICE" type="text" class="form-control text-right"
 									value="<%=dprice%>" onchange="calculateDis(this,this.value)" onkeypress="return isNumberKey(event,this,4)">
 									<select name="DTYPE" class="discountPicker form-control"

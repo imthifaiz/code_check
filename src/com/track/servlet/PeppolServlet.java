@@ -1770,11 +1770,8 @@ public class PeppolServlet extends HttpServlet implements IMLogger {
 //				IssueDate.appendChild(doc.createTextNode("2022-08-18")); // DATE yyyy-mm-dd
 				rootElement.appendChild(IssueDate);
 				
-				String invoiceduedate="";
-				if(!invoice_due_date.equalsIgnoreCase("")) {
-					String[] invduedate = invoice_due_date.split("/");
-					invoiceduedate = invduedate[2] + "-" + invduedate[1] + "-" + invduedate[0];
-				}
+				String[] invduedate = invoice_due_date.split("/");
+				String invoiceduedate = invduedate[2] + "-" + invduedate[1] + "-" + invduedate[0];
 
 				Element dueDate = doc.createElement("cbc:DueDate");
 				dueDate.appendChild(doc.createTextNode(invoiceduedate)); // due DATE yyyy-mm-dd
@@ -2138,7 +2135,7 @@ public class PeppolServlet extends HttpServlet implements IMLogger {
 
 				System.out.println(source.toString());
 
-				StreamResult result = new StreamResult(new File("W:\\Invoice_Outbound.xml"));
+				StreamResult result = new StreamResult(new File("D:\\Invoice_Outbound.xml"));
 				transformer.transform(source, result);
 
 				File xmlFile = new File(xmlFilePath);

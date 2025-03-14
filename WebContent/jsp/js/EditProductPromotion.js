@@ -139,14 +139,12 @@ $(document).ready(function(){
 		   if (rowCount > 1) {
 		        $(this).closest('tr').remove();
 		        setLineNo();
-		         setCOUNT();
 		    } else {
 		        $(this).closest('tr').remove();
 		        $("input[name=UNITPRICE]").val('');
 				$("input[name=FUNITPRICE]").val('');
 				$("input[name=DPRICE]").val('0.00');
 		        addRow();
-		        setCOUNT();
 		    }
 //	    $(this).parent().parent().remove();
 //	    setLineNo();
@@ -252,67 +250,6 @@ function removeSuggestionToTable(){
 	$(".itemSearch").typeahead('destroy');
 }
 
-function setCOUNTS(){
-	var i=0;
-	$(".po-table tbody tr td:first-child").each(function() {
-		i++;
-	});
-	$("input[name=ITEMCOUNT]").val(i);
-}
-function setCOUNT(){
-	
-		   $("input[name=TDISCOUNT]").val('0.00');
-		   $("input[name=TDISCOUNT1]").val('0.00');
-		   $("input[name=FPRICE]").val('0.00');
-		   $("input[name=DPRICE]").val('0.00');
-		   
-	var i=0;
-	var numberOfDecimal = $("input[name=numberOfDecimal]").val();
-	var price = parseFloat($("input[name=FUNITPRICE]").val()); 
-	$(".po-table tbody tr td:first-child").each(function() {
-		i++;
-	});
-	$("input[name=ITEMCOUNT]").val(i);
-	var count = parseFloat($("input[name=ITEMCOUNT]").val());
-	var totamount = parseFloat(price*count).toFixed(numberOfDecimal);
-	if (isNaN(totamount)) {
-		totamount = parseFloat(0).toFixed(numberOfDecimal);;
-	}
-	parseFloat($("input[name=TOTPRICE]").val(totamount));
-	
-	
-}
-
-function calculateFP(obj,price) {
-	var numberOfDecimal = $("input[name=numberOfDecimal]").val();
-    var unitprice = parseFloat($("input[name=TOTPRICE]").val()); 
-    var itemcount = parseFloat($("input[name=ITEMCOUNT]").val()); 
-    var itemprice = parseFloat($("input[name=UNITPRICE]").val()); 
-    var itempricedis = parseFloat($("input[name=TDISCOUNT]").val()); 
-   	var fp= parseFloat(price).toFixed(numberOfDecimal);
-   	var dis;
-    
-    if (isNaN(unitprice) || unitprice === 0) {
-        alert('Please select a valid product with a unit price.');
-        $(obj).val('0.00');
-        removeSuggestionToTable();
-		addSuggestionToTable();
-        return;
-    }
-    if(price>unitprice){
-			alert('Amount should not be greater than Total Amount')
-			$(obj).val('0.00');
-		}else{
-			parseFloat($("input[name=FPRICE]").val(fp));
-			fp = fp/itemcount;
-			itempricedis = itemprice-fp;
-			parseFloat($("input[name=TDISCOUNT]").val(fp));
-			dis= parseFloat(itempricedis).toFixed(numberOfDecimal);
-			parseFloat($("input[name=DPRICE]").val(dis));
-		}
-   
-}
-
 function loadItemData(obj,cost){
 	var radiotype = $("input[name=PRMDESC]").val();
 	var numberOfDecimal = $("input[name=numberOfDecimal]").val();
@@ -333,7 +270,6 @@ function loadItemData(obj,cost){
 				$(obj).closest('tr').find("td:nth-child(1)").find('input[name=basecost]').val(cost);
 				calculateAmount(obj);
 				calculateDisType(obj,'');
-				setCOUNT();
 			}else{
 				alert('please select the product at the price range of '+unitprice.toFixed(numberOfDecimal));
 				$(obj).closest('tr').remove();
@@ -513,10 +449,6 @@ function addRow(){
 	   $(".BQ").hide();
 	   $(".BV").hide();
 	   $(".DSHDR").show();
-	    $("input[name=TDISCOUNT]").val('0.00');
-		   $("input[name=TDISCOUNT1]").val('0.00');
-		   $("input[name=FPRICE]").val('0.00');
-		   $("input[name=DPRICE]").val('0.00');
     }
     
    if($("input[name=PRMDESC]").val() == "byqty"){
@@ -533,10 +465,6 @@ function addRow(){
 	   $(".BQ").hide();
 	   $(".BV").hide();
 	   $(".LU").hide();
-	    $("input[name=TDISCOUNT]").val('0.00');
-		   $("input[name=TDISCOUNT1]").val('0.00');
-		   $("input[name=FPRICE]").val('0.00');
-		   $("input[name=DPRICE]").val('0.00');
     }
 	
 	    
@@ -754,7 +682,6 @@ function loadPromotionTable(orders){
 	});
 
 	$(".po-table tbody").html(body);
-			setCOUNTS();
 
 	removeSuggestionToTable();
 	addSuggestionToTable();

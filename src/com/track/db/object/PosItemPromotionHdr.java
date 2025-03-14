@@ -70,12 +70,6 @@ public class PosItemPromotionHdr {
 	
 	@DBTable(columnName ="LIMIT_OF_USAGE")   
 	private double LIMIT_OF_USAGE;
-	
-	@DBTable(columnName ="FINALPRICE")   
-	private double FINALPRICE;
-	
-	@DBTable(columnName ="TOTALPRICE")   
-	private double TOTALPRICE;
 
 	public String getPLANT() {
 		return PLANT;
@@ -261,29 +255,13 @@ public class PosItemPromotionHdr {
 	public void setLIMIT_OF_USAGE(double lIMIT_OF_USAGE) {
 		LIMIT_OF_USAGE = lIMIT_OF_USAGE;
 	}
-	
-	public double getFINALPRICE() {
-		return FINALPRICE;
-	}
-	
-	public void setFINALPRICE(double fINALPRICE) {
-		FINALPRICE = fINALPRICE;
-	}
-	
-	public double getTOTALPRICE() {
-		return TOTALPRICE;
-	}
-	
-	public void setTOTALPRICE(double tOTALPRICE) {
-		TOTALPRICE = tOTALPRICE;
-	}
 
 
 	@Override
 	public String toString() {
 		return "PosItemPromotionHdr [PLANT=" + PLANT + ", ID=" + ID + ", PROMOTION_NAME=" + PROMOTION_NAME + ", PROMOTION_DESC=" + PROMOTION_DESC
 				+ ", CUSTOMER_TYPE_ID=" + CUSTOMER_TYPE_ID + ", START_DATE=" + START_DATE + ", START_TIME=" + START_TIME + ", END_DATE=" + END_DATE + ", END_TIME=" + END_TIME
-				+ ",  BY_VALUE=" + BY_VALUE + ", NOTES=" + NOTES + ", IsActive=" + IsActive + ", CRAT=" + CRAT + ", CRBY=" + CRBY + ", UPAT=" + UPAT + ", UPBY=" + UPBY +",OUTLET=" + OUTLET +",UNITPRICE=" + UNITPRICE +",QTY=" + QTY +",DISCOUNT=" + DISCOUNT +",DISCOUNT_TYPE=" + DISCOUNT_TYPE +",LIMIT_OF_USAGE=" + LIMIT_OF_USAGE +" ,TOTALPRICE=" + TOTALPRICE +" ,FINALPRICE=" + FINALPRICE +" ]";
+				+ ",  BY_VALUE=" + BY_VALUE + ", NOTES=" + NOTES + ", IsActive=" + IsActive + ", CRAT=" + CRAT + ", CRBY=" + CRBY + ", UPAT=" + UPAT + ", UPBY=" + UPBY +",OUTLET=" + OUTLET +",UNITPRICE=" + UNITPRICE +",QTY=" + QTY +",DISCOUNT=" + DISCOUNT +",DISCOUNT_TYPE=" + DISCOUNT_TYPE +",LIMIT_OF_USAGE=" + LIMIT_OF_USAGE +"]";
 		//		+ ", LIMIT_OF_USAGE=" + LIMIT_OF_USAGE + ", BY_VALUE=" + BY_VALUE + ", NOTES=" + NOTES + ", IsActive=" + IsActive + ", CRAT=" + CRAT + ", CRBY=" + CRBY + ", UPAT=" + UPAT + ", UPBY=" + UPBY +"]";
 	}
 

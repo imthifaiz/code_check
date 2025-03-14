@@ -120,7 +120,7 @@
 	   
 		
 	}
-	double dTotalQty = 0, dTotalPickedQty = 0, dTotalIssuedQty = 0,totalTax = 0, subTotal = 0,subTotalcost = 0;
+	double dTotalQty = 0, dTotalPickedQty = 0, dTotalIssuedQty = 0,totalTax = 0, subTotal = 0;
 	List ItemList = (ArrayList)request.getAttribute("ItemList");
 	List taxList =new ArrayList();
 	
@@ -614,7 +614,6 @@ Email: <%=EMAIL.trim()%>
 						  			
 						  			totalTax += itemtax; */
 						  			subTotal += item_amount;
-						  			subTotalcost += dCost;
 								%>
 								<%
 								Hashtable hit = new Hashtable();
@@ -793,11 +792,11 @@ Email: <%=EMAIL.trim()%>
 						<table id="table3" class="table">
 							<tbody style="text-align:right;">
 								<tr>
+									<td></td>
 									<td class="text-center">Qty Total</td>
-									<td class="text-left"><%=StrUtils.addZeroes(dTotalQty, "3")%></td>
-									<td class="text-left"><%=StrUtils.addZeroes(dTotalPickedQty, "3")%></td>
-									<td class="text-left"><%=StrUtils.addZeroes(dTotalIssuedQty, "3")%></td>
-									<td class="text-left"><%=Numbers.toMillionFormat(String.valueOf(subTotalcost),Integer.valueOf(numberOfDecimal))%></td>
+									<td class="text-center"><%=StrUtils.addZeroes(dTotalQty, "3")%></td>
+									<td class="text-center"><%=StrUtils.addZeroes(dTotalPickedQty, "3")%></td>
+									<td class="text-center"><%=StrUtils.addZeroes(dTotalIssuedQty, "3")%></td>
 									<td><%=lblSubTotal%></td>
 									<td><%=Numbers.toMillionFormat(String.valueOf(subTotal),Integer.valueOf(numberOfDecimal))%></td>
 								</tr>

@@ -1410,7 +1410,7 @@ public class ItemMstUtil {
         java.sql.Connection con = null;
         try {
                 con = DbBean.getConnection();
-                StringBuffer sql = new StringBuffer(" SELECT ITEM ,ITEMDESC,isnull(COST,'0') COST,isnull(SALESUOM,'') SALESUOM,isnull(cast(STKQTY as decimal(18,3)),0) STKQTY,isnull(INCPRICE,'0') INCPRICE,ISNULL(CPPI,'') CPPI,isnull(UNITPRICE,'0') UNITPRICE,isnull(MINSPRICE,'0') MINSPRICE,isnull(INCPRICEUNIT,'%') INCPRICEUNIT,CATLOGPATH,PRD_BRAND_ID,isnull(HSCODE,'') HSCODE,isnull(COO,'') COO,");
+                StringBuffer sql = new StringBuffer(" SELECT isnull(AVERAGECOST,'0') AVERAGECOST,ITEM ,ITEMDESC,isnull(COST,'0') COST,isnull(SALESUOM,'') SALESUOM,isnull(cast(STKQTY as decimal(18,3)),0) STKQTY,isnull(INCPRICE,'0') INCPRICE,ISNULL(CPPI,'') CPPI,isnull(UNITPRICE,'0') UNITPRICE,isnull(MINSPRICE,'0') MINSPRICE,isnull(INCPRICEUNIT,'%') INCPRICEUNIT,CATLOGPATH,PRD_BRAND_ID,isnull(HSCODE,'') HSCODE,isnull(COO,'') COO,");
                 sql.append("ISNULL(cast(MAXSTKQTY as decimal(18,3)),0) MAXSTKQTY,ISNULL((select ISNULL(SUM(QTY),0) from " + plant + "_INVMST where ITEM=IM.ITEM  group by item),0) STOCKONHAND,");
                 sql.append("ISNULL((select ISNULL(SUM(QTYOR),0)-ISNULL(SUM(QTYPICK),0) from [" + plant + "_DODET] D JOIN [" + plant + "_DOHDR] H ON D.DONO=H.DONO where ITEM=IM.ITEM and H.ORDER_STATUS!='Draft' and PICKSTATUS <>'C' group by item),0) OUTGOINGQTY,");
                 sql.append("ISNULL((select ISNULL(SUM(QTYOR),0)-ISNULL(SUM(QTYRC),0) from [" + plant + "_PODET] D JOIN [" + plant + "_POHDR] H ON D.PONO=H.PONO where ITEM=IM.ITEM and H.ORDER_STATUS!='Draft' and LNSTAT <>'C' group by item),0) INCOMINGQTY");

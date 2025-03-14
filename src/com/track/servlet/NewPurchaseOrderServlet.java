@@ -2743,7 +2743,7 @@ if(action.equalsIgnoreCase("suppliersummary")) {
 					Map itemMap = new HashMap();
 					itemMap.put("ConvertedUnitCost",
 							new DOUtil().getConvertedUnitCostForProduct(plant, "", podet.getITEM()));
-					String convertedcost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(plant,podet.getUNITMO(),podet.getITEM()); //imthi add to show Sales Price By Average Cost
+//					String convertedcost = new DOUtil().getConvertedAverageUnitCostForProductByCurrency(plant,podet.getUNITMO(),podet.getITEM()); //imthi add to show Sales Price By Average Cost
 					itemMap.put("ConvertedUnitCostWTC",
 							new DOUtil().getConvertedUnitCostForProductWTC(plant, "", podet.getITEM()));
 					itemMap.put("minSellingConvertedUnitCost", new DOUtil()
@@ -2753,11 +2753,13 @@ if(action.equalsIgnoreCase("suppliersummary")) {
 					Hashtable ht = new Hashtable();
 					ht.put("item", podet.getITEM());
 					ht.put("plant", plant);
-					Map m = new EstDetDAO().getEstQtyByProduct(ht);
-					itemMap.put("EstQty", (String) m.get("ESTQTY"));
+//					Map m = new EstDetDAO().getEstQtyByProduct(ht);
+//					itemMap.put("EstQty", (String) m.get("ESTQTY"));
+					itemMap.put("EstQty", "");
 
-					m = new InvMstDAO().getAvailableQtyByProduct(ht);
-					itemMap.put("AvlbQty", (String) m.get("AVLBQTY"));
+//					m = new InvMstDAO().getAvailableQtyByProduct(ht);
+//					itemMap.put("AvlbQty", (String) m.get("AVLBQTY"));
+					itemMap.put("AvlbQty", "");
 
 //					List listItem = new ItemUtil().queryItemMstDetails(podet.getITEM(), plant);
 //					Vector arrItem = (Vector) listItem.get(0);
@@ -2765,6 +2767,7 @@ if(action.equalsIgnoreCase("suppliersummary")) {
 						
 			            Map arrItem = new ItemMstUtil().GetProductForPurchase(podet.getITEM(),plant);
 			            if(arrItem.size()>0){
+			            String convertedcost = StrUtils.fString((String)arrItem.get("AVERAGECOST"));
 						itemMap.put("sItemDesc",StrUtils.fString((String)arrItem.get("ITEMDESC")));
 						itemMap.put("stkqty",StrUtils.fString((String)arrItem.get("STKQTY")));
 						itemMap.put("price",StrUtils.fString((String)arrItem.get("UNITPRICE")));
